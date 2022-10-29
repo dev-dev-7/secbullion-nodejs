@@ -1,7 +1,3 @@
 dispatch:
-  - url: "api.inceptivestudio.com/*"
+  - url: "api.secbullion.com/*"
     service: default
-  # - url: "demo.mazadee.com/*"
-  #   service: demo
-  # - url: "api.mazadee.com/*"
-  #   service: api
