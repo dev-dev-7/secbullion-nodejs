@@ -1,14 +1,14 @@
 {
-  "name": "api.cardzly.app",
+  "name": "api.secbullion.app",
   "version": "1.0.0",
-  "description": "Cardzly API",
+  "description": "Secbullion API",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
     "prod": "pm2 start index.js"
   },
-  "repository": "https://github.com/in-ceptive/cardzly-api-v1.git",
+  "repository": "https://github.com/ishro-app/secbullion-nodejs.git",
   "author": "Abdul",
   "license": "MIT",
   "dependencies": {
@@ -29,8 +29,7 @@
     "multistream": "^4.1.0",
     "mysql": "^2.18.1",
     "nodemon": "^2.0.15",
-    "string-sanitizer": "^2.0.2",
-    "twilio": "^3.74.0"
+    "string-sanitizer": "^2.0.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^5.5.3"

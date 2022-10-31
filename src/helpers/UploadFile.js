@@ -5,7 +5,7 @@ const storage = new Storage();
 //   keyFilename: "cardz-ly-87bd1efab582.json",
 // });
 // TODO edit access control to this bucket
-const bucketName = "cardzly-files";
+const bucketName = "secbullion-files";
 const bucket = storage.bucket(bucketName); // should be your bucket name
 
 exports.upload = async (files) => {
