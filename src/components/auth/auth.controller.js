@@ -7,7 +7,6 @@ import {
   MESSAGE_AUTH_ERROR,
   MESSAGE_AUTH_SUCCESS,
 } from "../../constants/message.constant.js";
-import Role from "../../enum/role.enum.js";
 
 const protect = catchAsync(async (req, res, next) => {
   try {

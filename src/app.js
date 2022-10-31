@@ -31,7 +31,6 @@ dotenv.config();
 // IMPORT ROUTERS
 
 import authRouter from "./routes/v1/auth.route.js";
-import userRouter from "./routes/v1/user.route.js";
 import uploadRouter from "./routes/v1/upload.route.js";
 
 // ***********************************************************
@@ -116,7 +115,6 @@ app.use(cookieParser());
 // ROUTES
 
 app.use("/v1/auth", authRouter);
-app.use("/v1/user", userRouter);
 app.use("/v1/file-upload", uploadRouter);
 
 // To check if server is running

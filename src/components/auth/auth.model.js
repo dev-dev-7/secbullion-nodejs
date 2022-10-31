@@ -1,71 +1,121 @@
+import Hash from "../../helpers/Hash.js";
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
-// *********************************************************************
-// REFRESH_TOKEN
+// **************************************************************
 
-const RefreshTokenSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     id: Schema.Types.ObjectId,
-    user_id: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "user_id is required"],
-    },
-    token: {
+    full_name: {
       type: String,
-      required: [true, "token is required"],
+      required: [true, "Please tell us your full name"],
     },
-  },
-  { timestamps: true }
-);
-
-// *********************************************************************
-// RESET_PASSWORD_TOKEN
-
-const ResetPasswordTokenSchema = new mongoose.Schema(
-  {
-    id: Schema.Types.ObjectId,
-    user_id: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: [true, "user_id is required"],
+    email: {
+      type: String,
+      required: [true, "Please provide your email"],
+      unique: true,
+      lowercase: true,
+    },
+    active: {
+      type: Number,
+      default: 1,
+      select: false,
+    },
+    password: {
+      type: String,
+      required: [true, "Please provied a password"],
+      minlength: 8,
+      select: false,
+    },
+    country_code: {
+      type: Object,
+      required: true,
+    },
+    mobile_number: {
+      type: String,
+      required: [true, "Please provied a mobile number"],
+    },
+    picture: {
+      type: String,
+      default: "https://mui.com/static/images/avatar/1.jpg",
+    },
+    address: {
+      type: Object,
+      required: [true, "Please provied a address"],
+    },
+    password_changed_at: {
+      type: Date,
     },
     otp_code: {
       type: String,
-      required: [true, "otp_code is required"],
-    },
-    verified_before: {
-      type: Boolean,
-      default: false,
-    },
-    secret_hash: {
-      type: String,
-      required: [true, "secret_hash is required"],
-    },
-    expire_at: {
-      type: Date,
-      required: [true, "expire_at is required"],
     },
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true }, timestamps: true }
+  { toObject: { virtuals: true }, toJSON: { virtuals: true } },
+
+  { timestamps: true },
+  { collection: "Users" }
 );
 
-// ****************************
+// **************************************************************
 
-ResetPasswordTokenSchema.method("toJSON", function () {
+userSchema.method("toJSON", function () {
   const { __v, _id, ...object } = this.toObject();
   object.id = _id;
   return object;
 });
+// toJSON: { virtuals: true },
 
-// *********************************************************************
+// Virtual populate
+// userSchema.virtual("auctions", {
+//   ref: "Auction",
+//   foreignField: "user_id",
+//   localField: "_id",
+// });
 
-export const ResetPasswordToken = mongoose.model(
-  "ResetPasswordToken",
-  ResetPasswordTokenSchema
-);
+// **************************************************************
 
-export const RefreshToken = mongoose.model("RefreshToken", RefreshTokenSchema);
+userSchema.pre("save", function (next) {
+  // Only run this function if password was actually modified
+  if (!this.isModified("password")) return next();
+  this.password = Hash.make(this.password);
+  this.password_changed_at = Date.now() - 1000;
+  next();
+});
 
-// module.exports = { ResetPasswordToken, RefreshToken };
+// **************************************************************
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
+  this.passwordChangedAt = Date.now() - 1000;
+  next();
+});
+
+// **************************************************************
+
+// userSchema.methods.correctPassword = async function (
+//   candidatePassword,
+//   userPassword
+// ) {
+//   return await bcrypt.compare(candidatePassword, userPassword);
+// };
+
+// **************************************************************
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.password_changed_at) {
+    const changedTimestamp = parseInt(
+      this.password_changed_at.getTime() / 1000,
+      10
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+  return false;
+};
+
+// **************************************************************
+
+const User = mongoose.model("User", userSchema);
+
+export default User;

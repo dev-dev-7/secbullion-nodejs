@@ -4,10 +4,10 @@ import {
   MESSAGE_AUTH_SUCCESS,
   MESSAGE_COMMON_ERROR,
 } from "../../constants/message.constant.js";
-import userService from "../user/user.service.js";
+import authModel from "../auth/auth.model.js";
 import jwtTokenService from "../../helpers/jwtToken.service.js";
 import Hash from "../../helpers/Hash.js";
-import refreshTokenService from "./refreshToken.service.js";
+// import refreshTokenService from "./refreshToken.service.js";
 import lodash from "lodash";
 import { RESPONSE_LOGIN_FIELDS } from "./auth.dto.js";
 
@@ -15,13 +15,13 @@ import { RESPONSE_LOGIN_FIELDS } from "./auth.dto.js";
 
 const register = async (user) => {
   try {
-    const result = await userService.getByEmail(user.email);
+    const result = await authModel.getByEmail(user.email);
 
     if (result.success) {
       return failed(MESSAGE_AUTH_ERROR.USER_EXISTS);
     }
 
-    const createdUser = await userService.create(user);
+    const createdUser = await authModel.create(user);
 
     if (!createdUser) {
       return failed(MESSAGE_AUTH_ERROR.SIGNUP);
@@ -38,7 +38,7 @@ const register = async (user) => {
 
 const login = async ({ email, password }) => {
   try {
-    const result = await userService.getByEmailWithPassword(email);
+    const result = await authModel.getByEmailWithPassword(email);
 
     if (!result.success) {
       return failed(MESSAGE_AUTH_ERROR.LOGIN);
@@ -64,22 +64,22 @@ const login = async ({ email, password }) => {
 };
 // *******************************************************
 
-const logout = async ({ user_id }) => {
-  try {
-    const result = await refreshTokenService.deleteRefreshTokenByUserId({
-      user_id,
-    });
+// const logout = async ({ user_id }) => {
+//   try {
+//     const result = await refreshTokenService.deleteRefreshTokenByUserId({
+//       user_id,
+//     });
 
-    if (result.success || result.message == MESSAGE_COMMON_ERROR.NOT_FOUND) {
-      return succeed(null, MESSAGE_AUTH_SUCCESS.LOGOUT);
-    }
+//     if (result.success || result.message == MESSAGE_COMMON_ERROR.NOT_FOUND) {
+//       return succeed(null, MESSAGE_AUTH_SUCCESS.LOGOUT);
+//     }
 
-    return failed(MESSAGE_COMMON_ERROR.WRONG);
-  } catch (error) {
-    console.error(error);
-    return failed(error.message);
-  }
-};
+//     return failed(MESSAGE_COMMON_ERROR.WRONG);
+//   } catch (error) {
+//     console.error(error);
+//     return failed(error.message);
+//   }
+// };
 
 // *******************************************************
 
@@ -115,6 +115,6 @@ const generateTokens = async (user) => {
   }
 };
 
-const authService = { register, login, logout };
+const authService = { register, login };
 
 export default authService;
