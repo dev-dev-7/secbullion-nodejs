@@ -32,14 +32,7 @@ dotenv.config();
 
 import authRouter from "./routes/v1/auth.route.js";
 import userRouter from "./routes/v1/user.route.js";
-import bannerRouter from "./routes/v1/banner.route.js";
-import settingsRouter from "./routes/v1/settings.route.js";
-import categoryRouter from "./routes/v1/category.route.js";
-import serviceRouter from "./routes/v1/service.route.js";
-import portfolioRouter from "./routes/v1/portfoilo.route.js";
 import uploadRouter from "./routes/v1/upload.route.js";
-import aboutUsRouter from "./routes/v1/aboutUs.route.js";
-import detailRouter from "./routes/v1/detail.route.js";
 
 // ***********************************************************
 // START CORS
@@ -124,14 +117,7 @@ app.use(cookieParser());
 
 app.use("/v1/auth", authRouter);
 app.use("/v1/user", userRouter);
-app.use("/v1/banner", bannerRouter);
-app.use("/v1/settings", settingsRouter);
-app.use("/v1/category", categoryRouter);
-app.use("/v1/service", serviceRouter);
-app.use("/v1/portfolio", portfolioRouter);
 app.use("/v1/file-upload", uploadRouter);
-app.use("/v1/about-us", aboutUsRouter);
-app.use("/v1/details", detailRouter);
 
 // To check if server is running
 app.get("/*", function (req, res) {
