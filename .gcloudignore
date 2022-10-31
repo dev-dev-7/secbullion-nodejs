@@ -12,6 +12,7 @@
 # below:
 .git
 .gitignore
+.yarn
 
 # Node.js dependencies:
 node_modules/

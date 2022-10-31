@@ -1,14 +1,9 @@
-import bcrypt from "bcryptjs";
-var salt = bcrypt.genSaltSync(10);
+var bcrypt = require("bcryptjs");
 // TODO: use async to speed up the hashing process
-const make = (plain) => {
-  return bcrypt.hashSync(plain, salt);
+exports.make = (plain) => {
+  return bcrypt.hashSync(plain, 10);
 };
 
-const check = (plain, hash) => {
+exports.check = (plain, hash) => {
   return bcrypt.compareSync(plain, hash);
 };
-
-const Hash = { check, make };
-
-export default Hash;

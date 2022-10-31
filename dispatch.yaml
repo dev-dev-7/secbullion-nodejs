@@ -1,3 +1,0 @@
-dispatch:
-  - url: "api.secbullion.com/*"
-    service: default
