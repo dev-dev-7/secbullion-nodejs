@@ -2,7 +2,7 @@ const authModel = require("./authModel");
 const Hash = require("../../helpers/hash");
 const jwt = require("jsonwebtoken");
 const smsglobal = require("../../helpers/smsglobal");
-const common = require("../../helpers/common");
+const time = require("../../helpers/time");
 const config = require("../../config/index");
 const { validationResult } = require("express-validator");
 const { JWT_SECRETE_KEY } = config.development;
@@ -115,7 +115,7 @@ exports.resendOtp = async (req, res) => {
     let otpHistory = await authModel.getUserHistoryKey(
       mobile.user_id,
       "otp_code",
-      common.timeNow(600, "minus")
+      time.timeNow(600, "minus")
     );
     if (otp && otpHistory?.length < 5) {
       await authModel.updateUserMetaData(mobile.user_id, "otp_code", otp_code);
