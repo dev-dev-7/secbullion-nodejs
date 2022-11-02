@@ -1,6 +1,6 @@
-require("@google-cloud/debug-agent").start({
-  serviceContext: { enableCanary: true },
-});
+// require("@google-cloud/debug-agent").start({
+//   serviceContext: { enableCanary: true },
+// });
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");

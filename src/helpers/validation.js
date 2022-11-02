@@ -58,13 +58,4 @@ exports.reset_password_validation = [
     .withMessage("Password must be at least 8 characters long"),
 ];
 
-// exports.change_password_validation = [
-//   check("password")
-//     .notEmpty()
-//     .bail()
-//     .isLength({ min: 8 })
-//     .withMessage("Password must be at least 8 characters long"),
-//   check("code").notEmpty().withMessage("You must enter OTP code"),
-// ];
-
-// exports.resend_otp_validation = [check("mobile").notEmpty()];
+exports.delete_account_validation = [check("user_id").notEmpty()];

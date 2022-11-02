@@ -28,8 +28,12 @@ router.post(
   authController.resetPassword
 );
 
-// router.post("/logout", authController.logout);
-// router.post("/delete-account", authController.deleteAccount);
+router.post("/logout", [verifyToken], authController.logout);
+router.post(
+  "/delete-account",
+  [verifyToken, validation.delete_account_validation],
+  authController.deleteAccount
+);
 
 // router.post(
 //   "/new-api",

@@ -1,5 +1,5 @@
 const db = require("../../config/connection");
-const Hash = require("../../helpers/Hash");
+const Hash = require("../../helpers/hash");
 const userTable = "tbl_users";
 const usermetaTable = "tbl_user_metadata";
 const userhistoryTable = "tbl_user_history";
@@ -68,7 +68,7 @@ const deleteUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).del();
 };
 
-const insertUserHistory = async ({ user_id, history_key, history_message }) => {
+const insertUserHistory = async (user_id, history_key, history_message) => {
   return db(userhistoryTable)
     .insert({
       user_id,
@@ -78,10 +78,20 @@ const insertUserHistory = async ({ user_id, history_key, history_message }) => {
     .then((id) => getUserById(id));
 };
 
-const getUserHistoryKey = async ({ user_id, history_key }) => {
-  return db(userhistoryTable)
-    .where({ user_id: user_id, history_key: history_key })
-    .first();
+const getUserHistoryKey = async (user_id, history_key, time = "") => {
+  if (time) {
+    return db(userhistoryTable)
+      .where({
+        user_id: user_id,
+        history_key: history_key,
+      })
+      .where("created_at", ">", time);
+  } else {
+    return db(userhistoryTable).where({
+      user_id: user_id,
+      history_key: history_key,
+    });
+  }
 };
 
 module.exports = {

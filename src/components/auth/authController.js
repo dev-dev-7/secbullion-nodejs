@@ -2,6 +2,7 @@ const authModel = require("./authModel");
 const Hash = require("../../helpers/hash");
 const jwt = require("jsonwebtoken");
 const smsglobal = require("../../helpers/smsglobal");
+const common = require("../../helpers/common");
 const config = require("../../config/index");
 const { validationResult } = require("express-validator");
 const { JWT_SECRETE_KEY } = config.development;
@@ -107,18 +108,24 @@ exports.resendOtp = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let otp_code = Math.floor(100000 + Math.random() * 900000);
   let mobile = await authModel.getMetaDataKeyValue("mobile", req.body.mobile);
   if (mobile) {
-    await authModel.updateUserMetaData(
+    let otp = await authModel.getUserMetaDataKey(mobile.user_id, "otp_code");
+    let otpHistory = await authModel.getUserHistoryKey(
       mobile.user_id,
       "otp_code",
-      Math.floor(100000 + Math.random() * 900000)
+      common.timeNow(600, "minus")
     );
-    let otp = await authModel.getUserMetaDataKey(mobile.user_id, "otp_code");
-    if (otp) {
-      smsglobal.sendMessage(req.body.mobile, otp.otp_code);
+    if (otp && otpHistory?.length < 5) {
+      await authModel.updateUserMetaData(mobile.user_id, "otp_code", otp_code);
+      smsglobal.sendMessage(req.body.mobile, otp_code);
+      await authModel.insertUserHistory(mobile.user_id, "otp_code", otp_code);
+      return res.status(200).json({ data: mobile, msg: "Otp Sent" });
+    } else {
+      await authModel.insertUserMetaData(mobile.user_id, "otp_code", otp_code);
+      return res.status(403).json({ errors: [{ msg: "Too many request" }] });
     }
-    return res.status(200).json({ data: mobile, msg: "Otp Sent" });
   } else {
     return res.status(404).json({ errors: [{ msg: "Not Found" }] });
   }
@@ -137,12 +144,21 @@ exports.resetPassword = async (req, res) => {
     let user = await authModel.updateUser(req.body.user_id, {
       password: Hash.make(req.body.password),
     });
+    await authModel.updateUserMetaData(
+      req.body.user_id,
+      "otp_code",
+      Math.floor(100000 + Math.random() * 900000)
+    );
     return res.status(201).json({ data: user, msg: "Password Updated" });
   } else {
     return res.status(400).json({ errors: [{ msg: "Invalid Code" }] });
   }
 };
 
-exports.logout = async (req, res) => {};
+exports.logout = async (req, res) => {
+  return res.status(200).json({ msg: "logout success" });
+};
 
-exports.deleteAccount = async (req, res) => {};
+exports.deleteAccount = async (req, res) => {
+  return res.status(200).json({ msg: "account deleted" });
+};
