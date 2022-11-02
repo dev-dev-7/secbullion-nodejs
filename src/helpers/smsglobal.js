@@ -4,7 +4,7 @@ const config = require("../config/index");
 //   config.development.TWILIO_AUTH_TOKEN
 // );
 
-const sendMessage = (phone) => {
+const sendMessage = (phone, otp_code) => {
   // twilio.messages
   //   .create({
   //     body: "This is the ship that made the Kessel Run in fourteen parsecs?",

@@ -1,5 +1,5 @@
 const DBAccess = require("../db");
-const { sendPushNotification } = require('../firebase/sendPushNotification')
+const { sendPushNotification } = require("../firebase/sendPushNotification");
 
 /**
  * Save sended message and socket user
@@ -16,7 +16,7 @@ const saveMessage = async (data, socket) => {
       senderName: data.senderName,
       senderImage: data.senderImage,
       status: data.status,
-      time: new Date()
+      time: new Date(),
     };
 
     await DBAccess.message.addNewMessage(message_entity); // Add new message
@@ -29,7 +29,7 @@ const saveMessage = async (data, socket) => {
     } else {
       // If socket id is null, ,it means user is offline.
       // If you notification access for this app you can send notification to taker in here.
-      sendPushNotification([reciever[0].fcm], message_entity)
+      sendPushNotification([reciever[0].fcm], message_entity);
     }
     return { Status: true, Message: "Message sended successfully" };
   } catch (err) {
@@ -41,9 +41,8 @@ const saveMessage = async (data, socket) => {
   }
 };
 
-
 /**
- * Update DB status and emit message delivered 
+ * Update DB status and emit message delivered
  * @param {any} chat_id chat ID
  * @param {any} socket is socket for emit data
  */
@@ -69,9 +68,7 @@ const messageDelivered = async (chat_id, socket) => {
   }
 };
 
-
-
 module.exports = {
   saveMessage,
-  messageDelivered
+  messageDelivered,
 };
