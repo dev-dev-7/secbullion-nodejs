@@ -35,10 +35,4 @@ router.post(
   authController.deleteAccount
 );
 
-// router.post(
-//   "/new-api",
-//   [verifyToken, validation.change_password_validation],
-//   authController.resetPassword
-// );
-
 module.exports = router;
