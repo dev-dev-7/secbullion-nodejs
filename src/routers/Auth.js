@@ -6,6 +6,7 @@ const validation = require("../helpers/validation");
 
 // Auth
 router.post("/login", validation.login_validation, authController.login);
+
 router.post(
   "/register",
   validation.register_validation,
@@ -29,6 +30,7 @@ router.post(
 );
 
 router.post("/logout", [verifyToken], authController.logout);
+
 router.post(
   "/delete-account",
   [verifyToken, validation.delete_account_validation],
