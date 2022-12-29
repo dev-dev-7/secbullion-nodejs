@@ -1,5 +1,5 @@
 const { check, body } = require("express-validator");
-const authModel = require("../components/auth/authModel");
+const authModel = require("../../components/auth/authModel");
 
 // AUTH VALIDATION
 exports.login_validation = [

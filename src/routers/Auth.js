@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const verifyToken = require("./../helpers/verifyToken");
 const authController = require("../components/auth/authController");
-const validation = require("../helpers/validation");
+const validation = require("../helpers/validation/auth");
 
 // Auth
 router.post("/login", validation.login_validation, authController.login);
