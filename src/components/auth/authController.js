@@ -5,7 +5,7 @@ const smsglobal = require("../../helpers/smsglobal");
 const time = require("../../helpers/time");
 const config = require("../../config/index");
 const { validationResult } = require("express-validator");
-const { JWT_SECRETE_KEY } = config.development;
+const { JWT_SECRETE_KEY } = config.tokens;
 
 exports.login = async (req, res) => {
   const errors = validationResult(req);

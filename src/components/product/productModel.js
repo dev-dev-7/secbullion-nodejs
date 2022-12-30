@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
-const table = "products";
+const table = "tbl_products";
+const tableFiles = "tbl_product_files";
 
 const create = async ({ category_id, title, description, quantity, unit }) => {
   return db(table)
@@ -48,8 +49,25 @@ const getByCategory = (category_id) => {
   return db(table).where("category_id", category_id);
 };
 
+const getActiveByCategory = (category_id) => {
+  return db(table).where("category_id", category_id).andWhere("status", 1);
+};
+
 const get = () => {
   return db(table);
+};
+
+const insertFiles = async (product_id, file) => {
+  return db(tableFiles)
+    .insert({
+      product_id: product_id,
+      file: file,
+    })
+    .then((id) => getById(id));
+};
+
+const getByFilesByProduct = (product_id) => {
+  return db(tableFiles).where("product_id", product_id);
 };
 
 module.exports = {
@@ -59,5 +77,8 @@ module.exports = {
   getById,
   getByTitle,
   getByCategory,
+  getActiveByCategory,
   get,
+  insertFiles,
+  getByFilesByProduct,
 };

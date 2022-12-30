@@ -7,9 +7,17 @@ exports.add = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   let product;
+  let file;
   product = await model.getByTitle(req.body.title);
   if (!product) {
     product = await model.create(req.body);
+    if (product) {
+      if (req.body.files) {
+        for (var i = 0; i < req.body.files.length; i++) {
+          await model.insertFiles(product.id, req.body.files[i]);
+        }
+      }
+    }
   }
   return res.status(201).json({ data: product });
 };

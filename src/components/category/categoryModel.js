@@ -1,5 +1,5 @@
 const db = require("../../config/connection");
-const table = "product_categories";
+const table = "tbl_product_categories";
 
 const create = async ({ title }) => {
   return db(table)

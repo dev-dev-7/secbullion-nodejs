@@ -7,10 +7,7 @@ function verifyToken(req, res, next) {
     const bearerToken = bearerHeader.split(" ")[1];
     try {
       req.token = bearerToken;
-      req.user = jwt.verify(
-        req.token,
-        config.development.JWT_SECRETE_KEY
-      )?.user;
+      req.user = jwt.verify(req.token, config.tokens.JWT_SECRETE_KEY)?.user;
       next();
     } catch (e) {
       console.error(e);
