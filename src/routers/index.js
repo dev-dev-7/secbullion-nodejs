@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require("./auth");
+const profile = require("./profile");
 const authAllInOne = require("./allinone");
 
 //Admin
@@ -16,6 +17,7 @@ router.get("/", (req, res) => {
 });
 
 router.use("/", auth);
+router.use("/", profile);
 router.use("/", authAllInOne);
 router.use("/admin", adminAuth);
 router.use("/admin", adminCategory);

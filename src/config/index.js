@@ -1,10 +1,10 @@
 require("dotenv").config();
-
+console.log("process:", process.env.MYSQL_HOST);
 module.exports = {
   VERSION: "/v1",
   PORT: 8080,
   mysql: {
-    host: process.env.MYSQL_HHOST,
+    host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
     database: process.env.MYSQL_DATABASE,
