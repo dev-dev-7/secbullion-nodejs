@@ -1,5 +1,4 @@
 require("dotenv").config();
-console.log("process:", process.env.MYSQL_HOST);
 module.exports = {
   VERSION: "/v1",
   PORT: 8080,

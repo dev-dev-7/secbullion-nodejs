@@ -12,6 +12,7 @@ exports.getAll = async (req, res) => {
         for (var p = 0; p < category[i].products.length; p++) {
           category[i].products[p].files =
             await productModel.getByFilesByProduct(category[i].products[p].id);
+          category[i].products[p].value = { currency: "AED", price: "56.07" };
         }
       }
     }
