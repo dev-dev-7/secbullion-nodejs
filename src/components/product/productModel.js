@@ -2,12 +2,20 @@ const db = require("../../config/connection");
 const table = "tbl_products";
 const tableFiles = "tbl_product_files";
 
-const create = async ({ category_id, title, description, quantity, unit }) => {
+const create = async ({
+  category_id,
+  title,
+  description,
+  specification,
+  quantity,
+  unit,
+}) => {
   return db(table)
     .insert({
       category_id: category_id,
       title: title,
       description: description,
+      specification: specification,
       quantity: quantity,
       unit: unit,
     })

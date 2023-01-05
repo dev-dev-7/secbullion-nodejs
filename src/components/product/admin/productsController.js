@@ -7,7 +7,6 @@ exports.add = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   let product;
-  let file;
   product = await model.getByTitle(req.body.title);
   if (!product) {
     product = await model.create(req.body);

@@ -5,6 +5,7 @@ exports.add = [
   check("category_id").notEmpty(),
   check("title").notEmpty(),
   check("description").notEmpty(),
+  check("specification").notEmpty(),
   check("quantity").notEmpty(),
   check("unit").notEmpty(),
 ];
@@ -13,6 +14,7 @@ exports.update = [
   check("category_id").notEmpty(),
   check("title").notEmpty(),
   check("description").notEmpty(),
+  check("specification").notEmpty(),
   check("quantity").notEmpty(),
   check("unit").notEmpty(),
   check("status").notEmpty(),
