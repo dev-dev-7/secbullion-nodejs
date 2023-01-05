@@ -43,9 +43,7 @@ const getMetaDataById = (id) => {
 };
 
 const getUserMetaData = (user_id) => {
-  return db(usermetaTable)
-    .where("user_id", user_id)
-    .andWhere("meta_key", "!=", "otp_code");
+  return db(usermetaTable).where("user_id", user_id);
 };
 
 const getUserMetaDataKey = (user_id, meta_key) => {
