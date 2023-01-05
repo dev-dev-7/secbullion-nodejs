@@ -1,7 +1,13 @@
+const { validationResult } = require("express-validator");
 const categoryModel = require("../category/categoryModel");
 const productModel = require("../product/productModel");
+const walletModel = require("../wallet/walletModel");
 
 exports.getAll = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  const wallet = await walletModel.getWalletByUserId(req.body.user_id);
   const category = await categoryModel.getActive();
   if (category.length) {
     for (var i = 0; i < category.length; i++) {
@@ -17,5 +23,11 @@ exports.getAll = async (req, res) => {
       }
     }
   }
-  return res.status(201).json({ data: category });
+  let result = {
+    currency: "AED",
+    gold_rate: "12000",
+    wallet: wallet,
+    items: category,
+  };
+  return res.status(201).json({ data: result });
 };

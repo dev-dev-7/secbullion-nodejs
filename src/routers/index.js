@@ -5,6 +5,7 @@ const auth = require("./auth");
 const profile = require("./profile");
 const authAllInOne = require("./allinone");
 const cart = require("./cart");
+const wallet = require("./wallet");
 
 //Admin
 const adminAuth = require("./admin/auth");
@@ -21,6 +22,7 @@ router.use("/", auth);
 router.use("/", profile);
 router.use("/", authAllInOne);
 router.use("/", cart);
+router.use("/", wallet);
 router.use("/admin", adminAuth);
 router.use("/admin", adminCategory);
 router.use("/admin", adminProduct);

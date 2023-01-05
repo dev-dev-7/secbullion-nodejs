@@ -1,4 +1,5 @@
 const authModel = require("./authModel");
+const walletModel = require("../wallet/walletModel");
 const Hash = require("../../helpers/hash");
 const jwt = require("jsonwebtoken");
 const smsglobal = require("../../helpers/smsglobal");
@@ -63,8 +64,11 @@ exports.register = async (req, res) => {
     }
     // Addtional fields
     let otp_code = Math.floor(100000 + Math.random() * 900000);
-    await authModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
-    smsglobal.sendMessage(req.body.mobile, otp_code);
+    if (user.user_id) {
+      await authModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
+      await walletModel.insertWallet(user.user_id, 0, 0, 0);
+      smsglobal.sendMessage(req.body.mobile, otp_code);
+    }
     return res.status(201).json({ data: user });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
