@@ -66,6 +66,7 @@ exports.register = async (req, res) => {
     let otp_code = Math.floor(100000 + Math.random() * 900000);
     if (user.user_id) {
       await authModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
+      await authModel.insertUserMetaData(user.user_id, "user_id", user.user_id);
       await walletModel.insertWallet(user.user_id, 0, 0, 0);
       smsglobal.sendMessage(req.body.mobile, otp_code);
     }
@@ -125,7 +126,10 @@ exports.resendOtp = async (req, res) => {
       await authModel.updateUserMetaData(mobile.user_id, "otp_code", otp_code);
       smsglobal.sendMessage(req.body.mobile, otp_code);
       await authModel.insertUserHistory(mobile.user_id, "otp_code", otp_code);
-      return res.status(200).json({ data: mobile, msg: "Otp Sent" });
+      return res.status(200).json({
+        data: await authModel.getUserMetaData(mobile.user_id),
+        msg: "Otp Sent",
+      });
     } else {
       await authModel.insertUserMetaData(mobile.user_id, "otp_code", otp_code);
       return res.status(403).json({ errors: [{ msg: "Too many request" }] });
