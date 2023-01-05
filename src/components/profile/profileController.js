@@ -40,3 +40,87 @@ exports.get = async (req, res) => {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
 };
+
+exports.addAddress = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authModel.getUserById(req.params.user_id);
+  if (user.user_id) {
+    let isExistAddress = await model.getUserMetaDataKeyValue(
+      req.params.user_id,
+      "address",
+      req.body.address
+    );
+    if (!isExistAddress) {
+      await model.insertUserMetaData(
+        req.params.user_id,
+        "address",
+        req.body.address
+      );
+    } else {
+      await model.updateUserMetaData(
+        req.params.user_id,
+        "address",
+        req.body.address
+      );
+    }
+    return res.status(201).json({
+      data: await model.getUserMetaDatasKey(req.params.user_id, "address"),
+    });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.getAddress = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authModel.getUserById(req.params.user_id);
+  if (user.user_id) {
+    return res.status(201).json({
+      data: await model.getUserMetaDatasKey(req.params.user_id, "address"),
+    });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.updateAddress = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authModel.getUserById(req.params.user_id);
+  if (user.user_id) {
+    await model.updateMetaData(
+      req.body.address_id,
+      "address",
+      req.body.address
+    );
+    return res.status(201).json({
+      data: await model.getUserMetaDatasKey(req.params.user_id, "address"),
+    });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.deleteAddress = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authModel.getUserById(req.params.user_id);
+  if (user.user_id) {
+    await model.deleteUserMetadata(
+      req.body.address_id,
+      req.params.user_id,
+      "address"
+    );
+    return res.status(201).json({
+      data: await model.getUserMetaDatasKey(req.params.user_id, "address"),
+    });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};

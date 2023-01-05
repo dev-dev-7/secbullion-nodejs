@@ -59,3 +59,12 @@ exports.reset_password_validation = [
 ];
 
 exports.delete_account_validation = [check("user_id").notEmpty()];
+
+exports.add_address = [check("address").notEmpty()];
+
+exports.put_address = [
+  check("address_id").notEmpty(),
+  check("address").notEmpty(),
+];
+
+exports.delete_address = [check("address_id").notEmpty()];

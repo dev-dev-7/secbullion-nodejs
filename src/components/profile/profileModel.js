@@ -18,6 +18,13 @@ const updateUserMetaData = async (user_id, meta_key, meta_values) => {
     .then((updated) => getUserMetaData(user_id));
 };
 
+const updateMetaData = async (id, meta_key, meta_values) => {
+  return db(usermetaTable)
+    .where({ id: id, meta_key: meta_key })
+    .update({ meta_values: meta_values })
+    .then((updated) => getMetaDataById(id));
+};
+
 const getUserMetaData = (user_id) => {
   return db(usermetaTable)
     .where("user_id", user_id)
@@ -32,6 +39,10 @@ const getUserMetaDataKey = (user_id, meta_key) => {
   return db(usermetaTable)
     .where({ user_id: user_id, meta_key: meta_key })
     .first();
+};
+
+const getUserMetaDatasKey = (user_id, meta_key) => {
+  return db(usermetaTable).where({ user_id: user_id, meta_key: meta_key });
 };
 
 const getUserMetaDataKeyValue = (user_id, meta_key, meta_values) => {
@@ -53,12 +64,23 @@ const getUsernameExist = (user_id, meta_key, meta_values) => {
     .first();
 };
 
+const deleteUserMetadata = (id, user_id, meta_key) => {
+  return db(usermetaTable)
+    .where("id", id)
+    .andWhere("user_id", user_id)
+    .andWhere("meta_key", meta_key)
+    .del();
+};
+
 module.exports = {
   insertUserMetaData,
   updateUserMetaData,
+  updateMetaData,
   getUserMetaData,
   getUserMetaDataKey,
+  getUserMetaDatasKey,
   getUserMetaDataKeyValue,
   getMetaDataKeyValue,
   getUsernameExist,
+  deleteUserMetadata,
 };

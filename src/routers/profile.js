@@ -1,8 +1,21 @@
 const express = require("express");
 const router = express.Router();
-const verifyToken = require("./../helpers/verifyToken");
 const profileController = require("../components/profile/profileController");
+const validation = require("../helpers/validation/auth");
+const verifyToken = require("./../helpers/verifyToken");
 
-router.put("/profile/:user_id", [verifyToken], profileController.update);
-router.get("/profile/:user_id", [verifyToken], profileController.get);
+router
+  .route("/profile/:user_id")
+  .get([verifyToken], profileController.get)
+  .put([verifyToken], profileController.update);
+
+router
+  .route("/profile/address/:user_id")
+  .post([verifyToken, validation.add_address], profileController.addAddress)
+  .get([verifyToken], profileController.getAddress)
+  .put([verifyToken, validation.put_address], profileController.updateAddress)
+  .delete(
+    [verifyToken, validation.delete_address],
+    profileController.deleteAddress
+  );
 module.exports = router;
