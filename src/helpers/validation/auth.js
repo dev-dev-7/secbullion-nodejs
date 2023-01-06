@@ -12,8 +12,7 @@ exports.login_validation = [
 ];
 
 exports.register_validation = [
-  check("first_name").notEmpty(),
-  check("last_name").notEmpty(),
+  check("full_name").notEmpty(),
   check("email")
     .isEmail()
     .custom(async (value) => {

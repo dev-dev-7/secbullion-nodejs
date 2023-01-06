@@ -70,7 +70,9 @@ exports.register = async (req, res) => {
       await walletModel.insertWallet(user.user_id, 0, 0, 0);
       smsglobal.sendMessage(req.body.mobile, otp_code);
     }
-    return res.status(201).json({ data: user });
+    return res
+      .status(201)
+      .json({ data: await authModel.getUserMetaData(user.user_id) });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
@@ -99,7 +101,9 @@ exports.verifiyOtp = async (req, res) => {
         Math.floor(100000 + Math.random() * 900000)
       );
       const token = jwt.sign({ user: user }, JWT_SECRETE_KEY);
-      return res.status(201).json({ data: user, token });
+      return res
+        .status(201)
+        .json({ data: await authModel.getUserMetaData(user.user_id), token });
     } else {
       return res.status(400).json({ errors: [{ msg: "Invalid Code" }] });
     }
@@ -157,7 +161,10 @@ exports.resetPassword = async (req, res) => {
       "otp_code",
       Math.floor(100000 + Math.random() * 900000)
     );
-    return res.status(201).json({ data: user, msg: "Password Updated" });
+    return res.status(201).json({
+      data: await authModel.getUserMetaData(user.user_id),
+      msg: "Password Updated",
+    });
   } else {
     return res.status(400).json({ errors: [{ msg: "Invalid Code" }] });
   }
