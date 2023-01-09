@@ -45,11 +45,6 @@ exports.resend_otp_validation = [check("mobile").notEmpty()];
 
 exports.reset_password_validation = [
   check("user_id").notEmpty(),
-  check("otp_code")
-    .notEmpty()
-    .bail()
-    .isLength({ min: 6 })
-    .withMessage("Otp must be at least 6 digit long"),
   check("password")
     .notEmpty()
     .bail()

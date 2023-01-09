@@ -3,9 +3,8 @@ const { validationResult } = require("express-validator");
 
 exports.add = async (req, res) => {
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  }
   let product;
   product = await model.getByTitle(req.body.title);
   if (!product) {

@@ -26,7 +26,9 @@ exports.login = async (req, res) => {
       if (user.otp_verified == 0) {
         smsglobal.sendMessage(user.mobile);
       }
-      return res.status(200).json({ data: user, token });
+      return res
+        .status(200)
+        .json({ data: await authModel.getUserMetaData(user.user_id), token });
     } else {
       return res.status(401).json({ errors: [{ msg: "Invalid credentials" }] });
     }
@@ -147,15 +149,10 @@ exports.resetPassword = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let otp_code = await authModel.getUserMetaDataKeyValue(
-    req.body.user_id,
-    "otp_code",
-    req.body.otp_code
-  );
-  if (otp_code) {
-    let user = await authModel.updateUser(req.body.user_id, {
-      password: Hash.make(req.body.password),
-    });
+  let user = await authModel.updateUser(req.body.user_id, {
+    password: Hash.make(req.body.password),
+  });
+  if (user) {
     await authModel.updateUserMetaData(
       req.body.user_id,
       "otp_code",
@@ -166,7 +163,7 @@ exports.resetPassword = async (req, res) => {
       msg: "Password Updated",
     });
   } else {
-    return res.status(400).json({ errors: [{ msg: "Invalid Code" }] });
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
 };
 
