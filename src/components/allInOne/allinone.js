@@ -72,7 +72,7 @@ exports.getAll = async (req, res) => {
     my_stake: stake,
     my_store: store,
     my_order: order,
-    profile: await authModel.getUserMetaData(req.body.user_id),
+    metadata: await authModel.getUserMetaData(req.body.user_id),
   };
   return res.status(201).json({ data: result });
 };
