@@ -3,6 +3,7 @@ const router = express.Router();
 
 const auth = require("./auth");
 const profile = require("./profile");
+const category = require("./category");
 const authAllInOne = require("./allinone");
 const cart = require("./cart");
 const wallet = require("./wallet");
@@ -21,6 +22,7 @@ router.get("/", (req, res) => {
 
 router.use("/", auth);
 router.use("/", profile);
+router.use("/", category);
 router.use("/", authAllInOne);
 router.use("/", cart);
 router.use("/", wallet);

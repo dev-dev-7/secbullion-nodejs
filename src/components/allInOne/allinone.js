@@ -1,28 +1,26 @@
 const { validationResult } = require("express-validator");
-const categoryModel = require("../category/categoryModel");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
+const categoryModel = require("../category/categoryModel");
+const { getPrice } = require("../../helpers/getProductPrice");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   const wallet = await walletModel.getWalletByUserId(req.body.user_id);
-  const category = await categoryModel.getActive();
-  if (category.length) {
-    for (var i = 0; i < category.length; i++) {
-      category[i].products = await productModel.getActiveByCategory(
-        category[i].id
+  const products = await productModel.getActiveProducts();
+  if (products.length) {
+    for (var p = 0; p < products.length; p++) {
+      products[p].files = await productModel.getByFilesByProduct(
+        products[p].id
       );
-      if (category[i].products.length) {
-        for (var p = 0; p < category[i].products.length; p++) {
-          category[i].products[p].files =
-            await productModel.getByFilesByProduct(category[i].products[p].id);
-          category[i].products[p].value = { currency: "AED", price: "56.07" };
-        }
-      }
+      products[p].value = {
+        currency: "AED",
+        price: getPrice(products[p].quantity, products[p].unit),
+      };
     }
   }
   // My Stake
@@ -34,6 +32,10 @@ exports.getAll = async (req, res) => {
         stake[i].product.files = await productModel.getByFilesByProduct(
           stake[i].product_id
         );
+        stake[i].product.value = {
+          currency: "AED",
+          price: getPrice(stake[i].product.quantity, stake[i].product.unit),
+        };
       }
     }
   }
@@ -46,6 +48,10 @@ exports.getAll = async (req, res) => {
         store[i].product.files = await productModel.getByFilesByProduct(
           store[i].product_id
         );
+        store[i].product.value = {
+          currency: "AED",
+          price: getPrice(store[i].product.quantity, store[i].product.unit),
+        };
       }
     }
   }
@@ -61,14 +67,19 @@ exports.getAll = async (req, res) => {
         order[i].product.files = await productModel.getByFilesByProduct(
           order[i].product_id
         );
+        order[i].product.value = {
+          currency: "AED",
+          price: getPrice(order[i].product.quantity, order[i].product.unit),
+        };
       }
     }
   }
   let result = {
     currency: "AED",
     gold_rate: "12000",
+    category: await categoryModel.getActive(),
     wallet: wallet,
-    items: category,
+    products: products,
     my_stake: stake,
     my_store: store,
     my_order: order,

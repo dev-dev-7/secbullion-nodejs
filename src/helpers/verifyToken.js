@@ -14,7 +14,7 @@ function verifyToken(req, res, next) {
       res.status(401).json({ errors: [{ msg: "Invalid credentials" }] });
     }
   } else {
-    res.sendStatus(403); // forbidden
+    res.sendStatus(403);
   }
 }
 

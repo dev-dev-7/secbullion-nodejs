@@ -63,6 +63,10 @@ const getActiveByCategory = (category_id) => {
   return db(table).where("category_id", category_id).andWhere("status", 1);
 };
 
+const getActiveProducts = () => {
+  return db(table).where("status", 1);
+};
+
 const get = () => {
   return db(table);
 };
@@ -91,4 +95,5 @@ module.exports = {
   get,
   insertFiles,
   getByFilesByProduct,
+  getActiveProducts,
 };
