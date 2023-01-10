@@ -4,7 +4,7 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
-const { getPrice } = require("../../helpers/getProductPrice");
+const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
