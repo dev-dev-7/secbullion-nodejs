@@ -84,6 +84,14 @@ const getByFilesByProduct = (product_id) => {
   return db(tableFiles).where("product_id", product_id);
 };
 
+const isExistProduct = (title, quantity, unit) => {
+  return db(table)
+    .where("title", title)
+    .andWhere("quantity", quantity)
+    .andWhere("unit", unit)
+    .first();
+};
+
 module.exports = {
   create,
   update,
@@ -96,4 +104,5 @@ module.exports = {
   insertFiles,
   getByFilesByProduct,
   getActiveProducts,
+  isExistProduct,
 };
