@@ -26,9 +26,13 @@ exports.login = async (req, res) => {
       if (user.otp_verified == 0) {
         smsglobal.sendMessage(user.mobile);
       }
-      return res
-        .status(200)
-        .json({ data: await authModel.getUserMetaData(user.user_id), token });
+      return res.status(200).json({
+        data: {
+          user: user,
+          metadata: await authModel.getUserMetaData(user.user_id),
+        },
+        token,
+      });
     } else {
       return res.status(401).json({ errors: [{ msg: "Invalid credentials" }] });
     }
@@ -72,9 +76,12 @@ exports.register = async (req, res) => {
       await walletModel.insertWallet(user.user_id, 0, 0, 0);
       smsglobal.sendMessage(req.body.mobile, otp_code);
     }
-    return res
-      .status(201)
-      .json({ data: await authModel.getUserMetaData(user.user_id) });
+    return res.status(201).json({
+      data: {
+        user: user,
+        metadata: await authModel.getUserMetaData(user.user_id),
+      },
+    });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }

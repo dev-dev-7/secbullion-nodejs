@@ -59,6 +59,7 @@ exports.getMyOrder = async (req, res) => {
   const product = await orderModel.getByType(req.params.user_id, [
     "collect",
     "deliver",
+    "delivered",
   ]);
   if (product) {
     for (var i = 0; i < product.length; i++) {
@@ -68,6 +69,7 @@ exports.getMyOrder = async (req, res) => {
           product[i].product_id
         );
       }
+      product[i].deliver_at = product[i].updated_at;
     }
   }
   return res.status(201).json({ data: product });

@@ -85,5 +85,5 @@ exports.getAll = async (req, res) => {
     my_order: order,
     metadata: await authModel.getUserMetaData(req.body.user_id),
   };
-  return res.status(201).json({ data: result });
+  return res.status(200).json({ data: result });
 };
