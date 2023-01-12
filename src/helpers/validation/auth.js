@@ -19,7 +19,12 @@ exports.register_validation = [
       if (await authModel.getMetaDataKeyValue("email", value))
         return Promise.reject("E-mail already exists");
     }),
-  check("mobile").notEmpty(),
+  check("mobile")
+    .notEmpty()
+    .custom(async (value) => {
+      if (await authModel.getMetaDataKeyValue("mobile", value))
+        return Promise.reject("Mobile already exists");
+    }),
   check("password")
     .notEmpty()
     .bail()
