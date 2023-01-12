@@ -170,7 +170,10 @@ exports.resetPassword = async (req, res) => {
       Math.floor(100000 + Math.random() * 900000)
     );
     return res.status(201).json({
-      data: await authModel.getUserMetaData(user.user_id),
+      data: {
+        user: user,
+        metadata: await authModel.getUserMetaData(user.user_id),
+      },
       msg: "Password Updated",
     });
   } else {
