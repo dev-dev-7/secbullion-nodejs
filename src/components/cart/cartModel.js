@@ -1,7 +1,15 @@
 const db = require("../../config/connection");
 const cartTable = "tbl_user_carts";
 
-const create = async ({ user_id, product_id, type, quantity, unit }) => {
+const create = async ({
+  user_id,
+  product_id,
+  type,
+  quantity,
+  unit,
+  duration,
+  duration_type,
+}) => {
   return db(cartTable)
     .insert({
       user_id: user_id,
@@ -9,6 +17,8 @@ const create = async ({ user_id, product_id, type, quantity, unit }) => {
       type: type,
       quantity: quantity,
       unit: unit,
+      duration: duration,
+      duration_type: duration_type,
     })
     .then((user_id) => getCartByUserId(user_id));
 };
