@@ -1,11 +1,12 @@
 const db = require("../../config/connection");
 const cartTable = "tbl_user_carts";
 
-const create = async ({ user_id, product_id, quantity, unit }) => {
+const create = async ({ user_id, product_id, type, quantity, unit }) => {
   return db(cartTable)
     .insert({
       user_id: user_id,
       product_id: product_id,
+      type: type,
       quantity: quantity,
       unit: unit,
     })
