@@ -85,6 +85,20 @@ const updateProduct = async (
     .then((updated) => getOrderById(product_order_id));
 };
 
+const getUserOrderByType = (user_id, type) => {
+  return db(orderTable)
+    .where("user_id", user_id)
+    .andWhere("status", type)
+    .first();
+};
+
+const deleteUserOrderProduct = (user_id, id) => {
+  return db(orderDetailsTable)
+    .where("id", id)
+    .andWhere("user_id", user_id)
+    .del();
+};
+
 module.exports = {
   create,
   getOrderByUserId,
@@ -93,4 +107,6 @@ module.exports = {
   getByType,
   getByUserProduct,
   updateProduct,
+  getUserOrderByType,
+  deleteUserOrderProduct,
 };
