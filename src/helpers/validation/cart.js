@@ -4,8 +4,7 @@ const { check } = require("express-validator");
 exports.create = [
   check("user_id").notEmpty(),
   check("product_id").notEmpty(),
-  check("quantity").notEmpty(),
-  check("unit").notEmpty(),
+  check("items").notEmpty(),
 ];
 exports.update = [
   check("product_id").notEmpty(),

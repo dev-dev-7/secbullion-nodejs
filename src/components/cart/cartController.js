@@ -5,15 +5,27 @@ exports.create = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let existCart = await cartModel.getUserCartByProductId(
-    req.body.user_id,
-    req.body.product_id
-  );
-  if (existCart.length) {
-    await cartModel.update(req.body.user_id, req.body.product_id, req.body);
-  } else {
-    await cartModel.create(req.body);
+  let items = req.body.items;
+  if (items.length) {
+    for (var i = 0; i < items.length; i++) {
+      let existCart = await cartModel.getUserCartProductByType(
+        req.body.user_id,
+        req.body.product_id,
+        items[i].type
+      );
+      if (existCart) {
+        await cartModel.update(
+          req.body.user_id,
+          req.body.product_id,
+          items[i].type,
+          items[i]
+        );
+      } else {
+        await cartModel.create(req.body.user_id, req.body.product_id, items[i]);
+      }
+    }
   }
+
   let carts = await cartModel.getCartByUserId(req.body.user_id);
   if (carts) {
     return res.status(201).json({ data: carts });
@@ -38,14 +50,16 @@ exports.update = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let existCart = await cartModel.getUserCartByProductId(
+  let existCart = await cartModel.getUserCartProductByType(
     req.params.user_id,
-    req.body.product_id
+    req.body.product_id,
+    req.body.type
   );
   if (existCart) {
     let carts = await cartModel.update(
       req.params.user_id,
       req.body.product_id,
+      req.body.type,
       req.body
     );
     return res.status(200).json({ data: carts });
