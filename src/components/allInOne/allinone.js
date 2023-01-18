@@ -106,10 +106,15 @@ exports.getAll = async (req, res) => {
         cartItems[c].product.value = {
           currency: "AED",
           unit: cartItems[c].unit,
-          price: getPrice(cartItems[c].quantity, cartItems[c].unit),
-          current_rate: getCurrentPrice(cartItems[c].unit),
+          price: getPrice(
+            cartItems[c].product.quantity,
+            cartItems[c].product.unit
+          ),
+          current_rate: getCurrentPrice(cartItems[c].product.unit),
         };
-        cart.subtotal += getPrice(cartItems[c].quantity, cartItems[c].unit);
+        cart.subtotal +=
+          getPrice(cartItems[c].product.quantity, cartItems[c].product.unit) *
+          cartItems[c].quantity;
       }
     }
     cart.items = cartItems;

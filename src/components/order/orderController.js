@@ -23,7 +23,9 @@ exports.orderSummary = async (req, res) => {
         cartItems[i].product.files = await productModel.getByFilesByProduct(
           cartItems[i].product_id
         );
-        order.subtotal += getPrice(cartItems[i].quantity, cartItems[i].unit);
+        order.subtotal +=
+          getPrice(cartItems[i].product.quantity, cartItems[i].product.unit) *
+          cartItems[i].quantity;
       }
     }
     order.items = cartItems;
