@@ -1,6 +1,11 @@
 const model = require("./appDataModel");
-
+require("dotenv").config();
 exports.appData = async (req, res) => {
-  const metadata = await model.getActive();
-  return res.status(201).json({ data: metadata });
+  let data = {};
+  data.metadata = await model.getActive();
+  data.checkout = {
+    secret_key: process.env.CHECKOUT_SECRETE_KEY,
+    public_key: process.env.CHECKOUT_PUBLIC_KEY,
+  };
+  return res.status(201).json({ data: data });
 };

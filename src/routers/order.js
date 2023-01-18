@@ -6,6 +6,9 @@ const verifyToken = require("./../helpers/verifyToken");
 
 // order
 router
+  .route("/order-summary")
+  .post([verifyToken, validation.summary], orderController.orderSummary);
+router
   .route("/submit-order")
   .post([verifyToken, validation.submit], orderController.submit);
 router

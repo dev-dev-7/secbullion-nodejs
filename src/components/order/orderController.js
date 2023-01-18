@@ -1,6 +1,37 @@
 const orderModel = require("./orderModel");
+const cartModel = require("./../cart/cartModel");
 const productModel = require("../product/productModel");
 const { validationResult } = require("express-validator");
+const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
+
+exports.orderSummary = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let order = {};
+  let cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  if (cartItems) {
+    order.items = cartItems;
+    order.subtotal = 0;
+    order.coupon_used = req.body.coupon_code == "SEC50" ? 50 : 0;
+    order.total = 0;
+    if (cartItems.length) {
+      for (var i = 0; i < cartItems.length; i++) {
+        cartItems[i].product = await productModel.getById(
+          cartItems[i].product_id
+        );
+        cartItems[i].product.files = await productModel.getByFilesByProduct(
+          cartItems[i].product_id
+        );
+        order.subtotal += getPrice(cartItems[i].quantity, cartItems[i].unit);
+      }
+    }
+    order.total = order.subtotal - order.coupon_used;
+    return res.status(201).json({ data: order });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
 
 exports.submit = async (req, res) => {
   const errors = validationResult(req);
