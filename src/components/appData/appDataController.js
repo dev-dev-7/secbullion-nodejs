@@ -1,5 +1,6 @@
-const model = require("./appDataModel");
 require("dotenv").config();
+const model = require("./appDataModel");
+
 exports.appData = async (req, res) => {
   let data = {};
   data.metadata = await model.getActive();
