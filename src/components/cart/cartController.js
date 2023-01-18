@@ -15,7 +15,11 @@ exports.create = async (req, res) => {
       );
       if (existCart) {
         if (items[i].quantity == 0) {
-          await cartModel.deleteUserCart(req.body.user_id, req.body.product_id);
+          await cartModel.deleteUserCart(
+            req.body.user_id,
+            req.body.product_id,
+            items[i].type
+          );
         } else {
           await cartModel.update(
             req.body.user_id,
@@ -83,7 +87,8 @@ exports.delete = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let del = await cartModel.deleteUserCart(
     req.params.user_id,
-    req.body.product_id
+    req.body.product_id,
+    req.body.type
   );
   if (del) {
     return res

@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
 const cartTable = "tbl_user_carts";
+const couponTable = "tbl_coupons";
 
 const create = async (
   user_id,
@@ -40,11 +41,16 @@ const getUserCartProductByType = (user_id, product_id, type) => {
     .first();
 };
 
-const deleteUserCart = (user_id, product_id) => {
+const deleteUserCart = (user_id, product_id, type) => {
   return db(cartTable)
     .where("user_id", user_id)
     .andWhere("product_id", product_id)
+    .andWhere("type", type)
     .del();
+};
+
+const getCoupon = (coupon_code) => {
+  return db(couponTable).where("coupon_code", coupon_code).first();
 };
 
 module.exports = {
@@ -53,4 +59,5 @@ module.exports = {
   getCartByUserId,
   getUserCartProductByType,
   deleteUserCart,
+  getCoupon,
 };
