@@ -10,3 +10,13 @@ exports.getPrice = (quantity, unit) => {
   }
   return total;
 };
+
+exports.getCurrentPrice = (unit) => {
+  let total;
+  if (unit == "gr") {
+    total = gramPrice;
+  } else if (unit == "kl") {
+    total = kiloPrice;
+  }
+  return total;
+};

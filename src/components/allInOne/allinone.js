@@ -5,7 +5,10 @@ const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
 const cartModel = require("../cart/cartModel");
-const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
+const {
+  getPrice,
+  getCurrentPrice,
+} = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
@@ -21,7 +24,9 @@ exports.getAll = async (req, res) => {
       );
       products[p].value = {
         currency: "AED",
+        unit: products[p].unit,
         price: getPrice(products[p].quantity, products[p].unit),
+        current_rate: getCurrentPrice(products[p].unit),
       };
     }
   }
@@ -36,7 +41,9 @@ exports.getAll = async (req, res) => {
         );
         stake[t].product.value = {
           currency: "AED",
+          unit: stake[t].product.unit,
           price: getPrice(stake[t].product.quantity, stake[t].product.unit),
+          current_rate: getCurrentPrice(stake[t].product.unit),
         };
       }
     }
@@ -52,7 +59,9 @@ exports.getAll = async (req, res) => {
         );
         store[s].product.value = {
           currency: "AED",
+          unit: store[s].product.unit,
           price: getPrice(store[s].product.quantity, store[s].product.unit),
+          current_rate: getCurrentPrice(store[s].product.unit),
         };
       }
     }
@@ -71,14 +80,21 @@ exports.getAll = async (req, res) => {
         );
         order[o].product.value = {
           currency: "AED",
+          unit: order[o].product.unit,
           price: getPrice(order[o].product.quantity, order[o].product.unit),
+          current_rate: getCurrentPrice(order[o].product.unit),
         };
       }
     }
   }
   // My Carts
+  const cart = {};
   const cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
+    cart.subtotal = 0;
+    cart.coupon_used = coupon ? coupon.discount_price : 0;
+    cart.total = 0;
     if (cartItems.length) {
       for (var c = 0; c < cartItems.length; c++) {
         cartItems[c].product = await productModel.getById(
@@ -89,10 +105,15 @@ exports.getAll = async (req, res) => {
         );
         cartItems[c].product.value = {
           currency: "AED",
+          unit: cartItems[c].unit,
           price: getPrice(cartItems[c].quantity, cartItems[c].unit),
+          current_rate: getCurrentPrice(cartItems[c].unit),
         };
+        cart.subtotal += getPrice(cartItems[i].quantity, cartItems[i].unit);
       }
     }
+    cart.items = cartItems;
+    cart.total = cart.subtotal - cart.coupon_used;
   }
   let result = {
     currency: "AED",
@@ -103,7 +124,7 @@ exports.getAll = async (req, res) => {
     my_stake: stake,
     my_store: store,
     my_order: order,
-    my_carts: cartItems,
+    my_carts: cart,
     metadata: await authModel.getUserMetaData(req.body.user_id),
   };
   return res.status(200).json({ data: result });

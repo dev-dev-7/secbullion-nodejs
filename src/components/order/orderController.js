@@ -8,11 +8,10 @@ exports.orderSummary = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let order = {};
+  const order = {};
   let cartItems = await cartModel.getCartByUserId(req.body.user_id);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
-    order.items = cartItems;
     order.subtotal = 0;
     order.coupon_used = coupon ? coupon.discount_price : 0;
     order.total = 0;
@@ -27,6 +26,7 @@ exports.orderSummary = async (req, res) => {
         order.subtotal += getPrice(cartItems[i].quantity, cartItems[i].unit);
       }
     }
+    order.items = cartItems;
     order.total = order.subtotal - order.coupon_used;
     return res.status(201).json({ data: order });
   } else {
