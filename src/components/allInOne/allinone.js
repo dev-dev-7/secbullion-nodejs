@@ -77,7 +77,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Carts
-  let cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  const cartItems = await cartModel.getCartByUserId(req.body.user_id);
   if (cartItems) {
     if (cartItems.length) {
       for (var c = 0; c < cartItems.length; c++) {
