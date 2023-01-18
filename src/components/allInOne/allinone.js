@@ -4,6 +4,7 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
+const cartModel = require("../cart/cartModel");
 const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
@@ -74,6 +75,23 @@ exports.getAll = async (req, res) => {
       }
     }
   }
+  let cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  if (cartItems) {
+    if (cartItems.length) {
+      for (var c = 0; c < cartItems.length; c++) {
+        cartItems[c].product = await productModel.getById(
+          cartItems[c].product_id
+        );
+        cartItems[c].product.files = await productModel.getByFilesByProduct(
+          cartItems[c].product_id
+        );
+        cartItems[c].value = {
+          currency: "AED",
+          price: getPrice(cartItems[c].quantity, cartItems[c].unit),
+        };
+      }
+    }
+  }
   let result = {
     currency: "AED",
     gold_rate: "12000",
@@ -83,6 +101,7 @@ exports.getAll = async (req, res) => {
     my_stake: stake,
     my_store: store,
     my_order: order,
+    my_carts: cartItems,
     metadata: await authModel.getUserMetaData(req.body.user_id),
   };
   return res.status(200).json({ data: result });
