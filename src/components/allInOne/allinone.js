@@ -109,7 +109,7 @@ exports.getAll = async (req, res) => {
           price: getPrice(cartItems[c].quantity, cartItems[c].unit),
           current_rate: getCurrentPrice(cartItems[c].unit),
         };
-        cart.subtotal += getPrice(cartItems[i].quantity, cartItems[i].unit);
+        cart.subtotal += getPrice(cartItems[c].quantity, cartItems[c].unit);
       }
     }
     cart.items = cartItems;
