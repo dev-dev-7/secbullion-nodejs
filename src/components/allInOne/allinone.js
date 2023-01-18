@@ -87,7 +87,7 @@ exports.getAll = async (req, res) => {
         cartItems[c].product.files = await productModel.getByFilesByProduct(
           cartItems[c].product_id
         );
-        cartItems[c].value = {
+        cartItems[c].product.value = {
           currency: "AED",
           price: getPrice(cartItems[c].quantity, cartItems[c].unit),
         };

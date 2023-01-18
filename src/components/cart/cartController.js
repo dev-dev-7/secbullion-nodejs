@@ -14,18 +14,27 @@ exports.create = async (req, res) => {
         items[i].type
       );
       if (existCart) {
-        await cartModel.update(
-          req.body.user_id,
-          req.body.product_id,
-          items[i].type,
-          items[i]
-        );
+        if (items[i].quantity == 0) {
+          await cartModel.deleteUserCart(req.body.user_id, req.body.product_id);
+        } else {
+          await cartModel.update(
+            req.body.user_id,
+            req.body.product_id,
+            items[i].type,
+            items[i]
+          );
+        }
       } else {
-        await cartModel.create(req.body.user_id, req.body.product_id, items[i]);
+        if (items[i].quantity != 0) {
+          await cartModel.create(
+            req.body.user_id,
+            req.body.product_id,
+            items[i]
+          );
+        }
       }
     }
   }
-
   let carts = await cartModel.getCartByUserId(req.body.user_id);
   if (carts) {
     return res.status(201).json({ data: carts });
