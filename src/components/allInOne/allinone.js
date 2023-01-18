@@ -12,6 +12,7 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   const wallet = await walletModel.getWalletByUserId(req.body.user_id);
+  // All Products
   const products = await productModel.getActiveProducts();
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
@@ -27,15 +28,15 @@ exports.getAll = async (req, res) => {
   // My Stake
   const stake = await orderModel.getByType(req.body.user_id, ["stake"]);
   if (stake) {
-    for (var i = 0; i < stake.length; i++) {
-      stake[i].product = await productModel.getById(stake[i].product_id);
-      if (stake[i].product) {
-        stake[i].product.files = await productModel.getByFilesByProduct(
-          stake[i].product_id
+    for (var t = 0; t < stake.length; t++) {
+      stake[t].product = await productModel.getById(stake[t].product_id);
+      if (stake[t].product) {
+        stake[t].product.files = await productModel.getByFilesByProduct(
+          stake[t].product_id
         );
-        stake[i].product.value = {
+        stake[t].product.value = {
           currency: "AED",
-          price: getPrice(stake[i].product.quantity, stake[i].product.unit),
+          price: getPrice(stake[t].product.quantity, stake[t].product.unit),
         };
       }
     }
@@ -43,15 +44,15 @@ exports.getAll = async (req, res) => {
   // My Store
   const store = await orderModel.getByType(req.body.user_id, ["store"]);
   if (store) {
-    for (var i = 0; i < store.length; i++) {
-      store[i].product = await productModel.getById(store[i].product_id);
-      if (store[i].product) {
-        store[i].product.files = await productModel.getByFilesByProduct(
-          store[i].product_id
+    for (var s = 0; s < store.length; s++) {
+      store[s].product = await productModel.getById(store[s].product_id);
+      if (store[s].product) {
+        store[s].product.files = await productModel.getByFilesByProduct(
+          store[s].product_id
         );
-        store[i].product.value = {
+        store[s].product.value = {
           currency: "AED",
-          price: getPrice(store[i].product.quantity, store[i].product.unit),
+          price: getPrice(store[s].product.quantity, store[s].product.unit),
         };
       }
     }
@@ -62,19 +63,20 @@ exports.getAll = async (req, res) => {
     "deliver",
   ]);
   if (order) {
-    for (var i = 0; i < order.length; i++) {
-      order[i].product = await productModel.getById(order[i].product_id);
-      if (order[i].product) {
-        order[i].product.files = await productModel.getByFilesByProduct(
-          order[i].product_id
+    for (var o = 0; o < order.length; o++) {
+      order[o].product = await productModel.getById(order[o].product_id);
+      if (order[o].product) {
+        order[o].product.files = await productModel.getByFilesByProduct(
+          order[o].product_id
         );
-        order[i].product.value = {
+        order[o].product.value = {
           currency: "AED",
-          price: getPrice(order[i].product.quantity, order[i].product.unit),
+          price: getPrice(order[o].product.quantity, order[o].product.unit),
         };
       }
     }
   }
+  // My Carts
   let cartItems = await cartModel.getCartByUserId(req.body.user_id);
   if (cartItems) {
     if (cartItems.length) {
