@@ -107,7 +107,6 @@ exports.getMyOrder = async (req, res) => {
 };
 
 exports.changeMyOrderStatus = async (req, res) => {
-  let result;
   let product = await orderModel.getByUserProduct(
     req.body.product_order_id,
     req.params.user_id,
@@ -115,7 +114,7 @@ exports.changeMyOrderStatus = async (req, res) => {
   );
   if (product) {
     if (product.status == "stake" && req.body.status == "store") {
-      result = await orderModel.updateProduct(
+      await orderModel.updateProduct(
         product.id,
         product.user_id,
         product.product_id,
@@ -128,7 +127,7 @@ exports.changeMyOrderStatus = async (req, res) => {
           "stake"
         );
         if (existStake) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             existStake.id,
             existStake.user_id,
             existStake.product_id,
@@ -143,7 +142,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       } else {
         if (req.body.quantity == product.quantity) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             product.id,
             product.user_id,
             product.product_id,
@@ -158,7 +157,7 @@ exports.changeMyOrderStatus = async (req, res) => {
           "deliver"
         );
         if (existDeliver) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             existDeliver.id,
             existDeliver.user_id,
             existDeliver.product_id,
@@ -173,7 +172,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       } else {
         if (req.body.quantity == product.quantity) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             product.id,
             product.user_id,
             product.product_id,
@@ -188,7 +187,7 @@ exports.changeMyOrderStatus = async (req, res) => {
           "collect"
         );
         if (existCollect) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             existCollect.id,
             existCollect.user_id,
             existCollect.product_id,
@@ -203,7 +202,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       } else {
         if (req.body.quantity == product.quantity) {
-          result = await orderModel.updateProduct(
+          await orderModel.updateProduct(
             product.id,
             product.user_id,
             product.product_id,
