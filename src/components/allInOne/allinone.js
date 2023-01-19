@@ -93,7 +93,8 @@ exports.getAll = async (req, res) => {
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
     cart.subtotal = 0;
-    cart.coupon_used = coupon ? coupon.discount_price : 0;
+    cart.discount_price = coupon ? coupon.discount_price : 0;
+    cart.coupon_code = req.body.coupon_code;
     cart.total = 0;
     if (cartItems.length) {
       for (var c = 0; c < cartItems.length; c++) {
@@ -118,7 +119,7 @@ exports.getAll = async (req, res) => {
       }
     }
     cart.items = cartItems;
-    cart.total = cart.subtotal - cart.coupon_used;
+    cart.total = cart.subtotal - cart.discount_price;
   }
   let result = {
     currency: "AED",

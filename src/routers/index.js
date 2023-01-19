@@ -8,6 +8,7 @@ const authAllInOne = require("./allinone");
 const cart = require("./cart");
 const wallet = require("./wallet");
 const order = require("./order");
+const bankDetails = require("./bankDetails");
 const appData = require("./appData");
 
 //Admin
@@ -29,6 +30,7 @@ router.use("/", authAllInOne);
 router.use("/", cart);
 router.use("/", wallet);
 router.use("/", order);
+router.use("/", bankDetails);
 router.use("/", appData);
 router.use("/admin", adminAuth);
 router.use("/admin", adminCategory);
