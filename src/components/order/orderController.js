@@ -86,6 +86,11 @@ exports.submit = async (req, res) => {
             itemArray[i].product_id
           );
         }
+        await cartModel.deleteUserCart(
+          itemArray[i].user_id,
+          itemArray[i].product_id,
+          itemArray[i].type
+        );
       }
     }
     order.items = itemArray;
