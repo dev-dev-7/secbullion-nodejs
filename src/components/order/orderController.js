@@ -94,6 +94,13 @@ exports.submit = async (req, res) => {
       }
     }
     order.items = itemArray;
+    //INSERT WALLET HISTORY
+    await walletModel.insertWalletHistory(
+      req.body.user_id,
+      "paid",
+      req.body.total,
+      order.id
+    );
   }
   return res
     .status(201)
