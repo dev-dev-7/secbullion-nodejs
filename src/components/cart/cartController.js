@@ -87,8 +87,8 @@ exports.delete = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let del = await cartModel.deleteUserCart(
     req.params.user_id,
-    req.body.product_id,
-    req.body.type
+    req.params.product_id,
+    req.params.type
   );
   if (del) {
     return res
