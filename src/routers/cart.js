@@ -9,9 +9,11 @@ router
   .route("/cart")
   .post([verifyToken, validation.create], cartController.create);
 router
-  .route("/cart/:product_id/:user_id/:type")
+  .route("/cart/:user_id")
   .get([verifyToken], cartController.get)
-  .put([verifyToken, validation.update], cartController.update)
+  .put([verifyToken, validation.update], cartController.update);
+router
+  .route("/cart/:user_id/:product_id/:type")
   .delete([verifyToken], cartController.delete);
 
 module.exports = router;
