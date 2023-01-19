@@ -87,7 +87,7 @@ exports.submit = async (req, res) => {
           );
         }
         await cartModel.deleteUserCart(
-          itemArray[i].user_id,
+          req.body.user_id,
           itemArray[i].product_id,
           itemArray[i].type
         );
@@ -97,7 +97,7 @@ exports.submit = async (req, res) => {
     //INSERT WALLET HISTORY
     await walletModel.insertWalletHistory(
       req.body.user_id,
-      "paid",
+      "balance",
       req.body.total,
       order.id
     );
