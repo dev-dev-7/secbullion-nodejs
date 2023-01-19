@@ -43,12 +43,12 @@ exports.submit = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   if (req.body.payment_method == "wallet") {
     let wallet = await walletModel.getWalletByUserId(req.body.user_id);
-    if (wallet.cash_balance < req.body.price) {
+    if (wallet.cash_balance < req.body.total) {
       return res
         .status(400)
         .json({ errors: [{ msg: "Not enough wallet balance" }] });
     } else {
-      let walletData = { cash_balance: wallet.cash_balance - req.body.price };
+      let walletData = { cash_balance: wallet.cash_balance - req.body.total };
       await walletModel.updateWallet(req.body.user_id, walletData);
       req.body.txn_token =
         "wallet-" +
@@ -56,7 +56,7 @@ exports.submit = async (req, res) => {
         "-" +
         wallet.cash_balance +
         "-" +
-        req.body.price;
+        req.body.total;
     }
   } else if (req.body.payment_method == "checkout") {
     let existOrder = await orderModel.getByTaxnId(req.body.txn_token);

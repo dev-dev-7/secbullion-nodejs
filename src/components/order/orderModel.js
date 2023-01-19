@@ -4,7 +4,8 @@ const orderDetailsTable = "tbl_product_order_details";
 
 const create = async ({
   user_id,
-  price,
+  subtotal,
+  total,
   currency,
   txn_token,
   coupon_code,
@@ -13,7 +14,8 @@ const create = async ({
   return db(orderTable)
     .insert({
       user_id: user_id,
-      price: price,
+      subtotal: subtotal,
+      total: total,
       currency: currency,
       txn_token: txn_token,
       coupon_code: coupon_code,
