@@ -1,6 +1,7 @@
 const orderModel = require("./orderModel");
 const cartModel = require("./../cart/cartModel");
 const productModel = require("../product/productModel");
+const walletModel = require("../wallet/walletModel");
 const { validationResult } = require("express-validator");
 const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
 
@@ -40,23 +41,58 @@ exports.submit = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let existOrder = await orderModel.getByTaxnId(req.body.txn_token);
-  if (!existOrder) {
-    let order = await orderModel.create(req.body);
-    if (order) {
-      var arr = Object.entries(req.body.items);
-      for (var i = 0; i < arr.length; i++) {
+  if (req.body.payment_method == "wallet") {
+    let wallet = await walletModel.getWalletByUserId(req.body.user_id);
+    if (wallet.cash_balance < req.body.price) {
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Not enough wallet balance" }] });
+    } else {
+      let walletData = { cash_balance: wallet.cash_balance - req.body.price };
+      await walletModel.updateWallet(req.body.user_id, walletData);
+      req.body.txn_token =
+        "wallet-" +
+        req.body.user_id +
+        "-" +
+        wallet.cash_balance +
+        "-" +
+        req.body.price;
+    }
+  } else if (req.body.payment_method == "checkout") {
+    let existOrder = await orderModel.getByTaxnId(req.body.txn_token);
+    if (existOrder) {
+      return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+    }
+  }
+  // Coupon Code
+  let coupon = await cartModel.getCoupon(req.body.coupon_code);
+  req.body.discount_price = coupon ? coupon.discount_price : 0;
+  // Insert Order
+  let order = await orderModel.create(req.body);
+  if (order) {
+    let itemArray = req.body.items;
+    if (itemArray.length) {
+      for (var i = 0; i < itemArray.length; i++) {
         await orderModel.insertOrderDetails(
           req.body.user_id,
           order.id,
-          req.body.items[i]
+          itemArray[i]
         );
+        itemArray[i].product = await productModel.getById(
+          itemArray[i].product_id
+        );
+        if (itemArray[i].product) {
+          itemArray[i].product.files = await productModel.getByFilesByProduct(
+            itemArray[i].product_id
+          );
+        }
       }
     }
-    return res.status(201).json({ msg: "order has been succesfully placed" });
-  } else {
-    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+    order.items = itemArray;
   }
+  return res
+    .status(201)
+    .json({ data: order, msg: "order has been succesfully placed" });
 };
 
 exports.getMyStake = async (req, res) => {

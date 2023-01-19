@@ -2,13 +2,22 @@ const db = require("../../config/connection");
 const orderTable = "tbl_product_orders";
 const orderDetailsTable = "tbl_product_order_details";
 
-const create = async ({ user_id, price, currency, txn_token }) => {
+const create = async ({
+  user_id,
+  price,
+  currency,
+  txn_token,
+  coupon_code,
+  discount_price,
+}) => {
   return db(orderTable)
     .insert({
       user_id: user_id,
       price: price,
       currency: currency,
       txn_token: txn_token,
+      coupon_code: coupon_code,
+      discount_price: discount_price,
     })
     .then((id) => getOrderById(id));
 };
