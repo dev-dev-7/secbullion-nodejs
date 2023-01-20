@@ -13,6 +13,6 @@ exports.getGramPrice = async (quantity) => {
       return res.data.price_gram_24k * quantity;
     })
     .catch((err) => {
-      return err;
+      return 61 * quantity;
     });
 };
