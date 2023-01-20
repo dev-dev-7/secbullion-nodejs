@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
@@ -7,15 +8,13 @@ const categoryModel = require("../category/categoryModel");
 const cartModel = require("../cart/cartModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
-const {
-  getPrice,
-  getCurrentPrice,
-} = require("../../helpers/mt5Commands/getProductPrice");
+const { getGramPrice } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  let todayGoldRate = await getGramPrice(1);
   const wallet = await walletModel.getWalletByUserId(req.body.user_id);
   // All Products
   const products = await productModel.getActiveProducts();
@@ -25,10 +24,10 @@ exports.getAll = async (req, res) => {
         products[p].id
       );
       products[p].value = {
-        currency: "AED",
+        currency: process.env.DEFAULT_CURRENCY,
         unit: products[p].unit,
-        price: getPrice(products[p].quantity, products[p].unit),
-        current_rate: getCurrentPrice(products[p].unit),
+        price: todayGoldRate * products[p].quantity,
+        current_rate: todayGoldRate,
       };
     }
   }
@@ -42,10 +41,10 @@ exports.getAll = async (req, res) => {
           stake[t].product_id
         );
         stake[t].product.value = {
-          currency: "AED",
+          currency: process.env.DEFAULT_CURRENCY,
           unit: stake[t].product.unit,
-          price: getPrice(stake[t].product.quantity, stake[t].product.unit),
-          current_rate: getCurrentPrice(stake[t].product.unit),
+          price: todayGoldRate * stake[t].product.quantity,
+          current_rate: todayGoldRate,
         };
       }
     }
@@ -60,10 +59,10 @@ exports.getAll = async (req, res) => {
           store[s].product_id
         );
         store[s].product.value = {
-          currency: "AED",
+          currency: process.env.DEFAULT_CURRENCY,
           unit: store[s].product.unit,
-          price: getPrice(store[s].product.quantity, store[s].product.unit),
-          current_rate: getCurrentPrice(store[s].product.unit),
+          price: todayGoldRate * store[s].product.quantity,
+          current_rate: todayGoldRate,
         };
       }
     }
@@ -81,10 +80,10 @@ exports.getAll = async (req, res) => {
           order[o].product_id
         );
         order[o].product.value = {
-          currency: "AED",
+          currency: process.env.DEFAULT_CURRENCY,
           unit: order[o].product.unit,
-          price: getPrice(order[o].product.quantity, order[o].product.unit),
-          current_rate: getCurrentPrice(order[o].product.unit),
+          price: todayGoldRate * order[o].product.quantity,
+          current_rate: todayGoldRate,
         };
       }
     }
@@ -107,17 +106,13 @@ exports.getAll = async (req, res) => {
           cartItems[c].product_id
         );
         cartItems[c].product.value = {
-          currency: "AED",
+          currency: process.env.DEFAULT_CURRENCY,
           unit: cartItems[c].unit,
-          price: getPrice(
-            cartItems[c].product.quantity,
-            cartItems[c].product.unit
-          ),
-          current_rate: getCurrentPrice(cartItems[c].product.unit),
+          price: todayGoldRate * cartItems[c].product.quantity,
+          current_rate: todayGoldRate,
         };
-        cart.subtotal +=
-          getPrice(cartItems[c].product.quantity, cartItems[c].product.unit) *
-          cartItems[c].quantity;
+        let totalQty = todayGoldRate * cartItems[c].product.quantity;
+        cart.subtotal += totalQty * cartItems[c].quantity;
       }
     }
     cart.items = cartItems;
@@ -135,8 +130,8 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
-    currency: "AED",
-    gold_rate: getPrice(1, "gr"),
+    currency: process.env.DEFAULT_CURRENCY,
+    gold_rate: todayGoldRate,
     category: await categoryModel.getActive(),
     wallet: { balance: wallet, transactions: transactions },
     products: products,

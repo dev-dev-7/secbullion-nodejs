@@ -4,7 +4,7 @@ const bankTable = "tbl_user_bank_details";
 const create = async (data) => {
   return db(bankTable)
     .insert(data)
-    .then((user_id) => getBankByUserId(data.user_id));
+    .then((id) => getBankById(id));
 };
 
 const update = async (id, user_id, data) => {

@@ -16,7 +16,7 @@
     "@google-cloud/storage": "^5.16.1",
     "@sendgrid/mail": "^7.6.0",
     "ajv": "^8.8.2",
-    "axios": "^0.26.0",
+    "axios": "^1.2.3",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "buffer": "^6.0.3",
