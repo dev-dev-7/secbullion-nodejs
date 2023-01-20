@@ -9,6 +9,7 @@ const cart = require("./cart");
 const wallet = require("./wallet");
 const order = require("./order");
 const bankDetails = require("./bankDetails");
+const transaction = require("./transaction");
 const appData = require("./appData");
 
 //Admin
@@ -31,6 +32,7 @@ router.use("/", cart);
 router.use("/", wallet);
 router.use("/", order);
 router.use("/", bankDetails);
+router.use("/", transaction);
 router.use("/", appData);
 router.use("/admin", adminAuth);
 router.use("/admin", adminCategory);

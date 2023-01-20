@@ -27,10 +27,15 @@ const deleteUserBank = (user_id, id) => {
   return db(bankTable).where("user_id", user_id).andWhere("id", id).del();
 };
 
+const getBankById = (id) => {
+  return db(bankTable).where("id", id).first();
+};
+
 module.exports = {
   create,
   update,
   getBankByIban,
   getBankByUserId,
   deleteUserBank,
+  getBankById,
 };
