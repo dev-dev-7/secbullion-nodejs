@@ -5,6 +5,8 @@ const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
 const cartModel = require("../cart/cartModel");
+const transactionModel = require("../transaction/transactionModel");
+const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const {
   getPrice,
   getCurrentPrice,
@@ -121,11 +123,22 @@ exports.getAll = async (req, res) => {
     cart.items = cartItems;
     cart.total = cart.subtotal - cart.discount_price;
   }
+  // Trnsaction
+  const transactions = await transactionModel.getTransactionByUserId(
+    req.body.user_id
+  );
+  if (transactions) {
+    for (var i = 0; i < transactions.length; i++) {
+      transactions[i].bankDetails = await bankDetailsModel.getBankById(
+        transactions[i].bank_detail_id
+      );
+    }
+  }
   let result = {
     currency: "AED",
     gold_rate: "12000",
     category: await categoryModel.getActive(),
-    wallet: wallet,
+    wallet: { balance: wallet, transactions: transactions },
     products: products,
     my_stake: stake,
     my_store: store,
