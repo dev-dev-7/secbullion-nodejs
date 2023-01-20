@@ -136,7 +136,7 @@ exports.getAll = async (req, res) => {
   }
   let result = {
     currency: "AED",
-    gold_rate: "12000",
+    gold_rate: getPrice(1, "gr"),
     category: await categoryModel.getActive(),
     wallet: { balance: wallet, transactions: transactions },
     products: products,
