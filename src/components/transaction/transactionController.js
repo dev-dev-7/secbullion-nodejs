@@ -19,10 +19,10 @@ exports.create = async (req, res) => {
 };
 
 exports.get = async (req, res) => {
-  let transactions = await model.getTransactionByUserId(req.params.user_id);
+  const transactions = await model.getTransactionByUserId(req.params.user_id);
   if (transactions) {
     for (var i = 0; i < transactions.length; i++) {
-      transactions[i].bank_details = await bankDetailsModel.getBankById(
+      transactions[i].bankDetails = await bankDetailsModel.getBankById(
         transactions[i].bank_detail_id
       );
     }
