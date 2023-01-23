@@ -8,16 +8,19 @@ const categoryModel = require("../category/categoryModel");
 const cartModel = require("../cart/cartModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
-const { getGramPrice } = require("../../helpers/mt5Commands/getProductPrice");
+const {
+  getAllSymbolsPrice,
+  getSymbolPrice,
+} = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let todayGoldRate = await getGramPrice(1);
   const wallet = await walletModel.getWalletByUserId(req.body.user_id);
   // All Products
   const products = await productModel.getActiveProducts();
+  let mt5PriceArray = await getAllSymbolsPrice(products);
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
       products[p].files = await productModel.getByFilesByProduct(
@@ -26,8 +29,8 @@ exports.getAll = async (req, res) => {
       products[p].value = {
         currency: process.env.DEFAULT_CURRENCY,
         unit: products[p].unit,
-        price: todayGoldRate * products[p].quantity,
-        current_rate: todayGoldRate,
+        price: await getPriceFromSymbol(mt5PriceArray, products[p].symbol),
+        current_rate: products[p].price,
       };
     }
   }
@@ -43,8 +46,8 @@ exports.getAll = async (req, res) => {
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: stake[t].product.unit,
-          price: todayGoldRate * stake[t].product.quantity,
-          current_rate: todayGoldRate,
+          price: await getPriceFromSymbol(mt5PriceArray, stake[t].symbol),
+          current_rate: stake[t].price,
         };
       }
     }
@@ -61,8 +64,8 @@ exports.getAll = async (req, res) => {
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: store[s].product.unit,
-          price: todayGoldRate * store[s].product.quantity,
-          current_rate: todayGoldRate,
+          price: await getPriceFromSymbol(mt5PriceArray, store[s].symbol),
+          current_rate: store[s].price,
         };
       }
     }
@@ -82,8 +85,8 @@ exports.getAll = async (req, res) => {
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: order[o].product.unit,
-          price: todayGoldRate * order[o].product.quantity,
-          current_rate: todayGoldRate,
+          price: await getPriceFromSymbol(mt5PriceArray, order[o].symbol),
+          current_rate: order[o].price,
         };
       }
     }
@@ -108,11 +111,13 @@ exports.getAll = async (req, res) => {
         cartItems[c].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: cartItems[c].unit,
-          price: todayGoldRate * cartItems[c].product.quantity,
-          current_rate: todayGoldRate,
+          price: cartItems[c].symbol,
+          current_rate: cartItems[c].price,
         };
-        let totalQty = todayGoldRate * cartItems[c].product.quantity;
-        cart.subtotal += totalQty * cartItems[c].quantity;
+        cart.subtotal += await getPriceFromSymbol(
+          mt5PriceArray,
+          cartItems[c].symbol
+        );
       }
     }
     cart.items = cartItems;
@@ -130,8 +135,9 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
+    symbols: mt5PriceArray,
     currency: process.env.DEFAULT_CURRENCY,
-    gold_rate: todayGoldRate,
+    gold_rate: await getSymbolPrice("PAMPSuisse-1gm"),
     category: await categoryModel.getActive(),
     wallet: { balance: wallet, transactions: transactions },
     products: products,
@@ -143,3 +149,10 @@ exports.getAll = async (req, res) => {
   };
   return res.status(200).json({ data: result });
 };
+
+async function getPriceFromSymbol(symbols, key) {
+  let result = symbols.filter(function (symbol) {
+    return symbol.Symbol == key;
+  });
+  return result[0]?.Ask;
+}

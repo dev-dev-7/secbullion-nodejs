@@ -1,30 +1,45 @@
 const axios = require("axios");
+const https = require("https");
+var FormData = require("form-data");
 
-function getMonth(month) {
-  month = month + 1;
-  return month < 10 ? "0" + month.toString() : month.toString();
-}
+exports.getAllSymbolsPrice = async (products) => {
+  const formData = new FormData();
+  if (products.length) {
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].symbol) {
+        formData.append("Symbols", products[i].symbol);
+      }
+    }
+  }
+  try {
+    return await axios
+      .post("https://personal.sec-markets.com/mt5/prices", formData, {
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      })
+      .then(function (response) {
+        return response.data;
+      });
+  } catch (err) {
+    return err;
+  }
+};
 
-exports.getGramPrice = async (quantity) => {
-  const today = new Date();
-  const options = {
-    headers: {
-      Accept: "application/json",
-      "x-access-token": "goldapi-7ygrtld4hhnh7-io",
-    },
-  };
-  let api_url =
-    "https://www.goldapi.io/api/XAU/USD/" +
-    today.getFullYear() +
-    getMonth(today.getMonth()) +
-    (today.getDate() - 1);
-  return axios
-    .get(api_url, options)
-    .then((res) => {
-      return res.data.price_gram_24k * quantity;
-    })
-    .catch((err) => {
-      console.log(err);
-      return 61 * quantity;
-    });
+exports.getSymbolPrice = async (symbol) => {
+  const formData = new FormData();
+  formData.append("Symbols", symbol);
+  try {
+    return await axios
+      .post("https://personal.sec-markets.com/mt5/prices", formData, {
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      })
+      .then(function (response) {
+        return response.data[0].Ask;
+      });
+  } catch (err) {
+    console.log("error:", err);
+  }
 };
