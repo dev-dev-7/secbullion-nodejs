@@ -46,8 +46,11 @@ exports.getAll = async (req, res) => {
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: stake[t].product.unit,
-          price: await getPriceFromSymbol(mt5PriceArray, stake[t].symbol),
-          current_rate: stake[t].price,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            stake[t].product.symbol
+          ),
+          current_rate: stake[t].product.price,
         };
       }
     }
@@ -64,8 +67,11 @@ exports.getAll = async (req, res) => {
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: store[s].product.unit,
-          price: await getPriceFromSymbol(mt5PriceArray, store[s].symbol),
-          current_rate: store[s].price,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            store[s].product.symbol
+          ),
+          current_rate: store[s].product.price,
         };
       }
     }
@@ -85,8 +91,11 @@ exports.getAll = async (req, res) => {
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: order[o].product.unit,
-          price: await getPriceFromSymbol(mt5PriceArray, order[o].symbol),
-          current_rate: order[o].price,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            order[o].product.symbol
+          ),
+          current_rate: order[o].product.price,
         };
       }
     }
@@ -110,13 +119,16 @@ exports.getAll = async (req, res) => {
         );
         cartItems[c].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
-          unit: cartItems[c].unit,
-          price: cartItems[c].symbol,
-          current_rate: cartItems[c].price,
+          unit: cartItems[c].product.unit,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            cartItems[c].product.symbol
+          ),
+          current_rate: cartItems[c].product.price,
         };
         cart.subtotal += await getPriceFromSymbol(
           mt5PriceArray,
-          cartItems[c].symbol
+          cartItems[c].product.symbol
         );
       }
     }

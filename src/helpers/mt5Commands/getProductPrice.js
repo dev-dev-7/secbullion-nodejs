@@ -37,7 +37,7 @@ exports.getSymbolPrice = async (symbol) => {
         }),
       })
       .then(function (response) {
-        return response.data[0].Ask;
+        return response.data[0]?.Ask;
       });
   } catch (err) {
     console.log("error:", err);
