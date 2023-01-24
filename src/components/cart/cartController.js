@@ -75,20 +75,23 @@ exports.get = async (req, res) => {
         cartItems[c].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: cartItems[c].product.unit,
-          price: await getPriceFromSymbol(
-            mt5PriceArray,
-            cartItems[c].product.symbol
-          ),
+          price:
+            (await getPriceFromSymbol(
+              mt5PriceArray,
+              cartItems[c].product.symbol
+            )) * cartItems[c].quantity,
           current_rate: cartItems[c].product.price,
         };
-        cart.subtotal += await getPriceFromSymbol(
-          mt5PriceArray,
-          cartItems[c].product.symbol
-        );
+        cart.subtotal +=
+          (await getPriceFromSymbol(
+            mt5PriceArray,
+            cartItems[c].product.symbol
+          )) * cartItems[c].quantity;
       }
     }
     cart.items = cartItems;
-    cart.total = cart.subtotal - cart.discount_price;
+    cart.subtotal = Number(cart.subtotal).toFixed(2);
+    cart.total = Number(cart.subtotal - cart.discount_price).toFixed(2);
   }
   if (cart) {
     return res.status(201).json({ data: cart });
