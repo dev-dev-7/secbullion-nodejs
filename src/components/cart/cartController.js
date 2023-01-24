@@ -1,5 +1,9 @@
 const cartModel = require("./cartModel");
+const productModel = require("../product/productModel");
 const { validationResult } = require("express-validator");
+const {
+  getAllSymbolsPrice,
+} = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.create = async (req, res) => {
   const errors = validationResult(req);
@@ -51,9 +55,43 @@ exports.get = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let carts = await cartModel.getCartByUserId(req.params.user_id);
-  if (carts) {
-    return res.status(201).json({ data: carts });
+  const cart = {};
+  const cartItems = await cartModel.getCartByUserId(req.params.user_id);
+  let mt5PriceArray = await getAllSymbolsPrice(cartItems);
+  let coupon = await cartModel.getCoupon(req.body.coupon_code);
+  if (cartItems) {
+    cart.subtotal = 0;
+    cart.discount_price = coupon ? coupon.discount_price : 0;
+    cart.coupon_code = req.body.coupon_code;
+    cart.total = 0;
+    if (cartItems.length) {
+      for (var c = 0; c < cartItems.length; c++) {
+        cartItems[c].product = await productModel.getById(
+          cartItems[c].product_id
+        );
+        cartItems[c].product.files = await productModel.getByFilesByProduct(
+          cartItems[c].product_id
+        );
+        cartItems[c].product.value = {
+          currency: process.env.DEFAULT_CURRENCY,
+          unit: cartItems[c].product.unit,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            cartItems[c].product.symbol
+          ),
+          current_rate: cartItems[c].product.price,
+        };
+        cart.subtotal += await getPriceFromSymbol(
+          mt5PriceArray,
+          cartItems[c].product.symbol
+        );
+      }
+    }
+    cart.items = cartItems;
+    cart.total = cart.subtotal - cart.discount_price;
+  }
+  if (cart) {
+    return res.status(201).json({ data: cart });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
@@ -98,3 +136,14 @@ exports.delete = async (req, res) => {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
 };
+
+async function getPriceFromSymbol(symbols = "", key = "") {
+  if (symbols && key) {
+    let result = symbols.filter(function (symbol) {
+      return symbol.Symbol == key;
+    });
+    return result[0]?.Ask;
+  } else {
+    return 60;
+  }
+}

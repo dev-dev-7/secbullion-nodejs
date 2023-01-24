@@ -5,7 +5,7 @@ const couponTable = "tbl_coupons";
 const create = async (
   user_id,
   product_id,
-  { type, quantity, unit, duration, duration_type }
+  { type, quantity, unit, duration, duration_type, symbol }
 ) => {
   return db(cartTable)
     .insert({
@@ -16,6 +16,7 @@ const create = async (
       unit: unit,
       duration: duration ? duration : 0,
       duration_type: duration_type,
+      symbol: symbol,
     })
     .then((user_id) => getCartByUserId(user_id));
 };

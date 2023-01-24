@@ -8,9 +8,9 @@ const verifyToken = require("./../helpers/verifyToken");
 router
   .route("/cart")
   .post([verifyToken, validation.create], cartController.create);
+router.route("/cart/:user_id").post([verifyToken], cartController.get);
 router
   .route("/cart/:user_id")
-  .get([verifyToken], cartController.get)
   .put([verifyToken, validation.update], cartController.update);
 router
   .route("/cart/:user_id/:product_id/:type")
