@@ -15,7 +15,7 @@ const getTransactionByRefrence = (user_id, reference_number) => {
 };
 
 const getTransactionByUserId = (user_id) => {
-  return db(bankTable).where("user_id", user_id);
+  return db(bankTable).where("user_id", user_id).orderBy("id", "desc");
 };
 
 module.exports = {

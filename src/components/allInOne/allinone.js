@@ -5,12 +5,12 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
+const cartModel = require("../cart/cartModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const {
   getAllSymbolsPrice,
   getSymbolPrice,
-  getPriceFromSymbol,
 } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
@@ -100,6 +100,41 @@ exports.getAll = async (req, res) => {
       }
     }
   }
+  // My Carts
+  const cart = {};
+  const cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  let coupon = await cartModel.getCoupon(req.body.coupon_code);
+  if (cartItems) {
+    cart.subtotal = 0;
+    cart.discount_price = coupon ? coupon.discount_price : 0;
+    cart.coupon_code = req.body.coupon_code;
+    cart.total = 0;
+    if (cartItems.length) {
+      for (var c = 0; c < cartItems.length; c++) {
+        cartItems[c].product = await productModel.getById(
+          cartItems[c].product_id
+        );
+        cartItems[c].product.files = await productModel.getByFilesByProduct(
+          cartItems[c].product_id
+        );
+        cartItems[c].product.value = {
+          currency: process.env.DEFAULT_CURRENCY,
+          unit: cartItems[c].product.unit,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            cartItems[c].product.symbol
+          ),
+          current_rate: cartItems[c].product.price,
+        };
+        cart.subtotal += await getPriceFromSymbol(
+          mt5PriceArray,
+          cartItems[c].product.symbol
+        );
+      }
+    }
+    cart.items = cartItems;
+    cart.total = cart.subtotal - cart.discount_price;
+  }
   // Trnsaction
   const transactions = await transactionModel.getTransactionByUserId(
     req.body.user_id
@@ -121,7 +156,13 @@ exports.getAll = async (req, res) => {
     my_stake: stake,
     my_store: store,
     my_order: order,
+    my_carts: cart,
     metadata: await authModel.getUserMetaData(req.body.user_id),
   };
   return res.status(200).json({ data: result });
 };
+
+async function getPriceFromSymbol(symbols, key) {
+  if (symbols && key) {
+  }
+}

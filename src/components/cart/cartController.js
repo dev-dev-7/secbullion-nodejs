@@ -1,9 +1,6 @@
 const cartModel = require("./cartModel");
 const productModel = require("../product/productModel");
 const { validationResult } = require("express-validator");
-const {
-  getAllSymbolsPrice,
-} = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.create = async (req, res) => {
   const errors = validationResult(req);
@@ -57,7 +54,6 @@ exports.get = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   const cart = {};
   const cartItems = await cartModel.getCartByUserId(req.params.user_id);
-  let mt5PriceArray = await getAllSymbolsPrice(cartItems);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
     cart.subtotal = 0;
@@ -75,17 +71,11 @@ exports.get = async (req, res) => {
         cartItems[c].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: cartItems[c].product.unit,
-          price: await getPriceFromSymbol(
-            mt5PriceArray,
-            cartItems[c].product.symbol
-          ),
+          price: cartItems[c].product.last_price,
           current_rate: cartItems[c].product.price,
         };
         cart.subtotal +=
-          (await getPriceFromSymbol(
-            mt5PriceArray,
-            cartItems[c].product.symbol
-          )) * cartItems[c].quantity;
+          cartItems[c].product.last_price * cartItems[c].quantity;
       }
     }
     cart.items = cartItems;
@@ -138,14 +128,3 @@ exports.delete = async (req, res) => {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
 };
-
-async function getPriceFromSymbol(symbols = "", key = "") {
-  if (symbols && key) {
-    let result = symbols.filter(function (symbol) {
-      return symbol.Symbol == key;
-    });
-    return result[0]?.Ask;
-  } else {
-    return 60;
-  }
-}

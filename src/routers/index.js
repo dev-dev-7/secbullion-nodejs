@@ -18,6 +18,7 @@ const adminCategory = require("./admin/category");
 const adminProduct = require("./admin/product");
 const fileProduct = require("./admin/file");
 const adminAppData = require("./admin/appData");
+const cronjobAuth = require("./admin/cronjob");
 
 // Home Page
 router.get("/", (req, res) => {
@@ -39,5 +40,6 @@ router.use("/admin", adminCategory);
 router.use("/admin", adminProduct);
 router.use("/admin", fileProduct);
 router.use("/admin", adminAppData);
+router.use("/admin", cronjobAuth);
 
 module.exports = router;

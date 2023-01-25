@@ -53,7 +53,7 @@ exports.getSymbolPrice = async (symbol) => {
 };
 
 exports.getPriceFromSymbol = async (symbols = "", key = "") => {
-  if (symbols && key) {
+  if (!symbols == 1 && key) {
     let result = symbols.filter(function (symbol) {
       return symbol.Symbol == key;
     });

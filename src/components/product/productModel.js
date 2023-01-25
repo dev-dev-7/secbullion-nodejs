@@ -64,7 +64,7 @@ const getActiveByCategory = (category_id) => {
 };
 
 const getActiveProducts = () => {
-  return db(table).where("status", 1).limit(8);
+  return db(table).where("status", 1);
 };
 
 const get = () => {
