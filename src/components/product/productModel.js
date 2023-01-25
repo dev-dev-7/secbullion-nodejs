@@ -92,6 +92,16 @@ const isExistProduct = (title, quantity, unit) => {
     .first();
 };
 
+const updateProductPrice = async (id, symbol, price) => {
+  return db(table)
+    .where("id", id)
+    .andWhere("symbol", symbol)
+    .update({
+      last_price: price,
+    })
+    .then((updated) => getById(id));
+};
+
 module.exports = {
   create,
   update,
@@ -105,4 +115,5 @@ module.exports = {
   getByFilesByProduct,
   getActiveProducts,
   isExistProduct,
+  updateProductPrice,
 };
