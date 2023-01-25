@@ -167,7 +167,7 @@ exports.changeMyOrderStatus = async (req, res) => {
     req.params.user_id,
     req.body.product_id
   );
-  req.body.price = product.last_price;
+  req.body.price = product.price;
   if (product) {
     if (product.status == "stake" && req.body.status == "store") {
       await orderModel.updateProduct(

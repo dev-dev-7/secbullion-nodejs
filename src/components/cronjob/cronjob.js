@@ -8,7 +8,7 @@ const orderModel = require("../order/orderModel");
 
 exports.priceUpdate = async (req, res) => {
   let mt5PriceArray = {};
-  const products = await productModel.getActiveProducts();
+  const products = await productModel.get();
   if (products) {
     mt5PriceArray = await getAllSymbolsPrice(products);
     for (var i = 0; i < products.length; i++) {
