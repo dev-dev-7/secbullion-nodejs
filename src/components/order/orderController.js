@@ -75,13 +75,13 @@ exports.submit = async (req, res) => {
     let itemArray = req.body.items;
     if (itemArray.length) {
       for (var i = 0; i < itemArray.length; i++) {
+        let product = await productModel.getById(itemArray[i].product_id);
+        itemArray[i].product = product;
+        itemArray[i].price = product.last_price;
         await orderModel.insertOrderDetails(
           req.body.user_id,
           order.id,
           itemArray[i]
-        );
-        itemArray[i].product = await productModel.getById(
-          itemArray[i].product_id
         );
         if (itemArray[i].product) {
           itemArray[i].product.files = await productModel.getByFilesByProduct(
@@ -161,13 +161,13 @@ exports.getMyOrder = async (req, res) => {
 
 exports.changeMyOrderStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
-  req.body.price = await getSymbolPrice(req.body.symbol);
   req.body.type = req.body.status;
   let product = await orderModel.getByUserProduct(
     req.body.product_order_id,
     req.params.user_id,
     req.body.product_id
   );
+  req.body.price = product.last_price;
   if (product) {
     if (product.status == "stake" && req.body.status == "store") {
       await orderModel.updateProduct(

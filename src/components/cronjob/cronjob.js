@@ -4,6 +4,7 @@ const {
   getPriceFromSymbol,
 } = require("../../helpers/mt5Commands/getProductPrice");
 const productModel = require("../product/productModel");
+const orderModel = require("../order/orderModel");
 
 exports.priceUpdate = async (req, res) => {
   let mt5PriceArray = {};
@@ -18,6 +19,7 @@ exports.priceUpdate = async (req, res) => {
           products[i].symbol,
           price
         );
+        await orderModel.updateOrderProductPrice(products[i].id, price);
       }
     }
   }

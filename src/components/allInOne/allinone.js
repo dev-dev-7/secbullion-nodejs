@@ -39,7 +39,7 @@ exports.getAll = async (req, res) => {
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: stake[t].product.unit,
-          price: stake[t].product.last_price,
+          price: stake[t].price * stake[t].quantity,
           current_rate: stake[t].product.price,
         };
       }
@@ -57,7 +57,7 @@ exports.getAll = async (req, res) => {
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: store[s].product.unit,
-          price: store[s].product.last_price,
+          price: store[s].price * store[s].quantity,
           current_rate: store[s].product.price,
         };
       }
@@ -78,7 +78,7 @@ exports.getAll = async (req, res) => {
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: order[o].product.unit,
-          price: order[o].product.last_price,
+          price: order[o].price * order[o].quantity,
           current_rate: order[o].product.price,
         };
       }

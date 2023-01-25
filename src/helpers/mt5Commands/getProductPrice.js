@@ -22,17 +22,17 @@ exports.getAllSymbolsPrice = async (products) => {
         if (response?.data[0]) {
           return response.data;
         } else {
-          return 1;
+          return 0;
         }
       });
   } catch (err) {
-    return 1;
+    return 0;
   }
 };
 
 exports.getSymbolPrice = async (symbol) => {
   const formData = new FormData();
-  formData.append("Symbols", symbol);
+  formData.append("Symbols", "GOLD.1g");
   try {
     return await axios
       .post("https://personal.sec-markets.com/mt5/prices", formData, {
@@ -44,11 +44,11 @@ exports.getSymbolPrice = async (symbol) => {
         if (response?.data?.Success) {
           return response.data[0]?.Ask;
         } else {
-          return 1;
+          return 0;
         }
       });
   } catch (err) {
-    return 1;
+    return 0;
   }
 };
 

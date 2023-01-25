@@ -126,6 +126,16 @@ const updateOrderProductQuantity = async (
     .then((updated) => getOrderById(product_order_id));
 };
 
+const updateOrderProductPrice = async (product_id, price) => {
+  return db(orderDetailsTable)
+    .where("product_id", product_id)
+    .andWhere("status", "!=", "collect")
+    .andWhere("status", "!=", "deliver")
+    .update({
+      price: price,
+    });
+};
+
 module.exports = {
   create,
   getOrderByUserId,
@@ -137,4 +147,5 @@ module.exports = {
   getUserOrderByType,
   deleteUserOrderProduct,
   updateOrderProductQuantity,
+  updateOrderProductPrice,
 };
