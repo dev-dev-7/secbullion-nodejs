@@ -5,7 +5,6 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
-const cartModel = require("../cart/cartModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 
@@ -13,7 +12,6 @@ exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  const wallet = await walletModel.getWalletByUserId(req.body.user_id);
   // All Products
   const products = await productModel.getActiveProducts();
   if (products.length) {
@@ -86,6 +84,8 @@ exports.getAll = async (req, res) => {
       }
     }
   }
+  // Wallet
+  const wallet = await walletModel.getWalletByUserId(req.body.user_id);
   // Trnsaction
   const transactions = await transactionModel.getTransactionByUserId(
     req.body.user_id

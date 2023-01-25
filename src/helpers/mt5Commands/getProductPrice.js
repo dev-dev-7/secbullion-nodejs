@@ -19,7 +19,7 @@ exports.getAllSymbolsPrice = async (products) => {
         }),
       })
       .then(function (response) {
-        if (response?.data?.Success) {
+        if (response?.data[0]) {
           return response.data;
         } else {
           return 1;
@@ -53,12 +53,12 @@ exports.getSymbolPrice = async (symbol) => {
 };
 
 exports.getPriceFromSymbol = async (symbols = "", key = "") => {
-  if (!symbols == 1 && key) {
+  if (symbols && key) {
     let result = symbols.filter(function (symbol) {
       return symbol.Symbol == key;
     });
     return result[0]?.Ask;
   } else {
-    return 60;
+    return 0;
   }
 };

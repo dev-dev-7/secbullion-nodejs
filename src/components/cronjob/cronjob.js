@@ -12,11 +12,13 @@ exports.priceUpdate = async (req, res) => {
     mt5PriceArray = await getAllSymbolsPrice(products);
     for (var i = 0; i < products.length; i++) {
       let price = await getPriceFromSymbol(mt5PriceArray, products[i].symbol);
-      await productModel.updateProductPrice(
-        products[i].id,
-        products[i].symbol,
-        price
-      );
+      if (price != 0) {
+        await productModel.updateProductPrice(
+          products[i].id,
+          products[i].symbol,
+          price
+        );
+      }
     }
   }
   return res.status(200).json({ data: mt5PriceArray });
