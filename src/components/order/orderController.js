@@ -1,9 +1,11 @@
+require("dotenv").config();
 const orderModel = require("./orderModel");
 const cartModel = require("./../cart/cartModel");
 const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const { validationResult } = require("express-validator");
 const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
+const { getSymbolPrice } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.orderSummary = async (req, res) => {
   const errors = validationResult(req);
@@ -158,6 +160,9 @@ exports.getMyOrder = async (req, res) => {
 };
 
 exports.changeMyOrderStatus = async (req, res) => {
+  req.body.currency = process.env.DEFAULT_CURRENCY;
+  req.body.price = await getSymbolPrice(req.body.symbol);
+  req.body.type = req.body.status;
   let product = await orderModel.getByUserProduct(
     req.body.product_order_id,
     req.params.user_id,
@@ -186,11 +191,17 @@ exports.changeMyOrderStatus = async (req, res) => {
           );
         } else {
           await orderModel.insertOrderDetails(
-            req.body.user_id,
+            product.user_id,
             product.order_id,
             req.body
           );
         }
+        await orderModel.updateOrderProductQuantity(
+          product.id,
+          product.user_id,
+          product.product_id,
+          product.quantity - req.body.quantity
+        );
       } else {
         if (req.body.quantity == product.quantity) {
           await orderModel.updateProduct(
@@ -221,6 +232,12 @@ exports.changeMyOrderStatus = async (req, res) => {
             req.body
           );
         }
+        await orderModel.updateOrderProductQuantity(
+          product.id,
+          product.user_id,
+          product.product_id,
+          product.quantity - req.body.quantity
+        );
       } else {
         if (req.body.quantity == product.quantity) {
           await orderModel.updateProduct(
@@ -251,6 +268,12 @@ exports.changeMyOrderStatus = async (req, res) => {
             req.body
           );
         }
+        await orderModel.updateOrderProductQuantity(
+          product.id,
+          product.user_id,
+          product.product_id,
+          product.quantity - req.body.quantity
+        );
       } else {
         if (req.body.quantity == product.quantity) {
           await orderModel.updateProduct(

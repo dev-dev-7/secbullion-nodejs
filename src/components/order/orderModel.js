@@ -110,6 +110,22 @@ const deleteUserOrderProduct = (user_id, id) => {
     .del();
 };
 
+const updateOrderProductQuantity = async (
+  product_order_id,
+  user_id,
+  product_id,
+  quantity
+) => {
+  return db(orderDetailsTable)
+    .where("id", product_order_id)
+    .andWhere("user_id", user_id)
+    .andWhere("product_id", product_id)
+    .update({
+      quantity: quantity,
+    })
+    .then((updated) => getOrderById(product_order_id));
+};
+
 module.exports = {
   create,
   getOrderByUserId,
@@ -120,4 +136,5 @@ module.exports = {
   updateProduct,
   getUserOrderByType,
   deleteUserOrderProduct,
+  updateOrderProductQuantity,
 };

@@ -10,6 +10,7 @@ const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const {
   getAllSymbolsPrice,
   getSymbolPrice,
+  getPriceFromSymbol,
 } = require("../../helpers/mt5Commands/getProductPrice");
 
 exports.getAll = async (req, res) => {
@@ -124,14 +125,3 @@ exports.getAll = async (req, res) => {
   };
   return res.status(200).json({ data: result });
 };
-
-async function getPriceFromSymbol(symbols = "", key = "") {
-  if (symbols && key) {
-    let result = symbols.filter(function (symbol) {
-      return symbol.Symbol == key;
-    });
-    return result[0]?.Ask;
-  } else {
-    return 60;
-  }
-}

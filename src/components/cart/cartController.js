@@ -75,11 +75,10 @@ exports.get = async (req, res) => {
         cartItems[c].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: cartItems[c].product.unit,
-          price:
-            (await getPriceFromSymbol(
-              mt5PriceArray,
-              cartItems[c].product.symbol
-            )) * cartItems[c].quantity,
+          price: await getPriceFromSymbol(
+            mt5PriceArray,
+            cartItems[c].product.symbol
+          ),
           current_rate: cartItems[c].product.price,
         };
         cart.subtotal +=

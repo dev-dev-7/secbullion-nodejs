@@ -19,10 +19,14 @@ exports.getAllSymbolsPrice = async (products) => {
         }),
       })
       .then(function (response) {
-        return response.data;
+        if (response?.data?.Success) {
+          return response.data;
+        } else {
+          return 1;
+        }
       });
   } catch (err) {
-    return err;
+    return 1;
   }
 };
 
@@ -37,9 +41,24 @@ exports.getSymbolPrice = async (symbol) => {
         }),
       })
       .then(function (response) {
-        return response.data[0]?.Ask;
+        if (response?.data?.Success) {
+          return response.data[0]?.Ask;
+        } else {
+          return 1;
+        }
       });
   } catch (err) {
-    console.log("error:", err);
+    return 1;
+  }
+};
+
+exports.getPriceFromSymbol = async (symbols = "", key = "") => {
+  if (symbols && key) {
+    let result = symbols.filter(function (symbol) {
+      return symbol.Symbol == key;
+    });
+    return result[0]?.Ask;
+  } else {
+    return 60;
   }
 };
