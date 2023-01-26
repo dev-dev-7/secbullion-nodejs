@@ -169,52 +169,146 @@ exports.changeMyOrderStatus = async (req, res) => {
   );
   if (orderProduct) {
     req.body.price = orderProduct.price;
-    let existItem = {};
     if (orderProduct.status == "stake" && req.body.status == "store") {
-      existItem = await orderModel.getUserOrderByType(
+      let exisStoretItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
         "store"
       );
+      if (req.body.quantity <= orderProduct.quantity) {
+        if (exisStoretItem) {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            req.body.status,
+            exisStoretItem.quantity + req.body.quantity
+          );
+        } else {
+          await orderModel.insertOrderDetails(
+            orderProduct.user_id,
+            orderProduct.order_id,
+            req.body
+          );
+        }
+        if (req.body.quantity == orderProduct.quantity) {
+          await orderModel.deleteUserOrderProduct(
+            orderProduct.id,
+            orderProduct.user_id
+          );
+        } else {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            orderProduct.status,
+            orderProduct.quantity - req.body.quantity
+          );
+        }
+      }
     } else if (orderProduct.status == "store" && req.body.status == "stake") {
-      existItem = await orderModel.getUserOrderByType(
+      let existStakeItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
         "stake"
       );
+      if (req.body.quantity <= orderProduct.quantity) {
+        if (existStakeItem) {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            req.body.status,
+            existStakeItem.quantity + req.body.quantity
+          );
+        } else {
+          await orderModel.insertOrderDetails(
+            orderProduct.user_id,
+            orderProduct.order_id,
+            req.body
+          );
+        }
+        if (req.body.quantity == orderProduct.quantity) {
+          await orderModel.deleteUserOrderProduct(
+            orderProduct.id,
+            orderProduct.user_id
+          );
+        } else {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            orderProduct.status,
+            orderProduct.quantity - req.body.quantity
+          );
+        }
+      }
     } else if (orderProduct.status == "store" && req.body.status == "deliver") {
-      existItem = await orderModel.getUserOrderByType(
+      let existDeliverItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
         "deliver"
       );
+      if (req.body.quantity <= orderProduct.quantity) {
+        if (existDeliverItem) {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            req.body.status,
+            existDeliverItem.quantity + req.body.quantity
+          );
+        } else {
+          await orderModel.insertOrderDetails(
+            orderProduct.user_id,
+            orderProduct.order_id,
+            req.body
+          );
+        }
+        if (req.body.quantity == orderProduct.quantity) {
+          await orderModel.deleteUserOrderProduct(
+            orderProduct.id,
+            orderProduct.user_id
+          );
+        } else {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            orderProduct.status,
+            orderProduct.quantity - req.body.quantity
+          );
+        }
+      }
     } else if (orderProduct.status == "store" && req.body.status == "collect") {
-      existItem = await orderModel.getUserOrderByType(
+      let existCollectItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
         "collect"
       );
-    }
-    if (req.body.quantity <= orderProduct.quantity) {
-      if (!existItem) {
-        await orderModel.updateOrderProductQuantity(
-          orderProduct.id,
-          orderProduct.user_id,
-          orderProduct.product_id,
-          orderProduct.quantity + req.body.quantity
-        );
-      } else {
-        await orderModel.insertOrderDetails(
-          orderProduct.user_id,
-          orderProduct.order_id,
-          req.body
-        );
-      }
-      if (req.body.quantity == orderProduct.quantity) {
-        await orderModel.deleteUserOrderProduct(
-          orderProduct.id,
-          orderProduct.user_id
-        );
+
+      if (req.body.quantity <= orderProduct.quantity) {
+        if (existCollectItem) {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            req.body.status,
+            existCollectItem.quantity + req.body.quantity
+          );
+        } else {
+          await orderModel.insertOrderDetails(
+            orderProduct.user_id,
+            orderProduct.order_id,
+            req.body
+          );
+        }
+        if (req.body.quantity == orderProduct.quantity) {
+          await orderModel.deleteUserOrderProduct(
+            orderProduct.id,
+            orderProduct.user_id
+          );
+        } else {
+          await orderModel.updateOrderProductQuantity(
+            orderProduct.user_id,
+            orderProduct.product_id,
+            orderProduct.status,
+            orderProduct.quantity - req.body.quantity
+          );
+        }
       }
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });

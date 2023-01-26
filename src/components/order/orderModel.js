@@ -80,14 +80,11 @@ const getByUserProduct = (id, user_id, product_id) => {
     .first();
 };
 
-const updateProduct = async (user_id, product_id, { status, delivery_id }) => {
+const updateProduct = async (user_id, product_id, data) => {
   return db(orderDetailsTable)
     .where("user_id", user_id)
     .andWhere("product_id", product_id)
-    .update({
-      status: status,
-      delivery_id: delivery_id,
-    });
+    .update(data);
 };
 
 const getUserOrderByType = (user_id, product_id, status) => {
@@ -106,19 +103,18 @@ const deleteUserOrderProduct = (id, user_id) => {
 };
 
 const updateOrderProductQuantity = async (
-  product_order_id,
   user_id,
   product_id,
+  status,
   quantity
 ) => {
   return db(orderDetailsTable)
-    .where("id", product_order_id)
-    .andWhere("user_id", user_id)
+    .where("user_id", user_id)
     .andWhere("product_id", product_id)
+    .andWhere("status", status)
     .update({
       quantity: quantity,
-    })
-    .then((updated) => getOrderById(product_order_id));
+    });
 };
 
 const updateOrderProductPrice = async (product_id, price) => {
