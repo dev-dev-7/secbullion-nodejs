@@ -22,7 +22,7 @@ exports.getAll = async (req, res) => {
       products[p].value = {
         currency: process.env.DEFAULT_CURRENCY,
         unit: products[p].unit,
-        price: products[p].last_price,
+        price: products[p].last_price.toFixed(2),
         current_rate: products[p].price,
       };
     }
@@ -39,7 +39,7 @@ exports.getAll = async (req, res) => {
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: stake[t].product.unit,
-          price: stake[t].price * stake[t].quantity,
+          price: (stake[t].price * stake[t].quantity).toFixed(2),
           current_rate: stake[t].product.price,
         };
       }
@@ -57,7 +57,7 @@ exports.getAll = async (req, res) => {
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: store[s].product.unit,
-          price: store[s].price * store[s].quantity,
+          price: (store[s].price * store[s].quantity).toFixed(2),
           current_rate: store[s].product.price,
         };
       }
@@ -78,7 +78,7 @@ exports.getAll = async (req, res) => {
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           unit: order[o].product.unit,
-          price: order[o].price * order[o].quantity,
+          price: (order[o].price * order[o].quantity).toFixed(2),
           current_rate: order[o].product.price,
         };
       }
@@ -99,7 +99,6 @@ exports.getAll = async (req, res) => {
   }
   let result = {
     currency: process.env.DEFAULT_CURRENCY,
-    gold_rate: 120000,
     category: await categoryModel.getActive(),
     wallet: { balance: wallet, transactions: transactions },
     products: products,
