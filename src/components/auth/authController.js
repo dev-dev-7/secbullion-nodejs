@@ -13,18 +13,22 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const userMetaData = await authModel.getMetaDataKeyValue(
+  const userEmail = await authModel.getMetaDataKeyValue(
     "email",
     req.body.email
   );
-  if (userMetaData === undefined) {
+  if (userEmail === undefined) {
     return res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
   } else {
-    let user = await authModel.getUserById(userMetaData.user_id);
+    const userMobile = await authModel.getUserMetaDataKey(
+      userEmail.user_id,
+      "mobile"
+    );
+    let user = await authModel.getUserById(userEmail.user_id);
     if (Hash.check(req.body.password, user.password)) {
       const token = jwt.sign({ user: user }, JWT_SECRETE_KEY);
-      if (user.otp_verified == 0) {
-        smsglobal.sendMessage(user.mobile);
+      if (user.status == 0) {
+        smsglobal.sendMessage(userMobile.meta_values);
       }
       return res.status(200).json({
         data: {
