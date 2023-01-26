@@ -20,6 +20,7 @@ exports.login = async (req, res) => {
   if (userEmail === undefined) {
     return res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
   } else {
+    let otp_code = Math.floor(100000 + Math.random() * 900000);
     const userMobile = await authModel.getUserMetaDataKey(
       userEmail.user_id,
       "mobile"
@@ -28,8 +29,13 @@ exports.login = async (req, res) => {
     if (Hash.check(req.body.password, user.password)) {
       const token = jwt.sign({ user: user }, JWT_SECRETE_KEY);
       if (user.status == 0) {
-        smsglobal.sendMessage(userMobile.meta_values);
+        smsglobal.sendMessage(userMobile.meta_values, otp_code);
       }
+      await authModel.insertUserMetaData(
+        userMobile.user_id,
+        "otp_code",
+        otp_code
+      );
       return res.status(200).json({
         data: {
           user: user,
