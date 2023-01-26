@@ -41,7 +41,6 @@ const insertOrderDetails = async (
   order_id,
   {
     product_id,
-    type,
     quantity,
     unit,
     price,
@@ -49,13 +48,13 @@ const insertOrderDetails = async (
     duration,
     duration_type,
     delivery_id,
+    type,
   }
 ) => {
   return db(orderDetailsTable).insert({
     user_id: user_id,
     order_id: order_id,
     product_id: product_id,
-    type: type,
     quantity: quantity,
     unit: unit,
     price: price,
@@ -67,8 +66,10 @@ const insertOrderDetails = async (
   });
 };
 
-const getByType = (user_id, types) => {
-  return db(orderDetailsTable).where("user_id", user_id).whereIn("type", types);
+const getByStatus = (user_id, statuses) => {
+  return db(orderDetailsTable)
+    .where("user_id", user_id)
+    .whereIn("status", statuses);
 };
 
 const getByUserProduct = (id, user_id, product_id) => {
@@ -79,31 +80,25 @@ const getByUserProduct = (id, user_id, product_id) => {
     .first();
 };
 
-const updateProduct = async (
-  product_order_id,
-  user_id,
-  product_id,
-  { status, delivery_id }
-) => {
+const updateProduct = async (user_id, product_id, { status, delivery_id }) => {
   return db(orderDetailsTable)
-    .where("id", product_order_id)
-    .andWhere("user_id", user_id)
+    .where("user_id", user_id)
     .andWhere("product_id", product_id)
     .update({
       status: status,
       delivery_id: delivery_id,
-    })
-    .then((updated) => getOrderById(product_order_id));
+    });
 };
 
-const getUserOrderByType = (user_id, type) => {
-  return db(orderTable)
+const getUserOrderByType = (user_id, product_id, status) => {
+  return db(orderDetailsTable)
     .where("user_id", user_id)
-    .andWhere("status", type)
+    .andWhere("product_id", product_id)
+    .andWhere("status", status)
     .first();
 };
 
-const deleteUserOrderProduct = (user_id, id) => {
+const deleteUserOrderProduct = (id, user_id) => {
   return db(orderDetailsTable)
     .where("id", id)
     .andWhere("user_id", user_id)
@@ -141,7 +136,7 @@ module.exports = {
   getOrderByUserId,
   getByTaxnId,
   insertOrderDetails,
-  getByType,
+  getByStatus,
   getByUserProduct,
   updateProduct,
   getUserOrderByType,

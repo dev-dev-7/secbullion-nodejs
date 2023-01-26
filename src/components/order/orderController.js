@@ -110,7 +110,7 @@ exports.submit = async (req, res) => {
 };
 
 exports.getMyStake = async (req, res) => {
-  const product = await orderModel.getByType(req.params.user_id, ["stake"]);
+  const product = await orderModel.getByStatus(req.params.user_id, ["stake"]);
   if (product) {
     for (var i = 0; i < product.length; i++) {
       product[i].product = await productModel.getById(product[i].product_id);
@@ -125,7 +125,7 @@ exports.getMyStake = async (req, res) => {
 };
 
 exports.getMyStore = async (req, res) => {
-  const product = await orderModel.getByType(req.params.user_id, ["store"]);
+  const product = await orderModel.getByStatus(req.params.user_id, ["store"]);
   if (product) {
     for (var i = 0; i < product.length; i++) {
       product[i].product = await productModel.getById(product[i].product_id);
@@ -140,7 +140,7 @@ exports.getMyStore = async (req, res) => {
 };
 
 exports.getMyOrder = async (req, res) => {
-  const product = await orderModel.getByType(req.params.user_id, [
+  const product = await orderModel.getByStatus(req.params.user_id, [
     "collect",
     "deliver",
     "delivered",
@@ -162,131 +162,61 @@ exports.getMyOrder = async (req, res) => {
 exports.changeMyOrderStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
   req.body.type = req.body.status;
-  let product = await orderModel.getByUserProduct(
+  let orderProduct = await orderModel.getByUserProduct(
     req.body.product_order_id,
     req.params.user_id,
     req.body.product_id
   );
-  req.body.price = product.price;
-  if (product) {
-    if (product.status == "stake" && req.body.status == "store") {
-      await orderModel.updateProduct(
-        product.id,
-        product.user_id,
-        product.product_id,
-        req.body
+  if (orderProduct) {
+    req.body.price = orderProduct.price;
+    let existItem = {};
+    if (orderProduct.status == "stake" && req.body.status == "store") {
+      existItem = await orderModel.getUserOrderByType(
+        orderProduct.user_id,
+        orderProduct.product_id,
+        "store"
       );
-    } else if (product.status == "store" && req.body.status == "stake") {
-      if (req.body.quantity < product.quantity) {
-        let existStake = await orderModel.getUserOrderByType(
-          product.user_id,
-          "stake"
-        );
-        if (existStake) {
-          await orderModel.updateProduct(
-            existStake.id,
-            existStake.user_id,
-            existStake.product_id,
-            req.body
-          );
-        } else {
-          await orderModel.insertOrderDetails(
-            product.user_id,
-            product.order_id,
-            req.body
-          );
-        }
+    } else if (orderProduct.status == "store" && req.body.status == "stake") {
+      existItem = await orderModel.getUserOrderByType(
+        orderProduct.user_id,
+        orderProduct.product_id,
+        "stake"
+      );
+    } else if (orderProduct.status == "store" && req.body.status == "deliver") {
+      existItem = await orderModel.getUserOrderByType(
+        orderProduct.user_id,
+        orderProduct.product_id,
+        "deliver"
+      );
+    } else if (orderProduct.status == "store" && req.body.status == "collect") {
+      existItem = await orderModel.getUserOrderByType(
+        orderProduct.user_id,
+        orderProduct.product_id,
+        "collect"
+      );
+    }
+    if (req.body.quantity <= orderProduct.quantity) {
+      if (!existItem) {
         await orderModel.updateOrderProductQuantity(
-          product.id,
-          product.user_id,
-          product.product_id,
-          product.quantity - req.body.quantity
+          orderProduct.id,
+          orderProduct.user_id,
+          orderProduct.product_id,
+          orderProduct.quantity + req.body.quantity
         );
       } else {
-        if (req.body.quantity == product.quantity) {
-          await orderModel.updateProduct(
-            product.id,
-            product.user_id,
-            product.product_id,
-            req.body
-          );
-        }
+        await orderModel.insertOrderDetails(
+          orderProduct.user_id,
+          orderProduct.order_id,
+          req.body
+        );
       }
-    } else if (product.status == "store" && req.body.status == "deliver") {
-      if (req.body.quantity < product.quantity) {
-        let existDeliver = await orderModel.getUserOrderByType(
-          product.user_id,
-          "deliver"
+      if (req.body.quantity == orderProduct.quantity) {
+        await orderModel.deleteUserOrderProduct(
+          orderProduct.id,
+          orderProduct.user_id
         );
-        if (existDeliver) {
-          await orderModel.updateProduct(
-            existDeliver.id,
-            existDeliver.user_id,
-            existDeliver.product_id,
-            req.body
-          );
-        } else {
-          await orderModel.insertOrderDetails(
-            req.body.user_id,
-            product.order_id,
-            req.body
-          );
-        }
-        await orderModel.updateOrderProductQuantity(
-          product.id,
-          product.user_id,
-          product.product_id,
-          product.quantity - req.body.quantity
-        );
-      } else {
-        if (req.body.quantity == product.quantity) {
-          await orderModel.updateProduct(
-            product.id,
-            product.user_id,
-            product.product_id,
-            req.body
-          );
-        }
-      }
-    } else if (product.status == "store" && req.body.status == "collect") {
-      if (req.body.quantity < product.quantity) {
-        let existCollect = await orderModel.getUserOrderByType(
-          product.user_id,
-          "collect"
-        );
-        if (existCollect) {
-          await orderModel.updateProduct(
-            existCollect.id,
-            existCollect.user_id,
-            existCollect.product_id,
-            req.body
-          );
-        } else {
-          await orderModel.insertOrderDetails(
-            req.body.user_id,
-            product.order_id,
-            req.body
-          );
-        }
-        await orderModel.updateOrderProductQuantity(
-          product.id,
-          product.user_id,
-          product.product_id,
-          product.quantity - req.body.quantity
-        );
-      } else {
-        if (req.body.quantity == product.quantity) {
-          await orderModel.updateProduct(
-            product.id,
-            product.user_id,
-            product.product_id,
-            req.body
-          );
-        }
       }
     }
-  }
-  if (product) {
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
