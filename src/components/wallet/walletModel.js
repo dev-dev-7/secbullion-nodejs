@@ -6,12 +6,19 @@ const getWalletByUserId = (user_id) => {
   return db(walletTable).where("user_id", user_id).first();
 };
 
-const insertWallet = async (user_id, cash_balance, commodities, staking) => {
+const insertWallet = async (
+  user_id,
+  cash_balance,
+  commodities,
+  staking,
+  currency
+) => {
   return db(walletTable).insert({
     user_id: user_id,
     cash_balance: cash_balance ? cash_balance : 0,
     commodities: commodities ? commodities : 0,
     staking: staking ? staking : 0,
+    currency: currency,
   });
 };
 

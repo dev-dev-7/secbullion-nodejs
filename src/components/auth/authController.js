@@ -1,3 +1,4 @@
+require("dotenv").config();
 const authModel = require("./authModel");
 const walletModel = require("../wallet/walletModel");
 const Hash = require("../../helpers/hash");
@@ -83,7 +84,13 @@ exports.register = async (req, res) => {
     if (user.user_id) {
       await authModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
       await authModel.insertUserMetaData(user.user_id, "user_id", user.user_id);
-      await walletModel.insertWallet(user.user_id, 0, 0, 0);
+      await walletModel.insertWallet(
+        user.user_id,
+        0,
+        0,
+        0,
+        process.env.DEFAULT_CURRENCY
+      );
       smsglobal.sendMessage(req.body.mobile, otp_code);
     }
     return res.status(201).json({
