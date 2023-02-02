@@ -28,7 +28,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Stake
-  const stake = await orderModel.getByType(req.body.user_id, ["stake"]);
+  const stake = await orderModel.getByStatus(req.body.user_id, ["stake"]);
   if (stake) {
     for (var t = 0; t < stake.length; t++) {
       stake[t].product = await productModel.getById(stake[t].product_id);
@@ -46,7 +46,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Store
-  const store = await orderModel.getByType(req.body.user_id, ["store"]);
+  const store = await orderModel.getByStatus(req.body.user_id, ["store"]);
   if (store) {
     for (var s = 0; s < store.length; s++) {
       store[s].product = await productModel.getById(store[s].product_id);
@@ -64,7 +64,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Order
-  const order = await orderModel.getByType(req.body.user_id, [
+  const order = await orderModel.getByStatus(req.body.user_id, [
     "collect",
     "deliver",
   ]);

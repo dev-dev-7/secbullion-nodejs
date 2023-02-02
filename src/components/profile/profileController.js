@@ -47,26 +47,13 @@ exports.addAddress = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let user = await authModel.getUserById(req.params.user_id);
   if (user.user_id) {
-    let isExistAddress = await model.getUserMetaDataKeyValue(
+    let address = await model.insertUserMetaData(
       req.params.user_id,
       "address",
-      req.body.address
+      JSON.stringify(req.body.address)
     );
-    if (!isExistAddress) {
-      await model.insertUserMetaData(
-        req.params.user_id,
-        "address",
-        req.body.address
-      );
-    } else {
-      await model.updateUserMetaData(
-        req.params.user_id,
-        "address",
-        req.body.address
-      );
-    }
     return res.status(201).json({
-      data: await model.getUserMetaDatasKey(req.params.user_id, "address"),
+      data: address,
     });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
