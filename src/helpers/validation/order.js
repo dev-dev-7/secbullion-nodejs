@@ -12,3 +12,9 @@ exports.submit = [
   check("txn_token").notEmpty(),
   check("items").notEmpty(),
 ];
+
+exports.status = [
+  check("product_order_id").notEmpty(),
+  check("product_id").notEmpty(),
+  check("status").notEmpty()
+];

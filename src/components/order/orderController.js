@@ -240,6 +240,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       }
     } else if (orderProduct.status == "store" && req.body.status == "deliver") {
+      // Email notify need to implemented
       let existDeliverItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
@@ -275,6 +276,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       }
     } else if (orderProduct.status == "store" && req.body.status == "collect") {
+       // Email notify need to implemented
       let existCollectItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
@@ -310,6 +312,14 @@ exports.changeMyOrderStatus = async (req, res) => {
           );
         }
       }
+    } else if (
+      (orderProduct.status == "collect" || orderProduct.status == "deliver") &&
+      req.body.status == "delivered"
+    ) {
+      await orderModel.updateOrderProductStatus(
+        orderProduct.product_id,
+        req.body.status
+      );
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {

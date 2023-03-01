@@ -21,9 +21,11 @@ const multerMid = multer({
 
 // Add headers
 app.use(function (req, res, next) {
+  
   // Website you wish to allow to connect
   res.header("Access-Control-Allow-Origin", "*");
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
 
   // Request methods you wish to allow
   res.setHeader(
@@ -34,7 +36,7 @@ app.use(function (req, res, next) {
   // Request headers you wish to allow
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "X-Requested-With,content-type"
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"
   );
 
   // Set to true if you need the website to include cookies in the requests sent

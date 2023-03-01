@@ -24,6 +24,18 @@ const create = async ({
     .then((id) => getOrderById(id));
 };
 
+const getAllOrders = (page = "", status = "", order_id = "") => {
+  if (status && order_id) {
+    return db(orderTable).where("status", status).andWhere("id", order_id);
+  } else if (status) {
+    return db(orderTable).where("status", status);
+  } else if (order_id) {
+    return db(orderTable).where("order_id", order_id);
+  } else {
+    return db(orderTable);
+  }
+};
+
 const getOrderById = (id) => {
   return db(orderTable).where("id", id).first();
 };
@@ -95,6 +107,10 @@ const getUserOrderByType = (user_id, product_id, status) => {
     .first();
 };
 
+const getDetailsByOrderId = (order_id) => {
+  return db(orderDetailsTable).where("order_id", order_id);
+};
+
 const deleteUserOrderProduct = (id, user_id) => {
   return db(orderDetailsTable)
     .where("id", id)
@@ -127,16 +143,25 @@ const updateOrderProductPrice = async (product_id, price) => {
     });
 };
 
+const updateOrderProductStatus = async (product_id, status) => {
+  return db(orderDetailsTable).where("product_id", product_id).update({
+    status: status,
+  });
+};
+
 module.exports = {
   create,
   getOrderByUserId,
+  getAllOrders,
   getByTaxnId,
   insertOrderDetails,
   getByStatus,
   getByUserProduct,
   updateProduct,
   getUserOrderByType,
+  getDetailsByOrderId,
   deleteUserOrderProduct,
   updateOrderProductQuantity,
   updateOrderProductPrice,
+  updateOrderProductStatus,
 };

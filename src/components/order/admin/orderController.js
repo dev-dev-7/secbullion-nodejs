@@ -1,14 +1,13 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
 const productModel = require("../../product/productModel");
-const { validationResult } = require("express-validator");
-const { getPrice } = require("../../../helpers/mt5Commands/getProductPrice");
-const {
-  getSymbolPrice,
-} = require("../../../helpers/mt5Commands/getProductPrice");
 
 exports.get = async (req, res) => {
-  let orders = await orderModel.getAllOrders(req.params.page);
+  let orders = await orderModel.getAllOrders(
+    req.params.page,
+    req.body.status,
+    req.body.order_id
+  );
   if (orders) {
     for (i = 0; i < orders.length; i++) {
       orders[i].details = await orderModel.getDetailsByOrderId(orders[i].id);
@@ -17,9 +16,10 @@ exports.get = async (req, res) => {
           orders[i].details[j].product = await productModel.getById(
             orders[i].details[j].product_id
           );
-          orders[i].details[j].product.files = await productModel.getByFilesByProduct(
-            orders[i].details[j].product_id
-          );
+          orders[i].details[j].product.files =
+            await productModel.getByFilesByProduct(
+              orders[i].details[j].product_id
+            );
         }
       }
     }
