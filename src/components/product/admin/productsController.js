@@ -24,7 +24,7 @@ exports.add = async (req, res) => {
   return res.status(201).json({ data: product });
 };
 
-exports.get = async (req, res) => {
+exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
