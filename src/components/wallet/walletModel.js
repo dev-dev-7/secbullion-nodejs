@@ -29,11 +29,12 @@ const updateWallet = async (user_id, data) => {
     .then((updated) => getWalletByUserId(user_id));
 };
 
-const insertWalletHistory = async (user_id, type, total, reference_id) => {
+const insertWalletHistory = async (user_id, transaction_type, type, amount, reference_id) => {
   return db(walletHistoryTable).insert({
     user_id: user_id,
+    transaction_type:transaction_type,
     type: type,
-    amount: total,
+    amount: amount,
     reference_id: reference_id,
   });
 };
