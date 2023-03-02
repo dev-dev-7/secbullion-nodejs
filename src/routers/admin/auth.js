@@ -6,4 +6,8 @@ const validation = require("../../helpers/validation/auth");
 // Auth
 router.post("/login", validation.login_validation, authController.login);
 
+// Users
+router.post("/users", authController.getAllUsers);
+router.put("/users/:user_id", authController.status);
+
 module.exports = router;

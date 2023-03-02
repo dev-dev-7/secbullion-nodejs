@@ -17,6 +17,10 @@ const updateUser = async (user_id, data) => {
     .then((updated) => getUserById(user_id));
 };
 
+const getUsers = () => {
+  return db(userTable);
+};
+
 const getUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).first();
 };
@@ -97,6 +101,7 @@ const getUserHistoryKey = async (user_id, history_key, time = "") => {
 module.exports = {
   createUser,
   updateUser,
+  getUsers,
   getUserById,
   insertUserMetaData,
   updateUserMetaData,
