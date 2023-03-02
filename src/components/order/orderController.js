@@ -26,9 +26,7 @@ exports.orderSummary = async (req, res) => {
         cartItems[i].product.files = await productModel.getByFilesByProduct(
           cartItems[i].product_id
         );
-        order.subtotal +=
-          getPrice(cartItems[i].product.quantity, cartItems[i].product.unit) *
-          cartItems[i].quantity;
+        order.subtotal += cartItems[i].product.last_price * cartItems[i].quantity;
       }
     }
     order.items = cartItems;
@@ -99,6 +97,7 @@ exports.submit = async (req, res) => {
     //INSERT WALLET HISTORY
     await walletModel.insertWalletHistory(
       req.body.user_id,
+      "purchase",
       "balance",
       req.body.total,
       order.id
