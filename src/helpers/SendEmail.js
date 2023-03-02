@@ -1,16 +1,16 @@
 const sgMail = require("@sendgrid/mail");
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-module.exports = function (data) {
-  const msg = {
-    to: "wael@ishro.com", // Change to your recipient
-    from: "tickets@ishro.com", // Change to your verified sender
-    subject: "Sending with SendGrid is Fun",
-    text: "and easy to do anywhere, even with Node.js",
-    html: "<strong>and easy to do anywhere, even with Node.js</strong>",
-    ...data,
-  };
 
+
+const deliverEmailNotify = async (order_id, items="") => {
+  const msg = {
+    to: "dev@ishro.com", // Change to your recipient
+    from: "tickets@ishro.com", // Change to your verified sender
+    subject: "Secbullion Order: "+order_id,
+    text: "and easy to do anywhere, even with Node.js",
+    html: "<strong>and easy to do anywhere, even with Node.js</strong>"
+  };
   return sgMail
     .send(msg)
     .then((response) => {
@@ -22,3 +22,5 @@ module.exports = function (data) {
       console.error(JSON.stringify(error));
     });
 };
+
+module.exports = { deliverEmailNotify };

@@ -5,7 +5,7 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const { validationResult } = require("express-validator");
 const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
-const { getSymbolPrice } = require("../../helpers/mt5Commands/getProductPrice");
+const { deliverEmailNotify } = require("../../helpers/sendEmail");
 
 exports.orderSummary = async (req, res) => {
   const errors = validationResult(req);
@@ -240,7 +240,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       }
     } else if (orderProduct.status == "store" && req.body.status == "deliver") {
-      // Email notify need to implemented
+     //  await deliverEmailNotify(1);
       let existDeliverItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
@@ -276,7 +276,7 @@ exports.changeMyOrderStatus = async (req, res) => {
         }
       }
     } else if (orderProduct.status == "store" && req.body.status == "collect") {
-       // Email notify need to implemented
+      //  await deliverEmailNotify(1);
       let existCollectItem = await orderModel.getUserOrderByType(
         orderProduct.user_id,
         orderProduct.product_id,
