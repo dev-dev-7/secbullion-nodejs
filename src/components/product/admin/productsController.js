@@ -35,6 +35,11 @@ exports.get = async (req, res) => {
   } else {
     products = await model.get();
   }
+  if (products) {
+    for (i = 0; i < products.length; i++) {
+      products[i].files = await model.getByFilesByProduct(products[i].id);
+    }
+  }
   return res.status(201).json({ data: products });
 };
 

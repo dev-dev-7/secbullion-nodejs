@@ -6,9 +6,11 @@ const verifyToken = require("../../helpers/verifyToken");
 
 // Product
 router
-  .route("/product")
-  .post([verifyToken, validation.add], productController.add)
+  .route("/products")
   .get([verifyToken, validation.get], productController.get);
+router
+  .route("/product")
+  .post([verifyToken, validation.add], productController.add);
 router
   .route("/product/:id")
   .put([verifyToken, validation.update], productController.update)
