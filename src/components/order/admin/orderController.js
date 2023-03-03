@@ -1,6 +1,7 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
 const productModel = require("../../product/productModel");
+const authModel = require("../../auth/authModel");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders(
@@ -20,6 +21,8 @@ exports.get = async (req, res) => {
             await productModel.getByFilesByProduct(
               orders[i].details[j].product_id
             );
+            orders[i].user = await authModel.getUserById(orders[i].user_id);
+            orders[i].user.metadata = await authModel.getUserMetaData(orders[i].user_id);
         }
       }
     }
