@@ -17,12 +17,16 @@ exports.get = async (req, res) => {
           orders[i].details[j].product = await productModel.getById(
             orders[i].details[j].product_id
           );
-          orders[i].details[j].product.files =
-            await productModel.getByFilesByProduct(
+          if(orders[i].details[j].product ){
+             let files = await productModel.getByFilesByProduct(
               orders[i].details[j].product_id
             );
-            orders[i].user = await authModel.getUserById(orders[i].user_id);
-            orders[i].user.metadata = await authModel.getUserMetaData(orders[i].user_id);
+            orders[i].details[j].product.files = files?files:[];
+          }
+        }
+        orders[i].user = await authModel.getUserById(orders[i].user_id);
+        if(orders[i].user){
+          orders[i].user.metadata = await authModel.getUserMetaData(orders[i].user_id);
         }
       }
     }

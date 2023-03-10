@@ -27,7 +27,7 @@ exports.update = async (req, res) => {
   if (transaction && transaction.status == 0) {
     let wallet = await walletModel.getWalletByUserId(transaction.user_id);
     let walletBalance = wallet.cash_balance + transaction.amount;
-    await model.updateTransaction(req.params.transaction_id, { status: 1 });
+    await model.updateTransaction(req.params.transaction_id, { status: req.body.status });
     await walletModel.updateWallet(transaction.user_id, {
       cash_balance: walletBalance,
     });
