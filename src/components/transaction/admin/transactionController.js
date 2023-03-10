@@ -11,6 +11,7 @@ exports.get = async (req, res) => {
         transactions[i].bank_detail_id
       );
       transactions[i].user = await authModel.getUserById(transactions[i].user_id);
+      transactions[i].user.id = i+1;
       transactions[i].user.metadata = await authModel.getUserMetaData(transactions[i].user_id);
     }
   }

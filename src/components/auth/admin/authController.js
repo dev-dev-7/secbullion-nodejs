@@ -35,6 +35,7 @@ exports.getAllUsers = async (req, res) => {
   const users = await authModel.getUsers();
   if (users) {
     for (i = 0; i < users.length; i++) {
+      users[i].id = i +1;
       users[i].metadata = await authModel.getUserMetaData(users[i].user_id);
     }
     return res.status(200).json({ data: users });
