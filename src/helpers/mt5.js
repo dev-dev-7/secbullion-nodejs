@@ -141,7 +141,7 @@ MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
 };
 
 exports.mt5Login = async () => {
-  var req = new MT5Request("52.187.46.216", 443);
+  var req = new MT5Request("secmt5.afkkarr.com", 443);
   // Authenticate on the server using Auth command
   req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
     if (error) {

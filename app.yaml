@@ -1,5 +1,7 @@
-runtime: nodejs16
-env: standard
+runtime: nodejs
+env: flex
+runtime_config:
+      operating_system: "ubuntu22"
 service: sec
 handlers:
   - url: .*
