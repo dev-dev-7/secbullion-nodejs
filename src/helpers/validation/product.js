@@ -9,6 +9,7 @@ exports.add = [
   check("specification").notEmpty(),
   check("quantity").notEmpty(),
   check("unit").notEmpty(),
+  check("symbol").notEmpty(),
 ];
 exports.get = [check("category_id").notEmpty()];
 exports.details = [check("product_id").notEmpty()];

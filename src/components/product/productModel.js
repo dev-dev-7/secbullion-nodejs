@@ -8,8 +8,9 @@ const create = async ({
   description,
   about,
   specification,
+  symbol,
   quantity,
-  unit,
+  unit
 }) => {
   return db(table)
     .insert({
@@ -18,6 +19,7 @@ const create = async ({
       description: description,
       about: about,
       specification: specification,
+      symbol: symbol,
       quantity: quantity,
       unit: unit,
     })
@@ -26,7 +28,7 @@ const create = async ({
 
 const update = async (
   id,
-  { category_id, title, description, price, quantity, unit }
+  { category_id, title, description,about, specification, symbol, quantity, unit }
 ) => {
   return db(table)
     .where("id", id)
@@ -34,6 +36,9 @@ const update = async (
       category_id: category_id,
       title: title,
       description: description,
+      about: about,
+      specification: specification,
+      symbol:symbol,
       quantity: quantity,
       unit: unit,
     })
@@ -89,12 +94,8 @@ const getByFilesByProduct = (product_id) => {
   return db(tableFiles).where("product_id", product_id).limit(3);
 };
 
-const isExistProduct = (title, quantity, unit) => {
-  return db(table)
-    .where("title", title)
-    .andWhere("quantity", quantity)
-    .andWhere("unit", unit)
-    .first();
+const isExistProduct = (symbol) => {
+  return db(table).where("symbol", symbol).first();
 };
 
 const updateProductPrice = async (id, symbol, price) => {
