@@ -64,7 +64,12 @@ const getActiveByCategory = (category_id) => {
 };
 
 const getActiveProducts = () => {
-  return db(table).where("status", 1);
+  return db(table).leftJoin(
+    db(tableFiles)
+      .select('*').as('f'), 
+    'f.product_id', 
+    table+'.id'
+  ).where("status", 1);
 };
 
 const get = () => {
@@ -81,7 +86,7 @@ const insertFiles = async (product_id, file) => {
 };
 
 const getByFilesByProduct = (product_id) => {
-  return db(tableFiles).where("product_id", product_id);
+  return db(tableFiles).where("product_id", product_id).limit(3);
 };
 
 const isExistProduct = (title, quantity, unit) => {

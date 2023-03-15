@@ -56,7 +56,6 @@ MT5Request.prototype.Get = function (path, callback) {
     });
   });
   req.on("error", function (e) {
-    console.log("errrrrrrrror:", e);
     return callback(e);
   });
 };
@@ -64,7 +63,7 @@ MT5Request.prototype.Get = function (path, callback) {
 MT5Request.prototype.processAuth = function (answer, password) {
   //---
   var pass_md5 = crypto.createHash("md5");
-  var buf = buffer.transcode(Buffer.from(password, "utf8"), "ut8", "utf161e");
+  var buf = buffer.transcode(Buffer.from(password, "utf8"), "utf8", "utf16le");
   pass_md5.update(buf, "binary");
   var pass_md5_digest = pass_md5.digest("binary");
   //---
@@ -88,7 +87,7 @@ MT5Request.prototype.ProcessAuthFinal = function (
 ) {
   //---
   var pass_md5 = crypto.createHash("md5");
-  var buf = buffer.transcode(Buffer.from(password, "utf8"), "ut8", "utf161e");
+  var buf = buffer.transcode(Buffer.from(password, "utf8"), "utf8", "utf16le");
   pass_md5.update(buf, "binary");
   var pass_md5_digest = pass_md5.digest("binary");
   //---
@@ -103,9 +102,16 @@ MT5Request.prototype.ProcessAuthFinal = function (
   return answer.cli_rand_answer == answer_md5.digest("hex");
 };
 
-MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
-  if (!login || !password || !build || !agent) return;
+MT5Request.prototype.Auth = function (
+  login,
+  password,
+  build,
+  agent,
+  symbol,
+  callback
+) {
   var self = this;
+  if (!login || !password || !build || !agent) return;
   self.Get(
     "/api/auth/start?version=" +
       build +
@@ -125,28 +131,46 @@ MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
             srv_rand_answer +
             "&cli_rand=" +
             cli_random_buf_hex,
-          function (error, res, body) {
+          async function (error, res, body) {
             var answer = self.parseBodyJSON(error, res, body, callback);
             if (answer) {
-              if (self.ProcessAuthFinal(answer, password, cli_random_buf))
+              if (self.ProcessAuthFinal(answer, password, cli_random_buf)) {
                 callback && callback(null);
-              else callback && callback("invalid final auth answer");
+              } else {
+                callback && callback("invalid final auth answer");
+              }
             }
           }
         );
       }
     }
   );
-  return true;
 };
 
-exports.mt5Login = async () => {
+// GET SYMBOL DETAILS
+
+exports.getSymbol = async (symbol) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   // Authenticate on the server using Auth command
-  req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
-    if (error) {
-      // console.log(error);
-      return;
-    }
-  });
+  return new Promise((resolve, reject) => {
+    req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      req.Get("/api/symbol/get?symbol=" + symbol, function (error, res, body) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        var answer = req.parseBodyJSON(error, res, body, null);
+        if (answer.answer) {
+          console.log("answer.answer", answer.answer);
+          resolve(answer.answer);
+        } else {
+         reject(null);
+        }
+      });
+    });
+   });
 };

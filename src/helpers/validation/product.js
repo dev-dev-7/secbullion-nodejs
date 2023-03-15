@@ -11,6 +11,7 @@ exports.add = [
   check("unit").notEmpty(),
 ];
 exports.get = [check("category_id").notEmpty()];
+exports.details = [check("product_id").notEmpty()];
 exports.update = [
   check("category_id").notEmpty(),
   check("title").notEmpty(),

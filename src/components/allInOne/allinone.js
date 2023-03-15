@@ -7,10 +7,11 @@ const authModel = require("../auth/authModel");
 const categoryModel = require("../category/categoryModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
-const { mt5Login } = require("../../helpers/mt5");
+const { getSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
- await mt5Login();
+  // let ress = await getSymbol("XAUUSD");
+  //  return res.status(200).json({ data: ress});
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
