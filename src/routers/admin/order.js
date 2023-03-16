@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const orderController = require("../../components/order/orderController");
 const adminOrderController = require("../../components/order/admin/orderController");
 const verifyToken = require("../../helpers/verifyToken");
 
@@ -8,6 +7,6 @@ const verifyToken = require("../../helpers/verifyToken");
 router.route("/orders/:page").post([verifyToken], adminOrderController.get);
 router
   .route("/order/change-status/:user_id")
-  .put([verifyToken], orderController.changeMyOrderStatus);
+  .put([verifyToken], adminOrderController.changeMyOrderStatus);
 
 module.exports = router;

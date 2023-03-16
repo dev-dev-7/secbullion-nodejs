@@ -118,17 +118,8 @@ const deleteUserOrderProduct = (id, user_id) => {
     .del();
 };
 
-const updateOrderProductQuantity = async (
-  user_id,
-  product_id,
-  status,
-  quantity
-) => {
-  return db(orderDetailsTable)
-    .where("user_id", user_id)
-    .andWhere("product_id", product_id)
-    .andWhere("status", status)
-    .update({
+const updateOrderProductQuantity = async (id, quantity) => {
+  return db(orderDetailsTable).where("id", id).update({
       quantity: quantity,
     });
 };
@@ -143,8 +134,8 @@ const updateOrderProductPrice = async (product_id, price) => {
     });
 };
 
-const updateOrderProductStatus = async (product_id, status) => {
-  return db(orderDetailsTable).where("product_id", product_id).update({
+const updateOrderProductStatus = async (id, status) => {
+  return db(orderDetailsTable).where("id", id).update({
     status: status,
   });
 };

@@ -14,7 +14,7 @@ exports.priceUpdate = async (req, res) => {
     mt5PriceArray = await getAllSymbolsPrice(products);
     for (var i = 0; i < products.length; i++) {
       let price = await getPriceFromSymbol(mt5PriceArray, products[i].symbol);
-      if (price != 0) {
+      if (price) {
         await productModel.updateProductPrice(
           products[i].id,
           products[i].symbol,
