@@ -26,7 +26,7 @@ exports.getAll = async (req, res) => {
         currency: process.env.DEFAULT_CURRENCY,
         unit: products[p].unit,
         price: products[p].last_price.toFixed(2),
-        current_rate: products[p].price,
+        current_rate: products[p].price
       };
     }
   }
