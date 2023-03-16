@@ -10,6 +10,7 @@ exports.add = [
   check("quantity").notEmpty(),
   check("unit").notEmpty(),
   check("symbol").notEmpty(),
+  check("files").notEmpty(),
 ];
 exports.get = [check("category_id").notEmpty()];
 exports.details = [check("product_id").notEmpty()];
@@ -22,4 +23,5 @@ exports.update = [
   check("quantity").notEmpty(),
   check("unit").notEmpty(),
   check("status").notEmpty(),
+  check("files").notEmpty(),
 ];

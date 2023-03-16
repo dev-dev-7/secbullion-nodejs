@@ -44,8 +44,15 @@ exports.update = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const product = await model.update(req.params.id, req.body);
-  return res.status(201).json({ data: product });
+  let updated = await model.update(req.params.id, req.body);
+  if(updated){
+    if (req.body.files) {
+      for (var i = 0; i < req.body.files.length; i++) {
+        await model.insertFiles(req.params.id, req.body.files[i]);
+      }
+    }
+  }
+  return res.status(201).json({ msg: "Succesfully updated" });
 };
 
 exports.delete = async (req, res) => {

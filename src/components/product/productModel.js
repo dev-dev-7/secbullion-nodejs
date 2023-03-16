@@ -42,7 +42,7 @@ const update = async (
       quantity: quantity,
       unit: unit,
     })
-    .then((updated) => getById(id));
+    .then((updated) => deleteByFilesByProduct(id));
 };
 
 const remove = async (id) => {
@@ -92,6 +92,10 @@ const insertFiles = async (product_id, file) => {
 
 const getByFilesByProduct = (product_id) => {
   return db(tableFiles).where("product_id", product_id).limit(3);
+};
+
+const deleteByFilesByProduct = (product_id) => {
+  return db(tableFiles).where("product_id", product_id).del().then(() => getById(product_id));
 };
 
 const isExistProduct = (symbol) => {
