@@ -15,8 +15,8 @@ exports.add = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
-  const category = await model.getAll();
-  return res.status(201).json({ data: category });
+  const appData = await model.getAll();
+  return res.status(201).json({ data: appData });
 };
 
 exports.update = async (req, res) => {
@@ -24,11 +24,11 @@ exports.update = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const category = await model.update(req.params.id, req.body);
-  return res.status(201).json({ data: category });
+  const appData = await model.update(req.params.id, req.body);
+  return res.status(201).json({ data: appData });
 };
 
 exports.delete = async (req, res) => {
-  const category = await model.remove(req.params.id);
-  return res.status(201).json({ data: category });
+  const appData = await model.remove(req.params.id);
+  return res.status(201).json({ data: appData, msg:"App data has been successfully deleted." });
 };
