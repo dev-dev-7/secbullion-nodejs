@@ -26,11 +26,9 @@ const create = async ({
 };
 
 const updateOrderStatus = async (id, status) => {
-  return db(orderTable)
-    .where("id", id)
-    .update({
-      status: status
-    });
+  return db(orderTable).where("id", id).update({
+    status: status,
+  });
 };
 
 const getAllOrders = (status = "", order_id = "") => {
@@ -117,12 +115,10 @@ const getUserOrderByType = (user_id, product_id, status) => {
 };
 
 const getDetailsByOrderId = (order_id) => {
-  return db(orderDetailsTable).leftJoin(
-    db(productTable)
-      .select('*').as('p'), 
-    'p.id',
-    orderDetailsTable+'.product_id'
-  ).where(orderDetailsTable+".order_id", order_id);
+  return db(orderDetailsTable + " as d")
+    .select("d.*", "p.*", "d.status as status")
+    .where("d.order_id", order_id)
+    .leftJoin(productTable + " as p", "p.id", "d.product_id");
 };
 
 const deleteUserOrderProduct = (id, user_id) => {
@@ -134,8 +130,8 @@ const deleteUserOrderProduct = (id, user_id) => {
 
 const updateOrderProductQuantity = async (id, quantity) => {
   return db(orderDetailsTable).where("id", id).update({
-      quantity: quantity,
-    });
+    quantity: quantity,
+  });
 };
 
 const updateOrderProductPrice = async (product_id, price) => {
@@ -154,24 +150,21 @@ const updateOrderProductStatus = async (id, status) => {
   });
 };
 
-const updateOrderProduct = async (id, {
-  quantity,
-  unit,
-  price,
-  duration,
-  duration_type,
-  delivery_id,
-  status,
-}) => {
-  return db(orderDetailsTable).where("id", id).update({
-    quantity: quantity,
-    unit: unit,
-    price: price,
-    duration: duration ? duration : 0,
-    duration_type: duration_type ? duration_type : "",
-    delivery_id: delivery_id ? delivery_id : 0,
-    status: status
-  });
+const updateOrderProduct = async (
+  id,
+  { quantity, unit, price, duration, duration_type, delivery_id, status }
+) => {
+  return db(orderDetailsTable)
+    .where("id", id)
+    .update({
+      quantity: quantity,
+      unit: unit,
+      price: price,
+      duration: duration ? duration : 0,
+      duration_type: duration_type ? duration_type : "",
+      delivery_id: delivery_id ? delivery_id : 0,
+      status: status,
+    });
 };
 
 module.exports = {
