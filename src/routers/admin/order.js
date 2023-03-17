@@ -4,7 +4,7 @@ const adminOrderController = require("../../components/order/admin/orderControll
 const verifyToken = require("../../helpers/verifyToken");
 
 // Product
-router.route("/orders").get([verifyToken], adminOrderController.get);
+router.route("/orders").post([verifyToken], adminOrderController.get);
 router
   .route("/order/change-status/:user_id")
   .put([verifyToken], adminOrderController.changeMyOrderItemStatus);
