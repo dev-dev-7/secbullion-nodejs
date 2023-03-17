@@ -11,7 +11,7 @@ exports.get = async (req, res) => {
   );
   if (orders) {
     for (i = 0; i < orders.length; i++) {
-      orders[i].details = await orderModel.getDetailsByOrderId(orders[i].id);
+      orders[i].items = await orderModel.getDetailsByOrderId(orders[i].id);
     }
     return res.status(201).json({ data: orders });
   } else {
