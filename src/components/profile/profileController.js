@@ -75,7 +75,7 @@ exports.getAllAddress = async (req, res) => {
 };
 
 exports.getAddress = async (req, res) => {
-  let address = await model.getMetaDataById(req.params.address_id);
+  let address = await model.getMetaDataById(req.body.address_id);
   if (address) {
     return res.status(201).json({data: address});
   } else {

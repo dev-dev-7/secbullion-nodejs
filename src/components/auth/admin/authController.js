@@ -45,6 +45,17 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+
+exports.getUser = async (req, res) => {
+  const users = await authModel.getUserById(req.params.user_id);
+  if (users) {
+      users.metadata = await profileModel.getUserMetaData(users.user_id);
+    return res.status(200).json({ data: users });
+  } else {
+    return res.status(401).json({ errors: [{ msg: "No users found" }] });
+  }
+};
+
 exports.status = async (req, res) => {
   const user = await authModel.getUserById(req.params.user_id);
   if (user) {
