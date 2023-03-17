@@ -2,6 +2,7 @@ const model = require("./../transactionModel");
 const bankDetailsModel = require("./../../bankDetails/bankDetailsModel");
 const walletModel = require("./../../wallet/walletModel");
 const authModel = require("./../../auth/authModel");
+const profileModel = require("./../../profile/profileModel");
 
 exports.get = async (req, res) => {
   const transactions = await model.getAllTransactions();
@@ -12,7 +13,7 @@ exports.get = async (req, res) => {
       );
       transactions[i].user = await authModel.getUserById(transactions[i].user_id);
       transactions[i].user.id = i+1;
-      transactions[i].user.metadata = await authModel.getUserMetaData(transactions[i].user_id);
+      transactions[i].user.metadata = await profileModel.getUserMetaData(transactions[i].user_id);
     }
   }
   if (transactions) {
