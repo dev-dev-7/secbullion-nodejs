@@ -1,6 +1,7 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
 const productModel = require("../../product/productModel");
+const profileModel = require("../../profile/profileModel");
 const authModel = require("../../auth/authModel");
 
 exports.get = async (req, res) => {
@@ -23,6 +24,7 @@ exports.get = async (req, res) => {
             );
             orders[i].details[j].product.files = files ? files : [];
           }
+          orders[i].details[j].delivery_address = await profileModel.getMetaDataById(orders[i].details[j].delivery_id);
         }
         orders[i].user = await authModel.getUserById(orders[i].user_id);
         if (orders[i].user) {

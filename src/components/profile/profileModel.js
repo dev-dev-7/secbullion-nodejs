@@ -77,6 +77,7 @@ module.exports = {
   updateUserMetaData,
   updateMetaData,
   getUserMetaData,
+  getMetaDataById,
   getUserMetaDataKey,
   getUserMetaDatasKey,
   getUserMetaDataKeyValue,
