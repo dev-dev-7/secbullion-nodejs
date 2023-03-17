@@ -33,7 +33,7 @@ const updateOrderStatus = async (id, status) => {
     });
 };
 
-const getAllOrders = (page = "", status = "", order_id = "") => {
+const getAllOrders = (status = "", order_id = "") => {
   if (status && order_id) {
     return db(orderTable).where("status", status).andWhere("id", order_id);
   } else if (status) {

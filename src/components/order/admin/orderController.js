@@ -6,7 +6,6 @@ const authModel = require("../../auth/authModel");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders(
-    req.params.page,
     req.body.status,
     req.body.order_id
   );
