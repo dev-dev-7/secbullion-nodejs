@@ -77,6 +77,15 @@ const getActiveProducts = () => {
   ).where("status", 1);
 };
 
+const getProduct = (product_id) => {
+  return db(table).leftJoin(
+    db(tableFiles)
+      .select('*').as('f'), 
+    'f.product_id', 
+    table+'.id'
+  ).where(table+".id", product_id).first();
+};
+
 const get = () => {
   return db(table);
 };
@@ -113,14 +122,15 @@ const updateProductPrice = async (id, symbol, price) => {
 };
 
 module.exports = {
+  get,
   create,
   update,
   remove,
   getById,
   getByTitle,
   getByCategory,
+  getProduct,
   getActiveByCategory,
-  get,
   insertFiles,
   getByFilesByProduct,
   getActiveProducts,

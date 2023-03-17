@@ -15,15 +15,9 @@ exports.get = async (req, res) => {
       orders[i].details = await orderModel.getDetailsByOrderId(orders[i].id);
       if (orders[i].details.length) {
         for (j = 0; j < orders[i].details.length; j++) {
-          orders[i].details[j].product = await productModel.getById(
+          orders[i].details[j].product = await productModel.getProduct(
             orders[i].details[j].product_id
           );
-          if (orders[i].details[j].product) {
-            let files = await productModel.getByFilesByProduct(
-              orders[i].details[j].product_id
-            );
-            orders[i].details[j].product.files = files ? files : [];
-          }
           orders[i].details[j].delivery_address = await profileModel.getMetaDataById(orders[i].details[j].delivery_id);
         }
         orders[i].user = await authModel.getUserById(orders[i].user_id);
