@@ -1,4 +1,5 @@
 const db = require("../../config/connection");
+const productTable = "tbl_products";
 const orderTable = "tbl_product_orders";
 const orderDetailsTable = "tbl_product_order_details";
 
@@ -116,7 +117,12 @@ const getUserOrderByType = (user_id, product_id, status) => {
 };
 
 const getDetailsByOrderId = (order_id) => {
-  return db(orderDetailsTable).where("order_id", order_id);
+  return db(orderDetailsTable).leftJoin(
+    db(productTable)
+      .select('*').as('p'), 
+    'p.id',
+    orderDetailsTable+'.product_id'
+  ).where(orderDetailsTable+".order_id", order_id);
 };
 
 const deleteUserOrderProduct = (id, user_id) => {

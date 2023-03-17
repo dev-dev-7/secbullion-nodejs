@@ -13,20 +13,6 @@ exports.get = async (req, res) => {
   if (orders) {
     for (i = 0; i < orders.length; i++) {
       orders[i].details = await orderModel.getDetailsByOrderId(orders[i].id);
-      if (orders[i].details.length) {
-        for (j = 0; j < orders[i].details.length; j++) {
-          orders[i].details[j].product = await productModel.getProductWithFile(
-            orders[i].details[j].product_id
-          );
-          orders[i].details[j].delivery_address = await profileModel.getMetaDataById(orders[i].details[j].delivery_id);
-        }
-        orders[i].user = await authModel.getUserById(orders[i].user_id);
-        if (orders[i].user) {
-          orders[i].user.metadata = await profileModel.getUserMetaData(
-            orders[i].user_id
-          );
-        }
-      }
     }
     return res.status(201).json({ data: orders });
   } else {
