@@ -68,7 +68,7 @@ const getActiveByCategory = (category_id) => {
   return db(table).where("category_id", category_id).andWhere("status", 1);
 };
 
-const getActiveProducts = () => {
+const getActiveProductsWithFiles = () => {
   return db(table).leftJoin(
     db(tableFiles)
       .select('*').as('f'), 
@@ -77,7 +77,7 @@ const getActiveProducts = () => {
   ).where("status", 1);
 };
 
-const getProduct = (product_id) => {
+const getProductWithFile = (product_id) => {
   return db(table).leftJoin(
     db(tableFiles)
       .select('*').as('f'), 
@@ -129,11 +129,11 @@ module.exports = {
   getById,
   getByTitle,
   getByCategory,
-  getProduct,
+  getProductWithFile,
   getActiveByCategory,
   insertFiles,
   getByFilesByProduct,
-  getActiveProducts,
+  getActiveProductsWithFiles,
   isExistProduct,
   updateProductPrice,
 };

@@ -16,7 +16,7 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   // All Products
-  const products = await productModel.getActiveProducts();
+  const products = await productModel.getActiveProductsWithFiles();
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
       products[p].files = await productModel.getByFilesByProduct(
