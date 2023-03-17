@@ -28,7 +28,7 @@ exports.get = async (req, res) => {
         }
         orders[i].user = await authModel.getUserById(orders[i].user_id);
         if (orders[i].user) {
-          orders[i].user.metadata = await authModel.getUserMetaData(
+          orders[i].user.metadata = await profileModel.getUserMetaData(
             orders[i].user_id
           );
         }
