@@ -24,6 +24,14 @@ const create = async ({
     .then((id) => getOrderById(id));
 };
 
+const updateOrderStatus = async (id, status) => {
+  return db(orderTable)
+    .where("id", id)
+    .update({
+      status: status
+    });
+};
+
 const getAllOrders = (page = "", status = "", order_id = "") => {
   if (status && order_id) {
     return db(orderTable).where("status", status).andWhere("id", order_id);
@@ -142,6 +150,8 @@ const updateOrderProductStatus = async (id, status) => {
 
 module.exports = {
   create,
+  updateOrderStatus,
+  getOrderById,
   getOrderByUserId,
   getAllOrders,
   getByTaxnId,

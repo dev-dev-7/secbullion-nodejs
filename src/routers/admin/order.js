@@ -7,6 +7,9 @@ const verifyToken = require("../../helpers/verifyToken");
 router.route("/orders/:page").post([verifyToken], adminOrderController.get);
 router
   .route("/order/change-status/:user_id")
+  .put([verifyToken], adminOrderController.changeMyOrderItemStatus);
+router
+  .route("/order/change-order-status/:order_id")
   .put([verifyToken], adminOrderController.changeMyOrderStatus);
 
 module.exports = router;

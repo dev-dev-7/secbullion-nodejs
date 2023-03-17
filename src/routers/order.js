@@ -23,6 +23,6 @@ router
   .get([verifyToken], orderController.getMyOrder);
 router
   .route("/order/change-status/:user_id")
-  .put([verifyToken], adminOrderController.changeMyOrderStatus);
+  .put([verifyToken], adminOrderController.changeMyOrderItemStatus);
 
 module.exports = router;

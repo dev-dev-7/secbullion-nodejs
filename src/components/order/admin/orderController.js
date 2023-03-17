@@ -39,6 +39,19 @@ exports.get = async (req, res) => {
 };
 
 exports.changeMyOrderStatus = async (req, res) => {
+  let existOrder = await orderModel.getOrderById(req.params.order_id);
+  if (existOrder) {
+    await orderModel.updateOrderStatus(
+      req.params.order_id,
+      req.body.status
+    );
+    return res.status(201).json({ msg: "Order status has been updated successfully" });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.changeMyOrderItemStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
   req.body.type = req.body.status;
   let selectedProduct = await orderModel.getByUserProduct(
