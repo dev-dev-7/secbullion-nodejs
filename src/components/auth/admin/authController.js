@@ -1,4 +1,5 @@
 const authModel = require("../authModel");
+const profileModel = require("../../profile/profileModel");
 const Hash = require("../../../helpers/hash");
 const jwt = require("jsonwebtoken");
 const smsglobal = require("../../../helpers/smsglobal");
@@ -11,7 +12,7 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const userMetaData = await authModel.getMetaDataKeyValue(
+  const userMetaData = await profileModel.getMetaDataKeyValue(
     "email",
     req.body.email
   );
@@ -36,7 +37,7 @@ exports.getAllUsers = async (req, res) => {
   if (users) {
     for (i = 0; i < users.length; i++) {
       users[i].id = i +1;
-      users[i].metadata = await authModel.getUserMetaData(users[i].user_id);
+      users[i].metadata = await profileModel.getUserMetaData(users[i].user_id);
     }
     return res.status(200).json({ data: users });
   } else {
