@@ -39,6 +39,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
     req.params.user_id,
     req.body.product_id
   );
+  console.log(selectedProduct);
   if (selectedProduct) {
     if (
       selectedProduct.status != req.body.status &&

@@ -116,7 +116,7 @@ const getUserOrderByType = (user_id, product_id, status) => {
 
 const getDetailsByOrderId = (order_id) => {
   return db(orderDetailsTable + " as d")
-    .select("d.*", "p.*", "d.status as status")
+    .select("d.*", "p.*", "d.status as status", "d.id as id", "p.last_price as price")
     .where("d.order_id", order_id)
     .leftJoin(productTable + " as p", "p.id", "d.product_id");
 };
