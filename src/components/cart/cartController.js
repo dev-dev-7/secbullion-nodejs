@@ -65,17 +65,17 @@ exports.get = async (req, res) => {
         cartItems[c].product = await productModel.getById(
           cartItems[c].product_id
         );
-        cartItems[c].product.files = await productModel.getByFilesByProduct(
-          cartItems[c].product_id
-        );
-        cartItems[c].product.value = {
-          currency: process.env.DEFAULT_CURRENCY,
-          unit: cartItems[c].product.unit,
-          price: cartItems[c].product.last_price,
-          current_rate: cartItems[c].product.price,
-        };
-        cart.subtotal +=
+        if(cartItems[c].product){
+          cartItems[c].product.files = await productModel.getByFilesByProduct(cartItems[c].product_id);
+          cartItems[c].product.value = {
+            currency: process.env.DEFAULT_CURRENCY,
+            unit: cartItems[c].product.unit,
+            price: cartItems[c].product.last_price,
+            current_rate: cartItems[c].product.price,
+          };
+          cart.subtotal +=
           cartItems[c].product.last_price * cartItems[c].quantity;
+        }
       }
     }
     cart.items = cartItems;

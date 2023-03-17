@@ -1,5 +1,6 @@
 require("dotenv").config();
 const authModel = require("./authModel");
+const profileModel = require("../profile/profileModel");
 const walletModel = require("../wallet/walletModel");
 const Hash = require("../../helpers/hash");
 const jwt = require("jsonwebtoken");
@@ -14,7 +15,7 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  const userEmail = await authModel.getMetaDataKeyValue(
+  const userEmail = await profileModel.getMetaDataKeyValue(
     "email",
     req.body.email
   );
@@ -22,7 +23,7 @@ exports.login = async (req, res) => {
     return res.status(404).json({ errors: [{ msg: "Invalid credentials" }] });
   } else {
     let otp_code = Math.floor(100000 + Math.random() * 900000);
-    const userMobile = await authModel.getUserMetaDataKey(
+    const userMobile = await profileModel.getUserMetaDataKey(
       userEmail.user_id,
       "mobile"
     );
@@ -32,7 +33,7 @@ exports.login = async (req, res) => {
       if (user.status == 0) {
         smsglobal.sendMessage(userMobile.meta_values, otp_code);
       }
-      await authModel.insertUserMetaData(
+      await profileModel.insertUserMetaData(
         userMobile.user_id,
         "otp_code",
         otp_code
@@ -40,7 +41,7 @@ exports.login = async (req, res) => {
       return res.status(200).json({
         data: {
           user: user,
-          metadata: await authModel.getUserMetaData(user.user_id),
+          metadata: await profileModel.getUserMetaData(user.user_id),
         },
         token,
       });
@@ -59,19 +60,19 @@ exports.register = async (req, res) => {
     var arr = Object.entries(req.body);
     for (var i = 0; i < arr.length; i++) {
       if (arr[i][0] != "password") {
-        let exist = await authModel.getUserMetaDataKeyValue(
+        let exist = await profileModel.getUserMetaDataKeyValue(
           user.user_id,
           arr[i][0],
           arr[i][1]
         );
         if (exist) {
-          await authModel.updateUserMetaData(
+          await profileModel.updateUserMetaData(
             user.user_id,
             arr[i][0],
             arr[i][1]
           );
         } else {
-          await authModel.insertUserMetaData(
+          await profileModel.insertUserMetaData(
             user.user_id,
             arr[i][0],
             arr[i][1]
@@ -82,8 +83,8 @@ exports.register = async (req, res) => {
     // Addtional fields
     let otp_code = Math.floor(100000 + Math.random() * 900000);
     if (user.user_id) {
-      await authModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
-      await authModel.insertUserMetaData(user.user_id, "user_id", user.user_id);
+      await profileModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
+      await profileModel.insertUserMetaData(user.user_id, "user_id", user.user_id);
       await walletModel.insertWallet(
         user.user_id,
         0,
@@ -96,7 +97,7 @@ exports.register = async (req, res) => {
     return res.status(201).json({
       data: {
         user: user,
-        metadata: await authModel.getUserMetaData(user.user_id),
+        metadata: await profileModel.getUserMetaData(user.user_id),
       },
     });
   } else {
@@ -108,20 +109,20 @@ exports.verifiyOtp = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let mobile = await authModel.getUserMetaDataKeyValue(
+  let mobile = await profileModel.getUserMetaDataKeyValue(
     req.body.user_id,
     "mobile",
     req.body.mobile
   );
   if (mobile) {
-    let otp_code = await authModel.getUserMetaDataKeyValue(
+    let otp_code = await profileModel.getUserMetaDataKeyValue(
       req.body.user_id,
       "otp_code",
       req.body.otp_code
     );
     if (otp_code) {
       let user = await authModel.updateUser(req.body.user_id, { status: 1 });
-      await authModel.updateUserMetaData(
+      await profileModel.updateUserMetaData(
         req.body.user_id,
         "otp_code",
         Math.floor(100000 + Math.random() * 900000)
@@ -130,7 +131,7 @@ exports.verifiyOtp = async (req, res) => {
       return res.status(201).json({
         data: {
           user: user,
-          metadata: await authModel.getUserMetaData(user.user_id),
+          metadata: await profileModel.getUserMetaData(user.user_id),
         },
         token,
       });
@@ -148,24 +149,24 @@ exports.resendOtp = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   let otp_code = Math.floor(100000 + Math.random() * 900000);
-  let mobile = await authModel.getMetaDataKeyValue("mobile", req.body.mobile);
+  let mobile = await profileModel.getMetaDataKeyValue("mobile", req.body.mobile);
   if (mobile) {
-    let otp = await authModel.getUserMetaDataKey(mobile.user_id, "otp_code");
-    let otpHistory = await authModel.getUserHistoryKey(
+    let otp = await profileModel.getUserMetaDataKey(mobile.user_id, "otp_code");
+    let otpHistory = await profileModel.getUserHistoryKey(
       mobile.user_id,
       "otp_code",
       time.timeNow(600, "minus")
     );
     if (otp && otpHistory?.length < 5) {
-      await authModel.updateUserMetaData(mobile.user_id, "otp_code", otp_code);
+      await profileModel.updateUserMetaData(mobile.user_id, "otp_code", otp_code);
       smsglobal.sendMessage(req.body.mobile, otp_code);
-      await authModel.insertUserHistory(mobile.user_id, "otp_code", otp_code);
+      await profileModel.insertUserHistory(mobile.user_id, "otp_code", otp_code);
       return res.status(200).json({
-        data: await authModel.getUserMetaData(mobile.user_id),
+        data: await profileModel.getUserMetaData(mobile.user_id),
         msg: "Otp Sent",
       });
     } else {
-      await authModel.insertUserMetaData(mobile.user_id, "otp_code", otp_code);
+      await profileModel.insertUserMetaData(mobile.user_id, "otp_code", otp_code);
       return res.status(403).json({ errors: [{ msg: "Too many request" }] });
     }
   } else {
@@ -181,7 +182,7 @@ exports.resetPassword = async (req, res) => {
     password: Hash.make(req.body.password),
   });
   if (user) {
-    await authModel.updateUserMetaData(
+    await profileModel.updateUserMetaData(
       req.body.user_id,
       "otp_code",
       Math.floor(100000 + Math.random() * 900000)
@@ -189,7 +190,7 @@ exports.resetPassword = async (req, res) => {
     return res.status(201).json({
       data: {
         user: user,
-        metadata: await authModel.getUserMetaData(user.user_id),
+        metadata: await profileModel.getUserMetaData(user.user_id),
       },
       msg: "Password Updated",
     });
