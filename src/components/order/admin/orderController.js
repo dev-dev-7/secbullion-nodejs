@@ -87,6 +87,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           );
         } else if (req.body.quantity == selectedProduct.quantity) {
           // update product everything
+          req.body.quantity = selectedProduct.quantity + req.body.quantity;
           await orderModel.updateOrderProduct(
             selectedProduct.id,
             req.body
