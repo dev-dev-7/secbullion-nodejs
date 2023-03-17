@@ -78,11 +78,9 @@ exports.getAddress = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let user = await authModel.getUserById(req.params.user_id);
-  if (user?.user_id) {
-    return res.status(201).json({
-      data: await model.getMetaDataById(req.body.address_id),
-    });
+  let address = await model.getMetaDataById(req.params.address_id);
+  if (address) {
+    return res.status(201).json({data: address});
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }

@@ -67,5 +67,3 @@ exports.put_address = [
 ];
 
 exports.delete_address = [check("address_id").notEmpty()];
-
-exports.get_address = [check("address_id").notEmpty()];

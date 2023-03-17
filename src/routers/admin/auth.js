@@ -11,6 +11,6 @@ router.post("/login", validation.login_validation, authController.login);
 router.post("/users", authController.getAllUsers);
 router.put("/users/:user_id", authController.status);
 router.get("/user/address/:user_id", profileController.getAllAddress);
-router.post("/user/address/:user_id", validation.get_address, profileController.getAddress);
+router.get("/user/address/:user_id", profileController.getAddress);
 
 module.exports = router;
