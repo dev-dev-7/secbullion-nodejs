@@ -68,7 +68,7 @@ const insertOrderDetails = async (
     duration,
     duration_type,
     delivery_id,
-    type,
+    status,
   }
 ) => {
   return db(orderDetailsTable).insert({
@@ -82,7 +82,7 @@ const insertOrderDetails = async (
     duration: duration ? duration : 0,
     duration_type: duration_type ? duration_type : "",
     delivery_id: delivery_id ? delivery_id : 0,
-    status: type,
+    status: status,
   });
 };
 
@@ -148,6 +148,26 @@ const updateOrderProductStatus = async (id, status) => {
   });
 };
 
+const updateOrderProduct = async (id, {
+  quantity,
+  unit,
+  price,
+  duration,
+  duration_type,
+  delivery_id,
+  status,
+}) => {
+  return db(orderDetailsTable).where("id", id).update({
+    quantity: quantity,
+    unit: unit,
+    price: price,
+    duration: duration ? duration : 0,
+    duration_type: duration_type ? duration_type : "",
+    delivery_id: delivery_id ? delivery_id : 0,
+    status: status
+  });
+};
+
 module.exports = {
   create,
   updateOrderStatus,
@@ -162,6 +182,7 @@ module.exports = {
   getUserOrderByType,
   getDetailsByOrderId,
   deleteUserOrderProduct,
+  updateOrderProduct,
   updateOrderProductQuantity,
   updateOrderProductPrice,
   updateOrderProductStatus,

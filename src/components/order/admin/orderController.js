@@ -55,7 +55,6 @@ exports.changeMyOrderStatus = async (req, res) => {
 
 exports.changeMyOrderItemStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
-  req.body.type = req.body.status;
   let selectedProduct = await orderModel.getByUserProduct(
     req.body.product_order_id,
     req.params.user_id,
@@ -93,6 +92,26 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           selectedProduct.id,
           selectedProduct.user_id
         );
+      }else{
+        if (req.body.quantity < selectedProduct.quantity) {
+          // Minus from selected item
+          await orderModel.updateOrderProductQuantity(
+            selectedProduct.id,
+            selectedProduct.quantity - req.body.quantity
+          );
+          // insert new item if not exist
+          await orderModel.insertOrderDetails(
+            selectedProduct.user_id,
+            selectedProduct.order_id,
+            req.body
+          );
+        } else if (req.body.quantity == selectedProduct.quantity) {
+          // update product everything
+          await orderModel.updateOrderProduct(
+            selectedProduct.id,
+            req.body
+          );
+        }
       }
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
