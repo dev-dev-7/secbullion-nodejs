@@ -1,8 +1,5 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
-const productModel = require("../../product/productModel");
-const profileModel = require("../../profile/profileModel");
-const authModel = require("../../auth/authModel");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders(
