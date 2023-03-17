@@ -14,7 +14,7 @@ exports.submit = [
 ];
 
 exports.status = [
-  check("product_order_id").notEmpty(),
+  check("order_product_id").notEmpty(),
   check("product_id").notEmpty(),
   check("status").notEmpty()
 ];

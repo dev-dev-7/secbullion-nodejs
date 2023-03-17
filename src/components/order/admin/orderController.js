@@ -32,7 +32,7 @@ exports.changeMyOrderStatus = async (req, res) => {
 exports.changeMyOrderItemStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
   let selectedProduct = await orderModel.getByUserProduct(
-    req.body.product_order_id,
+    req.body.order_product_id,
     req.params.user_id,
     req.body.product_id
   );
