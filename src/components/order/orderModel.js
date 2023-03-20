@@ -67,7 +67,7 @@ const insertOrderDetails = async (
     duration,
     duration_type,
     delivery_id,
-    status,
+    type,
   }
 ) => {
   return db(orderDetailsTable).insert({
@@ -81,7 +81,7 @@ const insertOrderDetails = async (
     duration: duration ? duration : 0,
     duration_type: duration_type ? duration_type : "",
     delivery_id: delivery_id ? delivery_id : 0,
-    status: status,
+    status: type
   });
 };
 
