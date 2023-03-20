@@ -33,7 +33,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
   let selectedProduct = await orderModel.isExistOrderProduct(
     req.body.order_product_id,
     req.params.user_id,
-    req.params.order_id,
+    req.body.order_id,
     req.body.product_id
   );
   if (selectedProduct) {
@@ -86,10 +86,14 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             req.body
           );
         } else if (req.body.quantity == selectedProduct.quantity) {
-          // update product everything
-          req.body.quantity = selectedProduct.quantity + req.body.quantity;
+          // convert product to new status with same quantity
           await orderModel.updateOrderProduct(selectedProduct.id, req.body);
         }
+      }
+    }else{
+      // Update and overwrite missing details for same status
+      if(req.body.quantity <= selectedProduct.quantity){
+        await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
