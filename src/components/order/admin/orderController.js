@@ -31,9 +31,10 @@ exports.changeMyOrderStatus = async (req, res) => {
 
 exports.changeMyOrderItemStatus = async (req, res) => {
   req.body.currency = process.env.DEFAULT_CURRENCY;
-  let selectedProduct = await orderModel.getByUserProduct(
+  let selectedProduct = await orderModel.isExistOrderProduct(
     req.body.order_product_id,
     req.params.user_id,
+    req.params.order_id,
     req.body.product_id
   );
   if (selectedProduct) {

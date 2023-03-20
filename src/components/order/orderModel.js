@@ -91,10 +91,11 @@ const getByStatus = (user_id, statuses) => {
     .whereIn("status", statuses);
 };
 
-const getByUserProduct = (id, user_id, product_id) => {
+const isExistOrderProduct = (id, user_id, order_id, product_id) => {
   return db(orderDetailsTable)
     .where("id", id)
     .andWhere("user_id", user_id)
+    .andWhere("order_id", order_id)
     .andWhere("product_id", product_id)
     .first();
 };
@@ -176,7 +177,7 @@ module.exports = {
   getByTaxnId,
   insertOrderDetails,
   getByStatus,
-  getByUserProduct,
+  isExistOrderProduct,
   updateProduct,
   getUserOrderByType,
   getDetailsByOrderId,
