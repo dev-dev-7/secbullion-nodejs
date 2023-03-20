@@ -107,9 +107,10 @@ const updateProduct = async (user_id, product_id, data) => {
     .update(data);
 };
 
-const getUserOrderByType = (user_id, product_id, status) => {
+const getUserOrderByType = (user_id, order_id, product_id, status) => {
   return db(orderDetailsTable)
     .where("user_id", user_id)
+    .andWhere("order_id", order_id)
     .andWhere("product_id", product_id)
     .andWhere("status", status)
     .first();

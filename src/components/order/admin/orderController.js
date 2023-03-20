@@ -19,11 +19,10 @@ exports.get = async (req, res) => {
 exports.changeMyOrderStatus = async (req, res) => {
   let existOrder = await orderModel.getOrderById(req.params.order_id);
   if (existOrder) {
-    await orderModel.updateOrderStatus(
-      req.params.order_id,
-      req.body.status
-    );
-    return res.status(201).json({ msg: "Order status has been updated successfully" });
+    await orderModel.updateOrderStatus(req.params.order_id, req.body.status);
+    return res
+      .status(201)
+      .json({ msg: "Order status has been updated successfully" });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
@@ -42,12 +41,13 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       selectedProduct.status != req.body.status &&
       req.body.quantity <= selectedProduct.quantity
     ) {
-      let exisStoretItem = await orderModel.getUserOrderByType(
+      let existStoreItem = await orderModel.getUserOrderByType(
         selectedProduct.user_id,
+        selectedProduct.order_id,
         selectedProduct.product_id,
         req.body.status
       );
-      if (exisStoretItem && req.body.quantity < selectedProduct.quantity) {
+      if (existStoreItem && req.body.quantity < selectedProduct.quantity) {
         // Minus from selected product
         await orderModel.updateOrderProductQuantity(
           selectedProduct.id,
@@ -55,21 +55,24 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         );
         // Add for existing product
         await orderModel.updateOrderProductQuantity(
-          exisStoretItem.id,
-          exisStoretItem.quantity + req.body.quantity
+          existStoreItem.id,
+          existStoreItem.quantity + req.body.quantity
         );
-      } else if (exisStoretItem && req.body.quantity == selectedProduct.quantity) {
-        //Add for existing product 
+      } else if (
+        existStoreItem &&
+        req.body.quantity == selectedProduct.quantity
+      ) {
+        //Add for existing product
         await orderModel.updateOrderProductQuantity(
-          exisStoretItem.id,
-          exisStoretItem.quantity +req.body.quantity
+          existStoreItem.id,
+          existStoreItem.quantity + req.body.quantity
         );
         // Delete selected product
         await orderModel.deleteUserOrderProduct(
           selectedProduct.id,
           selectedProduct.user_id
         );
-      }else{
+      } else {
         if (req.body.quantity < selectedProduct.quantity) {
           // Minus from selected item
           await orderModel.updateOrderProductQuantity(
@@ -85,10 +88,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         } else if (req.body.quantity == selectedProduct.quantity) {
           // update product everything
           req.body.quantity = selectedProduct.quantity + req.body.quantity;
-          await orderModel.updateOrderProduct(
-            selectedProduct.id,
-            req.body
-          );
+          await orderModel.updateOrderProduct(selectedProduct.id, req.body);
         }
       }
     }
