@@ -2,10 +2,7 @@ require("dotenv").config();
 const orderModel = require("../orderModel");
 
 exports.get = async (req, res) => {
-  let orders = await orderModel.getAllOrders(
-    req.body.status,
-    req.body.order_id
-  );
+  let orders = await orderModel.getAllOrders();
   if (orders) {
     for (i = 0; i < orders.length; i++) {
       orders[i].items = await orderModel.getDetailsByOrderId(orders[i].id);
@@ -40,13 +37,13 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       selectedProduct.status != req.body.status &&
       req.body.quantity <= selectedProduct.quantity
     ) {
-      let existStoreItem = await orderModel.getUserOrderByType(
+      let existStatusItem = await orderModel.getUserOrderByType(
         selectedProduct.user_id,
         selectedProduct.order_id,
         selectedProduct.product_id,
         req.body.status
       );
-      if (existStoreItem && req.body.quantity < selectedProduct.quantity) {
+      if (existStatusItem && req.body.quantity < selectedProduct.quantity) {
         // Minus from selected product
         await orderModel.updateOrderProductQuantity(
           selectedProduct.id,
@@ -54,17 +51,18 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         );
         // Add for existing product
         await orderModel.updateOrderProductQuantity(
-          existStoreItem.id,
-          existStoreItem.quantity + req.body.quantity
+          existStatusItem.id,
+          existStatusItem.quantity + req.body.quantity
         );
       } else if (
-        existStoreItem &&
+        existStatusItem &&
         req.body.quantity == selectedProduct.quantity
       ) {
         //Add for existing product
-        await orderModel.updateOrderProductQuantity(
-          existStoreItem.id,
-          existStoreItem.quantity + req.body.quantity
+        req.body.quantity = req.body.quantity + existStatusItem.quantity;
+        await orderModel.updateOrderProduct(
+          existStatusItem.id,
+          req.body.quantity
         );
         // Delete selected product
         await orderModel.deleteUserOrderProduct(

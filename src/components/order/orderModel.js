@@ -31,16 +31,8 @@ const updateOrderStatus = async (id, status) => {
   });
 };
 
-const getAllOrders = (status = "", order_id = "") => {
-  if (status && order_id) {
-    return db(orderTable).where("status", status).andWhere("id", order_id);
-  } else if (status) {
-    return db(orderTable).where("status", status);
-  } else if (order_id) {
-    return db(orderTable).where("order_id", order_id);
-  } else {
-    return db(orderTable);
-  }
+const getAllOrders = () => {
+  return db(orderTable);
 };
 
 const getOrderById = (id) => {
@@ -117,7 +109,7 @@ const getUserOrderByType = (user_id, order_id, product_id, status) => {
 
 const getDetailsByOrderId = (order_id) => {
   return db(orderDetailsTable + " as d")
-    .select("d.*", "p.*", "d.status as status", "d.id as id", "p.last_price as price")
+    .select("d.*", "p.*", "d.quantity as quantity","d.status as status", "d.id as id", "p.last_price as price")
     .where("d.order_id", order_id)
     .leftJoin(productTable + " as p", "p.id", "d.product_id");
 };
