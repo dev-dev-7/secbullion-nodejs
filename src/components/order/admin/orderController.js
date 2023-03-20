@@ -50,9 +50,10 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           selectedProduct.quantity - req.body.quantity
         );
         // Add for existing product
-        await orderModel.updateOrderProductQuantity(
+        req.body.quantity = existStatusItem.quantity + req.body.quantity;
+        await orderModel.updateOrderProduct(
           existStatusItem.id,
-          existStatusItem.quantity + req.body.quantity
+          req.body
         );
       } else if (
         existStatusItem &&
@@ -62,7 +63,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         req.body.quantity = req.body.quantity + existStatusItem.quantity;
         await orderModel.updateOrderProduct(
           existStatusItem.id,
-          req.body.quantity
+          req.body
         );
         // Delete selected product
         await orderModel.deleteUserOrderProduct(
