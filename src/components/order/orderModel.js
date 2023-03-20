@@ -32,7 +32,7 @@ const updateOrderStatus = async (id, status) => {
 };
 
 const getAllOrders = () => {
-  return db(orderTable);
+  return db(orderTable).orderBy('id', 'DESC');
 };
 
 const getOrderById = (id) => {
