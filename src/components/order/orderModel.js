@@ -91,11 +91,10 @@ const getByStatus = (user_id, statuses) => {
     .whereIn("status", statuses);
 };
 
-const isExistOrderProduct = (id, user_id, order_id, product_id) => {
+const isExistOrderProduct = (id, user_id, product_id) => {
   return db(orderDetailsTable)
     .where("id", id)
     .andWhere("user_id", user_id)
-    .andWhere("order_id", order_id)
     .andWhere("product_id", product_id)
     .first();
 };

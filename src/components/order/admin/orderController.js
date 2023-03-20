@@ -33,7 +33,6 @@ exports.changeMyOrderItemStatus = async (req, res) => {
   let selectedProduct = await orderModel.isExistOrderProduct(
     req.body.order_product_id,
     req.params.user_id,
-    req.body.order_id,
     req.body.product_id
   );
   if (selectedProduct) {
