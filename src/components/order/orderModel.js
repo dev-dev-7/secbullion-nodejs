@@ -80,7 +80,7 @@ const insertOrderDetails = async (
     currency: currency,
     duration: duration ? duration : 0,
     duration_type: duration_type ? duration_type : "",
-    delivery_id: delivery_id ? delivery_id : 0,
+    delivery_id: delivery_id ? delivery_id : "",
     status: type
   });
 };
