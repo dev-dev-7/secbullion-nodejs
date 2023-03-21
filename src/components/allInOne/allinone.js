@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
-const authModel = require("../auth/authModel");
+const profileModel = require("../profile/profileModel");
 const categoryModel = require("../category/categoryModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
@@ -15,21 +15,6 @@ exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  // All Products
-  const products = await productModel.getActiveProductsWithFiles();
-  if (products.length) {
-    for (var p = 0; p < products.length; p++) {
-      products[p].files = await productModel.getByFilesByProduct(
-        products[p].id
-      );
-      products[p].value = {
-        currency: process.env.DEFAULT_CURRENCY,
-        unit: products[p].unit,
-        price: products[p].last_price.toFixed(2),
-        current_rate: products[p].price
-      };
-    }
-  }
   // My Stake
   const stake = await orderModel.getByStatus(req.body.user_id, ["stake"]);
   if (stake) {
@@ -102,13 +87,11 @@ exports.getAll = async (req, res) => {
   }
   let result = {
     currency: process.env.DEFAULT_CURRENCY,
-    category: await categoryModel.getActive(),
     wallet: { balance: wallet, transactions: transactions },
-    products: products,
     my_stake: stake,
     my_store: store,
     my_order: order,
-    metadata: await authModel.getUserMetaData(req.body.user_id),
+    metadata: await profileModel.getUserMetaData(req.body.user_id),
   };
   return res.status(200).json({ data: result });
 };
