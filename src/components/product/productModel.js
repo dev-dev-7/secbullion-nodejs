@@ -71,7 +71,7 @@ const getActiveByCategory = (category_id) => {
 const getActiveProductsWithFiles = () => {
   return db(table).leftJoin(
     db(tableFiles)
-      .select('*').as('f'), 
+      .select('*').groupBy('product_id').as('f'), 
     'f.product_id', 
     table+'.id'
   ).where("status", 1);

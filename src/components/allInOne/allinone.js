@@ -19,11 +19,8 @@ exports.getAll = async (req, res) => {
   const stake = await orderModel.getByStatus(req.body.user_id, ["stake"]);
   if (stake) {
     for (var t = 0; t < stake.length; t++) {
-      stake[t].product = await productModel.getById(stake[t].product_id);
+      stake[t].product = await productModel.getProductWithFile(stake[t].product_id);
       if (stake[t].product) {
-        stake[t].product.files = await productModel.getByFilesByProduct(
-          stake[t].product_id
-        );
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           symbol: stake[t].product.symbol,
@@ -39,11 +36,8 @@ exports.getAll = async (req, res) => {
   const store = await orderModel.getByStatus(req.body.user_id, ["store"]);
   if (store) {
     for (var s = 0; s < store.length; s++) {
-      store[s].product = await productModel.getById(store[s].product_id);
+      store[s].product = await productModel.getProductWithFile(store[s].product_id);
       if (store[s].product) {
-        store[s].product.files = await productModel.getByFilesByProduct(
-          store[s].product_id
-        );
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           symbol: store[s].product.symbol,
@@ -62,11 +56,8 @@ exports.getAll = async (req, res) => {
   ]);
   if (order) {
     for (var o = 0; o < order.length; o++) {
-      order[o].product = await productModel.getById(order[o].product_id);
+      order[o].product = await productModel.getProductWithFile(order[o].product_id);
       if (order[o].product) {
-        order[o].product.files = await productModel.getByFilesByProduct(
-          order[o].product_id
-        );
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
           symbol: order[o].product.symbol,
