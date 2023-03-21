@@ -11,10 +11,11 @@ exports.getAll = async (req, res) => {
   const products = await productModel.getActiveProductsWithFiles();
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
-      
       products[p].value = {
         currency: process.env.DEFAULT_CURRENCY,
+        symbol: products[p].symbol,
         unit: products[p].unit,
+        quantity: products[p].quantity,
         price: products[p].last_price.toFixed(2),
         current_rate: products[p].price,
       };
