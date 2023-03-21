@@ -50,6 +50,7 @@ exports.resend_otp_validation = [check("mobile").notEmpty()];
 
 exports.reset_password_validation = [
   check("user_id").notEmpty(),
+  check("otp_code").notEmpty(),
   check("password")
     .notEmpty()
     .bail()
