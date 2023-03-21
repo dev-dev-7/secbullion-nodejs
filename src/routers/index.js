@@ -15,6 +15,7 @@ const appData = require("./appData");
 
 //Admin
 const adminAuth = require("./admin/auth");
+const adminDashboard = require("./admin/dashboard");
 const adminCategory = require("./admin/category");
 const adminProduct = require("./admin/product");
 const adminOrder = require("./admin/order");
@@ -40,6 +41,7 @@ router.use("/", bankDetails);
 router.use("/", transaction);
 router.use("/", appData);
 router.use("/admin", adminAuth);
+router.use("/admin", adminDashboard);
 router.use("/admin", adminCategory);
 router.use("/admin", adminProduct);
 router.use("/admin", adminOrder);
