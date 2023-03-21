@@ -1,7 +1,6 @@
 require("dotenv").config();
 const { validationResult } = require("express-validator");
 const productModel = require("./productModel");
-const categoryModel = require("../category/categoryModel");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
@@ -15,7 +14,7 @@ exports.getAll = async (req, res) => {
         currency: process.env.DEFAULT_CURRENCY,
         symbol: products[p].symbol,
         unit: products[p].unit,
-        quantity: products[p].quantity,
+        quantity: 1,
         price: products[p].last_price.toFixed(2),
         current_rate: products[p].price,
       };
