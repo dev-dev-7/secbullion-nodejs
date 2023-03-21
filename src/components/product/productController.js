@@ -27,6 +27,14 @@ exports.details = async (req, res) => {
   const product = await productModel.getById(req.params.product_id);
   if (product) {
     product.files = await productModel.getByFilesByProduct(product.id);
+    product.value = {
+      currency: process.env.DEFAULT_CURRENCY,
+      symbol: product.symbol,
+      unit: product.unit,
+      quantity: 1,
+      price: product.last_price.toFixed(2),
+      current_rate: product.price,
+    };
   }
   return res.status(200).json({ data: product });
 };
