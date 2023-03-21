@@ -10,7 +10,7 @@ const create = async ({
   specification,
   symbol,
   quantity,
-  unit
+  unit,
 }) => {
   return db(table)
     .insert({
@@ -28,7 +28,16 @@ const create = async ({
 
 const update = async (
   id,
-  { category_id, title, description,about, specification, symbol, quantity, unit }
+  {
+    category_id,
+    title,
+    description,
+    about,
+    specification,
+    symbol,
+    quantity,
+    unit,
+  }
 ) => {
   return db(table)
     .where("id", id)
@@ -38,7 +47,7 @@ const update = async (
       description: description,
       about: about,
       specification: specification,
-      symbol:symbol,
+      symbol: symbol,
       quantity: quantity,
       unit: unit,
     })
@@ -69,21 +78,16 @@ const getActiveByCategory = (category_id) => {
 };
 
 const getActiveProductsWithFiles = () => {
-  return db(table).leftJoin(
-    db(tableFiles)
-      .select('*').groupBy('product_id').as('f'), 
-    'f.product_id', 
-    table+'.id'
-  ).where("status", 1);
+  return db.select(table + ".*",tableFiles+".file")
+    .from(table)
+    .leftJoin(tableFiles, table + ".id", tableFiles + ".product_id").groupBy('id');
 };
 
 const getProductWithFile = (product_id) => {
-  return db(table).leftJoin(
-    db(tableFiles)
-      .select('*').as('f'), 
-    'f.product_id', 
-    table+'.id'
-  ).where(table+".id", product_id).first();
+  return db(table)
+    .leftJoin(db(tableFiles).select("*").as("f"), "f.product_id", table + ".id")
+    .where(table + ".id", product_id)
+    .first();
 };
 
 const get = () => {
@@ -104,7 +108,10 @@ const getByFilesByProduct = (product_id) => {
 };
 
 const deleteByFilesByProduct = (product_id) => {
-  return db(tableFiles).where("product_id", product_id).del().then(() => getById(product_id));
+  return db(tableFiles)
+    .where("product_id", product_id)
+    .del()
+    .then(() => getById(product_id));
 };
 
 const isExistProduct = (symbol) => {

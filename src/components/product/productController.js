@@ -8,18 +8,18 @@ exports.getAll = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   // All Products
   const products = await productModel.getActiveProductsWithFiles();
-  if (products.length) {
-    for (var p = 0; p < products.length; p++) {
-      products[p].value = {
-        currency: process.env.DEFAULT_CURRENCY,
-        symbol: products[p].symbol,
-        unit: products[p].unit,
-        quantity: 1,
-        price: products[p].last_price.toFixed(2),
-        current_rate: products[p].price,
-      };
-    }
-  }
+  // if (products.length) {
+  //   for (var p = 0; p < products.length; p++) {
+  //     products[p].value = {
+  //       currency: process.env.DEFAULT_CURRENCY,
+  //       symbol: products[p].symbol,
+  //       unit: products[p].unit,
+  //       quantity: 1,
+  //       price: products[p].last_price.toFixed(2),
+  //       current_rate: products[p].price,
+  //     };
+  //   }
+  // }
   return res.status(200).json({ data: products });
 };
 
