@@ -128,6 +128,10 @@ const updateProductPrice = async (id, symbol, price) => {
     .then((updated) => getById(id));
 };
 
+const getFilesByProductId = (product_id) => {
+  return db(tableFiles).where("product_id", product_id).limit(10);
+};
+
 module.exports = {
   get,
   create,
@@ -143,4 +147,5 @@ module.exports = {
   getActiveProductsWithFiles,
   isExistProduct,
   updateProductPrice,
+  getFilesByProductId
 };
