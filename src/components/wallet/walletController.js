@@ -12,9 +12,9 @@ exports.get = async (req, res) => {
   let stake = await orderModel.getSumOfUserStack(req.params.user_id, "stake");
   let result = {
     currency: process.env.DEFAULT_CURRENCY,
-    cash_balance: wallet.cash_balance,
-    commodities: store.price,
-    staking: stake.price
+    cash_balance: (wallet.cash_balance).toFixed(2),
+    commodities: (store.price).toFixed(2),
+    staking: (stake.price).toFixed(2)
   }
   if (result) {
     return res.status(201).json({ data: result });
