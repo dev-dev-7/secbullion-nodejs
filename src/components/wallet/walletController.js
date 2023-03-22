@@ -13,8 +13,8 @@ exports.get = async (req, res) => {
   let result = {
     currency: process.env.DEFAULT_CURRENCY,
     cash_balance: wallet.cash_balance,
-    commodities: (store.price * store.quantity).toFixed(2),
-    staking: (stake.price * stake.quantity).toFixed(2)
+    commodities: store.price,
+    staking: stake.price
   }
   if (result) {
     return res.status(201).json({ data: result });

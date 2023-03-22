@@ -169,7 +169,7 @@ const updateOrderProduct = async (
 
 const getSumOfUserStack = async (user_id, type) => {
   return db
-    .select("price", db.raw("SUM(quantity) as quantity"))
+    .select(db.raw("SUM(price * quantity) as price"))
     .from(orderDetailsTable)
     .where("user_id", user_id)
     .andWhere("status", type)
