@@ -17,7 +17,7 @@ exports.get = async (req, res) => {
     staking: (stake.price).toFixed(2)
   }
   if (result) {
-    return res.status(201).json({ data: result });
+    return res.status(200).json({ data: result });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
