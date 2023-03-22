@@ -32,7 +32,7 @@ const updateOrderStatus = async (id, status) => {
 };
 
 const getAllOrders = () => {
-  return db(orderTable).orderBy('id', 'DESC');
+  return db(orderTable).orderBy("id", "DESC");
 };
 
 const getOrderById = (id) => {
@@ -73,7 +73,7 @@ const insertOrderDetails = async (
     duration: duration ? duration : 0,
     duration_type: duration_type ? duration_type : "",
     delivery_id: delivery_id ? delivery_id : "",
-    status: type
+    status: type,
   });
 };
 
@@ -109,7 +109,14 @@ const getUserOrderByType = (user_id, order_id, product_id, status) => {
 
 const getDetailsByOrderId = (order_id) => {
   return db(orderDetailsTable + " as d")
-    .select("d.*", "p.*", "d.quantity as quantity","d.status as status", "d.id as id", "p.last_price as price")
+    .select(
+      "d.*",
+      "p.*",
+      "d.quantity as quantity",
+      "d.status as status",
+      "d.id as id",
+      "p.last_price as price"
+    )
     .where("d.order_id", order_id)
     .leftJoin(productTable + " as p", "p.id", "d.product_id");
 };
@@ -160,6 +167,15 @@ const updateOrderProduct = async (
     });
 };
 
+const getSumOfUserStack = async (user_id, type) => {
+  return db
+    .select("price", db.raw("SUM(quantity) as quantity"))
+    .from(orderDetailsTable)
+    .where("user_id", user_id)
+    .andWhere("status", type)
+    .first();
+};
+
 module.exports = {
   create,
   updateOrderStatus,
@@ -178,4 +194,5 @@ module.exports = {
   updateOrderProductQuantity,
   updateOrderProductPrice,
   updateOrderProductStatus,
+  getSumOfUserStack,
 };
