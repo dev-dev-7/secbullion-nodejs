@@ -2,11 +2,6 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
-const walletModel = require("../wallet/walletModel");
-const profileModel = require("../profile/profileModel");
-const categoryModel = require("../category/categoryModel");
-const transactionModel = require("../transaction/transactionModel");
-const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const { getSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
@@ -19,7 +14,9 @@ exports.getAll = async (req, res) => {
   const stake = await orderModel.getByStatus(req.body.user_id, ["stake"]);
   if (stake) {
     for (var t = 0; t < stake.length; t++) {
-      stake[t].product = await productModel.getProductWithFile(stake[t].product_id);
+      stake[t].product = await productModel.getProductWithFile(
+        stake[t].product_id
+      );
       if (stake[t].product) {
         stake[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
@@ -36,7 +33,9 @@ exports.getAll = async (req, res) => {
   const store = await orderModel.getByStatus(req.body.user_id, ["store"]);
   if (store) {
     for (var s = 0; s < store.length; s++) {
-      store[s].product = await productModel.getProductWithFile(store[s].product_id);
+      store[s].product = await productModel.getProductWithFile(
+        store[s].product_id
+      );
       if (store[s].product) {
         store[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
@@ -56,7 +55,9 @@ exports.getAll = async (req, res) => {
   ]);
   if (order) {
     for (var o = 0; o < order.length; o++) {
-      order[o].product = await productModel.getProductWithFile(order[o].product_id);
+      order[o].product = await productModel.getProductWithFile(
+        order[o].product_id
+      );
       if (order[o].product) {
         order[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
@@ -69,26 +70,10 @@ exports.getAll = async (req, res) => {
       }
     }
   }
-  // Wallet
-  const wallet = await walletModel.getWalletByUserId(req.body.user_id);
-  // Trnsaction
-  const transactions = await transactionModel.getTransactionByUserId(
-    req.body.user_id
-  );
-  if (transactions) {
-    for (var i = 0; i < transactions.length; i++) {
-      transactions[i].bankDetails = await bankDetailsModel.getBankById(
-        transactions[i].bank_detail_id
-      );
-    }
-  }
   let result = {
-    currency: process.env.DEFAULT_CURRENCY,
-    wallet: { balance: wallet, transactions: transactions },
     my_stake: stake,
     my_store: store,
-    my_order: order,
-    metadata: await profileModel.getUserMetaData(req.body.user_id),
+    my_order: order
   };
   return res.status(200).json({ data: result });
 };

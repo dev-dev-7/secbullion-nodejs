@@ -1,6 +1,8 @@
 require("dotenv").config();
 const walletModel = require("./walletModel");
 const orderModel = require("../order/orderModel");
+const transactionModel = require("../transaction/transactionModel");
+const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const { validationResult } = require("express-validator");
 
 exports.get = async (req, res) => {
@@ -18,6 +20,27 @@ exports.get = async (req, res) => {
   }
   if (result) {
     return res.status(200).json({ data: result });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.getTransaction = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  const transactions = await transactionModel.getTransactionByUserId(
+    req.params.user_id
+  );
+  if (transactions) {
+    for (var i = 0; i < transactions.length; i++) {
+      transactions[i].bankDetails = await bankDetailsModel.getBankById(
+        transactions[i].bank_detail_id
+      );
+    }
+  }
+  if (transactions) {
+    return res.status(200).json({ data: transactions });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }

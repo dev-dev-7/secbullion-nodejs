@@ -6,4 +6,7 @@ const verifyToken = require("./../helpers/verifyToken");
 // Wallet
 router.route("/wallet/:user_id").get([verifyToken], walletController.get);
 
+// Transactions
+router.route("/transactions/:user_id").get([verifyToken], walletController.getTransaction);
+
 module.exports = router;
