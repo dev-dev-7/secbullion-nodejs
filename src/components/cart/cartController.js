@@ -1,3 +1,4 @@
+require("dotenv").config();
 const cartModel = require("./cartModel");
 const productModel = require("../product/productModel");
 const { validationResult } = require("express-validator");
@@ -56,6 +57,7 @@ exports.get = async (req, res) => {
   const cartItems = await cartModel.getCartByUserId(req.params.user_id);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
+    cart.currency = process.env.DEFAULT_CURRENCY,
     cart.subtotal = 0;
     cart.discount_price = coupon ? coupon.discount_price : 0;
     cart.coupon_code = req.body.coupon_code;

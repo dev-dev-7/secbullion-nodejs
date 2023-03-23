@@ -15,6 +15,7 @@ exports.orderSummary = async (req, res) => {
   let cartItems = await cartModel.getCartByUserId(req.body.user_id);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
+    order.currency = process.env.DEFAULT_CURRENCY,
     order.subtotal = 0;
     order.coupon_used = coupon ? coupon.discount_price : 0;
     order.total = 0;

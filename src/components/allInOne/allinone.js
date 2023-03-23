@@ -6,7 +6,7 @@ const { getSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
   // let ress = await getSymbol("XAUUSD");
-  //  return res.status(200).json({ data: ress});
+  // return res.status(200).json({ data: ress});
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
@@ -71,6 +71,7 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
+    user_id: req.body.user_id,
     my_stake: stake,
     my_store: store,
     my_order: order
