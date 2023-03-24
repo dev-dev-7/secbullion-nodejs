@@ -2,11 +2,9 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
-const { getSymbol } = require("../../helpers/mt5");
+const { getSymbolPrice, getPriceFromSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
-  // let ress = await getSymbol("XAUUSD");
-  // return res.status(200).json({ data: ress});
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });

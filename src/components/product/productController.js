@@ -1,6 +1,7 @@
 require("dotenv").config();
 const { validationResult } = require("express-validator");
 const productModel = require("./productModel");
+const { getSymbolPrice, getPriceFromSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
@@ -8,13 +9,14 @@ exports.getAll = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   // All Products
   const products = await productModel.getActiveProductsWithFiles();
+  let symbolPrices = await getSymbolPrice(products);
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
       products[p].value = {
         currency: process.env.DEFAULT_CURRENCY,
         symbol: products[p].symbol,
         unit: products[p].unit,
-        price: products[p].last_price.toFixed(2),
+        price: await getPriceFromSymbol(symbolPrices, products[p].symbol),
         current_rate: products[p].price,
       };
     }

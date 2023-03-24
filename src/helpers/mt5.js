@@ -102,14 +102,7 @@ MT5Request.prototype.ProcessAuthFinal = function (
   return answer.cli_rand_answer == answer_md5.digest("hex");
 };
 
-MT5Request.prototype.Auth = function (
-  login,
-  password,
-  build,
-  agent,
-  symbol,
-  callback
-) {
+MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
   var self = this;
   if (!login || !password || !build || !agent) return;
   self.Get(
@@ -147,30 +140,97 @@ MT5Request.prototype.Auth = function (
   );
 };
 
+exports.getPriceFromSymbol = async (symbols = "", key = "") => {
+  if (symbols && key) {
+    let result = symbols.filter(function (symbol) {
+      return symbol.Symbol == key;
+    });
+    return result[0]?.Ask;
+  } else {
+    return 0;
+  }
+};
+
 // GET SYMBOL DETAILS
 
-exports.getSymbol = async (symbol) => {
+exports.getSymbolPrice = async (products) => {
+  let symbols = [];
+  if (products.length) {
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].symbol) {
+        symbols.push(products[i].symbol);
+      }
+    }
+  }
   var req = new MT5Request("secmt5.afkkarr.com", 443);
-  // Authenticate on the server using Auth command
   return new Promise((resolve, reject) => {
-    req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
+    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
       if (error) {
         console.log(error);
         return;
       }
-      req.Get("/api/symbol/get?symbol=" + symbol, function (error, res, body) {
+      req.Get("/api/tick/last?symbol=" + symbols, function (error, res, body) {
         if (error) {
           console.log(error);
           return;
         }
         var answer = req.parseBodyJSON(error, res, body, null);
         if (answer.answer) {
-          console.log("answer.answer", answer.answer);
+          // console.log("answer.answer", answer.answer);
           resolve(answer.answer);
         } else {
-         reject(null);
+          reject(null);
         }
       });
     });
-   });
+  });
 };
+
+// exports.getSymbolDetails = async (symbol) => {
+//   var req = new MT5Request("secmt5.afkkarr.com", 443);
+//   return new Promise((resolve, reject) => {
+//     req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
+//       if (error) {
+//         console.log(error);
+//         return;
+//       }
+//       req.Get("/api/symbol/get?symbol=" + symbol, function (error, res, body) {
+//         if (error) {
+//           console.log(error);
+//           return;
+//         }
+//         var answer = req.parseBodyJSON(error, res, body, null);
+//         if (answer.answer) {
+//           console.log("answer.answer", answer.answer);
+//           resolve(answer.answer);
+//         } else {
+//          reject(null);
+//         }
+//       });
+//     });
+//    });
+// };
+
+// exports.getAllSymbols = async (symbol) => {
+//   var req = new MT5Request("secmt5.afkkarr.com", 443);
+//   return new Promise((resolve, reject) => {
+//     req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
+//       if (error) {
+//         console.log(error);
+//         return;
+//       }
+//       req.Get("/api/symbol/list", function (error, res, body) {
+//         if (error) {
+//           console.log(error);
+//           return;
+//         }
+//         var answer = req.parseBodyJSON(error, res, body, null);
+//         if (answer.answer) {
+//           resolve(answer.answer);
+//         } else {
+//          reject(null);
+//         }
+//       });
+//     });
+//    });
+// };

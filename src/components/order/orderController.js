@@ -4,7 +4,6 @@ const cartModel = require("./../cart/cartModel");
 const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const { validationResult } = require("express-validator");
-const { getPrice } = require("../../helpers/mt5Commands/getProductPrice");
 const { deliverEmailNotify } = require("../../helpers/sendEmail");
 
 exports.orderSummary = async (req, res) => {
