@@ -140,14 +140,14 @@ MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
   );
 };
 
-exports.getPriceFromSymbol = async (symbols = "", key = "") => {
+exports.getPriceFromSymbol = async (symbols = "", key = "", price="") => {
   if (symbols && key) {
     let result = symbols.filter(function (symbol) {
       return symbol.Symbol == key;
     });
     return result[0]?.Ask;
   } else {
-    return 0;
+    return price;
   }
 };
 

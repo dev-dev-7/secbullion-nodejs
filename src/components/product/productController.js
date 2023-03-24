@@ -16,7 +16,7 @@ exports.getAll = async (req, res) => {
         currency: process.env.DEFAULT_CURRENCY,
         symbol: products[p].symbol,
         unit: products[p].unit,
-        price: await getPriceFromSymbol(symbolPrices, products[p].symbol),
+        price: await getPriceFromSymbol(symbolPrices, products[p].symbol, products[p].last_price),
         current_rate: products[p].price,
       };
     }
