@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
 const usermetaTable = "tbl_user_metadata";
+const userhistoryTable = "tbl_user_history";
 
 const insertUserMetaData = async (user_id, meta_key, meta_values) => {
   return db(usermetaTable)
@@ -73,13 +74,11 @@ const deleteUserMetadata = (id, user_id, meta_key) => {
 };
 
 const insertUserHistory = async (user_id, history_key, history_message) => {
-  return db(userhistoryTable)
-    .insert({
-      user_id,
-      history_key,
-      history_message,
-    })
-    .then((id) => getUserById(id));
+  return db(userhistoryTable).insert({
+    user_id,
+    history_key,
+    history_message,
+  });
 };
 
 const getUserHistoryKey = async (user_id, history_key, time = "") => {
@@ -111,5 +110,5 @@ module.exports = {
   getUsernameExist,
   deleteUserMetadata,
   insertUserHistory,
-  getUserHistoryKey
+  getUserHistoryKey,
 };
