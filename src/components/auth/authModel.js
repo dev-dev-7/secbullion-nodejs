@@ -1,5 +1,5 @@
 const db = require("../../config/connection");
-const Hash = require("../../helpers/hash.js");
+const Hash = require("../../helpers/hash");
 const userTable = "tbl_users";
 
 const createUser = async ({ password }) => {
