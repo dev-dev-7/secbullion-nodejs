@@ -164,6 +164,7 @@ exports.resendOtp = async (req, res) => {
       "otp_code",
       time.timeNow(600, "minus")
     );
+    console.log("otpHistory: ", otpHistory);
     let otpAttemps = otpHistory ? otpHistory?.length : 0;
     if (otp && otpAttemps < 5) {
       await profileModel.updateUserMetaData(
