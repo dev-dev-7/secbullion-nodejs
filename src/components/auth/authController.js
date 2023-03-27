@@ -159,20 +159,20 @@ exports.resendOtp = async (req, res) => {
   );
   if (mobile) {
     let otp = await profileModel.getUserMetaDataKey(mobile.user_id, "otp_code");
-    let otpHistory = await profileModel.getUserHistoryKey(
-      mobile.user_id,
-      "otp_code",
-      time.timeNow(600, "minus")
-    );
-    console.log("otpHistory: ", otpHistory);
-    let otpAttemps = otpHistory ? otpHistory?.length : 0;
-    if (otp && otpAttemps < 5) {
+    // let otpHistory = await profileModel.getUserHistoryKey(
+    //   mobile.user_id,
+    //   "otp_code",
+    //   time.timeNow(600, "minus")
+    // );
+    // let otpAttemps = otpHistory ? otpHistory?.length : 0;
+    if (otp) {
+      //  && otpAttemps < 5
       await profileModel.updateUserMetaData(
         mobile.user_id,
         "otp_code",
         otp_code
       );
-      smsglobal.sendMessage(req.body.mobile, otp_code);
+      // smsglobal.sendMessage(req.body.mobile, otp_code);
       await profileModel.insertUserHistory(
         mobile.user_id,
         "otp_code",
