@@ -2,7 +2,7 @@ require("dotenv").config();
 const authModel = require("./authModel");
 const profileModel = require("../profile/profileModel");
 const walletModel = require("../wallet/walletModel");
-const Hash = require("../../helpers/hash");
+const Hash = require("../../helpers/hash.js");
 const jwt = require("jsonwebtoken");
 const smsglobal = require("../../helpers/smsglobal");
 const time = require("../../helpers/time");

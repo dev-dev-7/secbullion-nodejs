@@ -1,5 +1,5 @@
 const db = require("../../config/connection");
-const Hash = require("../../helpers/hash");
+const Hash = require("../../helpers/hash.js");
 const userTable = "tbl_users";
 
 const createUser = async ({ password }) => {
@@ -26,8 +26,6 @@ const getUserById = (user_id) => {
 const deleteUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).del();
 };
-
-
 
 module.exports = {
   createUser,
