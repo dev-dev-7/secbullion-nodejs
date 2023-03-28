@@ -140,8 +140,8 @@ MT5Request.prototype.Auth = function (login, password, build, agent, callback) {
   );
 };
 
-exports.getPriceFromSymbol = async (symbols = "", key = "", price="") => {
-  if (symbols && key) {
+exports.getPriceFromSymbol = async (symbols = "", key = "", price = "") => {
+  if (symbols.length && key) {
     let result = symbols.filter(function (symbol) {
       return symbol.Symbol == key;
     });
@@ -162,28 +162,37 @@ exports.getSymbolPrice = async (products) => {
       }
     }
   }
-  var req = new MT5Request("secmt5.afkkarr.com", 443);
-  return new Promise((resolve, reject) => {
-    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
-      if (error) {
-        console.log(error);
-        return;
-      }
-      req.Get("/api/tick/last?symbol=" + symbols, function (error, res, body) {
+  if (symbols?.length) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
           console.log(error);
           return;
         }
-        var answer = req.parseBodyJSON(error, res, body, null);
-        if (answer.answer) {
-          // console.log("answer.answer", answer.answer);
-          resolve(answer.answer);
-        } else {
-          reject(null);
-        }
+        req.Get(
+          "/api/tick/last?symbol=" + symbols,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            console.log("answer body: ", body);
+
+            if (answer.answer) {
+              // console.log("answer.answer", answer.answer);
+              resolve(answer.answer);
+            } else {
+              reject(null);
+            }
+          }
+        );
       });
     });
-  });
+  } else {
+    return [];
+  }
 };
 
 // exports.getSymbolDetails = async (symbol) => {
