@@ -9,7 +9,7 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   // My Stake
-  const stake = await orderModel.getByStatus(req.body.user_id, ["stake"]);
+  const stake = await orderModel.getByStatus(req.params.user_id, ["stake"]);
   if (stake) {
     for (var t = 0; t < stake.length; t++) {
       stake[t].product = await productModel.getProductWithFile(
@@ -28,7 +28,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Store
-  const store = await orderModel.getByStatus(req.body.user_id, ["store"]);
+  const store = await orderModel.getByStatus(req.params.user_id, ["store"]);
   if (store) {
     for (var s = 0; s < store.length; s++) {
       store[s].product = await productModel.getProductWithFile(
@@ -47,7 +47,7 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Order
-  const order = await orderModel.getByStatus(req.body.user_id, [
+  const order = await orderModel.getByStatus(req.params.user_id, [
     "collect",
     "deliver",
   ]);
@@ -69,10 +69,10 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
-    user_id: req.body.user_id,
+    user_id: req.params.user_id,
     my_stake: stake,
     my_store: store,
-    my_order: order
+    my_order: order,
   };
   return res.status(200).json({ data: result });
 };
