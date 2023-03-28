@@ -9,70 +9,91 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   // My Stake
-  const stake = await orderModel.getByStatus(req.params.user_id, ["stake"]);
-  if (stake) {
-    for (var t = 0; t < stake.length; t++) {
-      stake[t].product = await productModel.getProductWithFile(
-        stake[t].product_id
+  const stakes = await orderModel.getByStatus(req.params.user_id, ["stake"]);
+  let stakeSymbolPrices = await getSymbolPrice(stakes);
+  if (stakes) {
+    for (var t = 0; t < stakes.length; t++) {
+      stakes[t].product = await productModel.getProductWithFile(
+        stakes[t].product_id
       );
-      if (stake[t].product) {
-        stake[t].product.value = {
+      if (stakes[t].product) {
+        stakes[t].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
-          symbol: stake[t].product.symbol,
-          unit: stake[t].product.unit,
-          quantity: stake[t].quantity,
-          price: (stake[t].price * stake[t].quantity).toFixed(2),
-          current_rate: stake[t].product.price,
+          symbol: stakes[t].product.symbol,
+          unit: stakes[t].product.unit,
+          quantity: stakes[t].quantity,
+          price: (
+            (await getPriceFromSymbol(
+              stakeSymbolPrices,
+              stakes[t].symbol,
+              stakes[t].product.last_price
+            )) * stakes[t].quantity
+          ).toFixed(2),
+          current_rate: stakes[t].product.price,
         };
       }
     }
   }
   // My Store
-  const store = await orderModel.getByStatus(req.params.user_id, ["store"]);
-  if (store) {
-    for (var s = 0; s < store.length; s++) {
-      store[s].product = await productModel.getProductWithFile(
-        store[s].product_id
+  const stores = await orderModel.getByStatus(req.params.user_id, ["store"]);
+  let storeSymbolPrices = await getSymbolPrice(stores);
+  if (stores) {
+    for (var s = 0; s < stores.length; s++) {
+      stores[s].product = await productModel.getProductWithFile(
+        stores[s].product_id
       );
-      if (store[s].product) {
-        store[s].product.value = {
+      if (stores[s].product) {
+        stores[s].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
-          symbol: store[s].product.symbol,
-          unit: store[s].product.unit,
-          quantity: store[s].quantity,
-          price: (store[s].price * store[s].quantity).toFixed(2),
-          current_rate: store[s].product.price,
+          symbol: stores[s].product.symbol,
+          unit: stores[s].product.unit,
+          quantity: stores[s].quantity,
+          price: (
+            (await getPriceFromSymbol(
+              storeSymbolPrices,
+              stores[s].symbol,
+              stores[s].product.last_price
+            )) * stores[s].quantity
+          ).toFixed(2),
+          current_rate: stores[s].product.price,
         };
       }
     }
   }
   // My Order
-  const order = await orderModel.getByStatus(req.params.user_id, [
+  const orders = await orderModel.getByStatus(req.params.user_id, [
     "collect",
     "deliver",
   ]);
-  if (order) {
-    for (var o = 0; o < order.length; o++) {
-      order[o].product = await productModel.getProductWithFile(
-        order[o].product_id
+  let orderSymbolPrices = await getSymbolPrice(orders);
+  if (orders) {
+    for (var o = 0; o < orders.length; o++) {
+      orders[o].product = await productModel.getProductWithFile(
+        orders[o].product_id
       );
-      if (order[o].product) {
-        order[o].product.value = {
+      if (orders[o].product) {
+        orders[o].product.value = {
           currency: process.env.DEFAULT_CURRENCY,
-          symbol: order[o].product.symbol,
-          unit: order[o].product.unit,
-          quantity: order[o].quantity,
-          price: (order[o].price * order[o].quantity).toFixed(2),
-          current_rate: order[o].product.price,
+          symbol: orders[o].product.symbol,
+          unit: orders[o].product.unit,
+          quantity: orders[o].quantity,
+          price: (
+            (await getPriceFromSymbol(
+              orderSymbolPrices,
+              orders[o].symbol,
+              orders[o].product.last_price
+            )) * orders[o].quantity
+          ).toFixed(2),
+          current_rate: orders[o].product.price,
         };
       }
     }
   }
   let result = {
     user_id: req.params.user_id,
-    my_stake: stake,
-    my_store: store,
-    my_order: order,
+    my_stake: stakes,
+    my_store: stores,
+    my_order: orders,
   };
   return res.status(200).json({ data: result });
 };
