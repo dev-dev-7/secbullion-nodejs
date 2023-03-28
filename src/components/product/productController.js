@@ -30,13 +30,18 @@ exports.getAll = async (req, res) => {
 
 exports.details = async (req, res) => {
   const product = await productModel.getById(req.params.product_id);
+  let symbolPrices = await getSymbolPrice([{ symbol: product.symbol }]);
   if (product) {
     product.files = await productModel.getByFilesByProduct(product.id);
     product.value = {
       currency: process.env.DEFAULT_CURRENCY,
       symbol: product.symbol,
       unit: product.unit,
-      price: product.last_price.toFixed(2),
+      price: await getPriceFromSymbol(
+        symbolPrices,
+        product.symbol,
+        product.last_price
+      ),
       current_rate: product.price,
     };
   }
