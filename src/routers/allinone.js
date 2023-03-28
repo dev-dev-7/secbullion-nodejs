@@ -7,6 +7,6 @@ const verifyToken = require("./../helpers/verifyToken");
 // Allinone
 router
   .route("/all-in-one/:user_id")
-  .post([verifyToken, validation.getAll], allinoneController.getAll);
+  .get([verifyToken, validation.getAll], allinoneController.getAll);
 
 module.exports = router;
