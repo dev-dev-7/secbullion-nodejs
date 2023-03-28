@@ -16,7 +16,7 @@ exports.uploadMultiFiles = async (req, res) => {
     );
     return res.status(200).json({ success: true, data });
   } catch (err) {
-    console.error("error : ", err);
+    // console.error("error : ", err);
     if (err.code === "LIMIT_UNEXPECTED_FILE") {
       return res.status(500).json({
         success: false,

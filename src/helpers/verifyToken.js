@@ -11,8 +11,6 @@ function verifyToken(req, res, next) {
       if (user) {
         req.user = user.user;
       }
-      console.log("req.token: ", req.token);
-      console.log("req.user: ", req.user);
       next();
     } catch (e) {
       console.error(e);

@@ -234,6 +234,5 @@ exports.logout = async (req, res) => {
 };
 
 exports.deleteAccount = async (req, res) => {
-  console.log("user_id:", req.body.user_id);
   return res.status(200).json({ msg: "account deleted" });
 };
