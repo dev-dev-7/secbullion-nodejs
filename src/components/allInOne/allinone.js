@@ -2,7 +2,6 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
-const { getSymbolPrice, getPriceFromSymbol } = require("../../helpers/mt5");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
@@ -10,7 +9,6 @@ exports.getAll = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   // My Stake
   const stakes = await orderModel.getByStatus(req.params.user_id, ["stake"]);
-  let stakeSymbolPrices = await getSymbolPrice(stakes);
   if (stakes) {
     for (var t = 0; t < stakes.length; t++) {
       stakes[t].product = await productModel.getProductWithFile(
@@ -22,13 +20,7 @@ exports.getAll = async (req, res) => {
           symbol: stakes[t].product.symbol,
           unit: stakes[t].product.unit,
           quantity: stakes[t].quantity,
-          price: (
-            (await getPriceFromSymbol(
-              stakeSymbolPrices,
-              stakes[t].symbol,
-              stakes[t].product.last_price
-            )) * stakes[t].quantity
-          ).toFixed(2),
+          price: (stakes[t].product.last_price * stakes[t].quantity).toFixed(2),
           current_rate: stakes[t].product.price,
         };
       }
@@ -36,7 +28,6 @@ exports.getAll = async (req, res) => {
   }
   // My Store
   const stores = await orderModel.getByStatus(req.params.user_id, ["store"]);
-  let storeSymbolPrices = await getSymbolPrice(stores);
   if (stores) {
     for (var s = 0; s < stores.length; s++) {
       stores[s].product = await productModel.getProductWithFile(
@@ -48,13 +39,7 @@ exports.getAll = async (req, res) => {
           symbol: stores[s].product.symbol,
           unit: stores[s].product.unit,
           quantity: stores[s].quantity,
-          price: (
-            (await getPriceFromSymbol(
-              storeSymbolPrices,
-              stores[s].symbol,
-              stores[s].product.last_price
-            )) * stores[s].quantity
-          ).toFixed(2),
+          price: (stores[s].product.last_price * stores[s].quantity).toFixed(2),
           current_rate: stores[s].product.price,
         };
       }
@@ -65,7 +50,6 @@ exports.getAll = async (req, res) => {
     "collect",
     "deliver",
   ]);
-  let orderSymbolPrices = await getSymbolPrice(orders);
   if (orders) {
     for (var o = 0; o < orders.length; o++) {
       orders[o].product = await productModel.getProductWithFile(
@@ -77,13 +61,7 @@ exports.getAll = async (req, res) => {
           symbol: orders[o].product.symbol,
           unit: orders[o].product.unit,
           quantity: orders[o].quantity,
-          price: (
-            (await getPriceFromSymbol(
-              orderSymbolPrices,
-              orders[o].symbol,
-              orders[o].product.last_price
-            )) * orders[o].quantity
-          ).toFixed(2),
+          price: (orders[o].product.last_price * orders[o].quantity).toFixed(2),
           current_rate: orders[o].product.price,
         };
       }
