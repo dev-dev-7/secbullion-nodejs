@@ -56,8 +56,8 @@ const update = async (
 
 const remove = async (id) => {
   return db(table)
-    .del()
     .where("id", id)
+    .update({ status: 4 })
     .then((updated) => getById(id));
 };
 
@@ -78,9 +78,12 @@ const getActiveByCategory = (category_id) => {
 };
 
 const getActiveProductsWithFiles = () => {
-  return db.select(table + ".*",tableFiles+".file")
+  return db
+    .select(table + ".*", tableFiles + ".file")
     .from(table)
-    .leftJoin(tableFiles, table + ".id", tableFiles + ".product_id").groupBy('id');
+    .leftJoin(tableFiles, table + ".id", tableFiles + ".product_id")
+    .where(table + ".status", "!=", 4)
+    .groupBy("id");
 };
 
 const getProductWithFile = (product_id) => {
@@ -91,7 +94,7 @@ const getProductWithFile = (product_id) => {
 };
 
 const get = () => {
-  return db(table);
+  return db(table).where("status", "!=", 4);
 };
 
 const insertFiles = async (product_id, file) => {
@@ -147,5 +150,5 @@ module.exports = {
   getActiveProductsWithFiles,
   isExistProduct,
   updateProductPrice,
-  getFilesByProductId
+  getFilesByProductId,
 };

@@ -25,12 +25,7 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let products;
-  if (req.body.category_id) {
-    products = await model.get(req.body.category_id);
-  } else {
-    products = await model.get();
-  }
+  let products = await model.get();
   if (products) {
     for (i = 0; i < products.length; i++) {
       products[i].files = await model.getByFilesByProduct(products[i].id);
@@ -45,7 +40,7 @@ exports.update = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   let updated = await model.update(req.params.id, req.body);
-  if(updated){
+  if (updated) {
     if (req.body.files) {
       for (var i = 0; i < req.body.files.length; i++) {
         await model.insertFiles(req.params.id, req.body.files[i]);
