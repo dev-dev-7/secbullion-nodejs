@@ -167,7 +167,7 @@ exports.getSymbolPrice = async (products) => {
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
-          console.log(error);
+          // console.log(error);
           return;
         }
         req.Get(
@@ -178,8 +178,6 @@ exports.getSymbolPrice = async (products) => {
               return;
             }
             var answer = req.parseBodyJSON(error, res, body, null);
-            console.log("answer body: ", body);
-
             if (answer.answer) {
               // console.log("answer.answer", answer.answer);
               resolve(answer.answer);
