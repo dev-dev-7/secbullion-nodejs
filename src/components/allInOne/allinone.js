@@ -61,7 +61,7 @@ exports.getAll = async (req, res) => {
           symbol: orders[o].product.symbol,
           unit: orders[o].product.unit,
           quantity: orders[o].quantity,
-          price: (orders[o].product.last_price * orders[o].quantity).toFixed(2),
+          price: (orders[o].price * orders[o].quantity).toFixed(2),
           current_rate: orders[o].product.price,
         };
       }
