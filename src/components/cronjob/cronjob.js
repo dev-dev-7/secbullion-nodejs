@@ -6,7 +6,7 @@ const { getSymbolPrice, getPriceFromSymbol } = require("../../helpers/mt5");
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.get();
   if (products) {
-    for (var n = 1; n <= 7; n++) {
+    for (var n = 1; n <= 35; n++) {
       console.log("n:" + n);
       let symbolPrices = await getSymbolPrice(products);
       for (var i = 0; i < products.length; i++) {
