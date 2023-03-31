@@ -73,6 +73,10 @@ const getByCategory = (category_id) => {
   return db(table).where("category_id", category_id);
 };
 
+const getBySymbol = (symbol) => {
+  return db(table).where("symbol", symbol);
+};
+
 const getActiveByCategory = (category_id) => {
   return db(table).where("category_id", category_id).andWhere("status", 1);
 };
@@ -143,6 +147,7 @@ module.exports = {
   getById,
   getByTitle,
   getByCategory,
+  getBySymbol,
   getProductWithFile,
   getActiveByCategory,
   insertFiles,

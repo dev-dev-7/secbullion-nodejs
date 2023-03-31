@@ -68,7 +68,7 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
-    gold_price: "XAU USD",
+    symbol: await productModel.getBySymbol("XAUUSD"),
     user_id: req.params.user_id,
     my_stake: stakes,
     my_store: stores,
