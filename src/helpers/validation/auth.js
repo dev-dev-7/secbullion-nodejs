@@ -1,5 +1,5 @@
 const { check, body } = require("express-validator");
-const authModel = require("../../components/auth/authModel");
+const profileModel = require("../../components/profile/profileModel");
 
 // AUTH VALIDATION
 exports.login_validation = [
@@ -16,13 +16,13 @@ exports.register_validation = [
   check("email")
     .isEmail()
     .custom(async (value) => {
-      if (await authModel.getMetaDataKeyValue("email", value))
+      if (await profileModel.getMetaDataKeyValue("email", value))
         return Promise.reject("E-mail already exists");
     }),
   check("mobile")
     .notEmpty()
     .custom(async (value) => {
-      if (await authModel.getMetaDataKeyValue("mobile", value))
+      if (await profileModel.getMetaDataKeyValue("mobile", value))
         return Promise.reject("Mobile already exists");
     }),
   check("password")

@@ -241,3 +241,45 @@ exports.getSymbolPrice = async (products) => {
 //     });
 //    });
 // };
+
+exports.createMt5Account = async (body) => {
+  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  return new Promise((resolve, reject) => {
+    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      let group = "demo" + "\\" + "Sec" + "\\" + "Sec" + "\\" + "USD";
+      req.Get(
+        "/api/user/add?pass_main=" +
+          body.password +
+          "&pass_investor=" +
+          body.password +
+          "&group=" +
+          group +
+          "&name=" +
+          body.full_name.split(" ")[0] +
+          "&company=Secbullion&phone=" +
+          body.mobile +
+          "&email=" +
+          body.email +
+          "&id=" +
+          body.user_id +
+          "&leverage=500",
+        function (error, res, body) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
+        }
+      );
+    });
+  });
+};

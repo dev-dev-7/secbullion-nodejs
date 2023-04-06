@@ -8,6 +8,7 @@ const smsglobal = require("../../helpers/smsglobal");
 // const time = require("../../helpers/time");
 const config = require("../../config/index");
 const { validationResult } = require("express-validator");
+const { createMt5Account } = require("../../helpers/mt5");
 const { JWT_SECRETE_KEY } = config.tokens;
 
 exports.login = async (req, res) => {
@@ -55,6 +56,9 @@ exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  // create MT5 Accounts:
+  req.body.user_id = 12121;
+  let mt5result = await createMt5Account(req.body);
   const user = await authModel.createUser(req.body);
   if (user) {
     var arr = Object.entries(req.body);
@@ -88,6 +92,11 @@ exports.register = async (req, res) => {
         user.user_id,
         "user_id",
         user.user_id
+      );
+      await profileModel.insertUserMetaData(
+        user.user_id,
+        "mt5_account_no",
+        mt5result.Login
       );
       await walletModel.insertWallet(
         user.user_id,
