@@ -3,8 +3,10 @@ const orderModel = require("./orderModel");
 const cartModel = require("./../cart/cartModel");
 const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
+const profileModel = require("../profile/profileModel");
 const { validationResult } = require("express-validator");
 const { deliverEmailNotify } = require("../../helpers/sendEmail");
+const { sendBuyRequest } = require("../../helpers/mt5");
 
 exports.orderSummary = async (req, res) => {
   const errors = validationResult(req);
@@ -14,8 +16,7 @@ exports.orderSummary = async (req, res) => {
   let cartItems = await cartModel.getCartByUserId(req.body.user_id);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
-    order.currency = process.env.DEFAULT_CURRENCY,
-    order.subtotal = 0;
+    (order.currency = process.env.DEFAULT_CURRENCY), (order.subtotal = 0);
     order.coupon_used = coupon ? coupon.discount_price : 0;
     order.total = 0;
     if (cartItems.length) {
@@ -26,7 +27,8 @@ exports.orderSummary = async (req, res) => {
         cartItems[i].product.files = await productModel.getByFilesByProduct(
           cartItems[i].product_id
         );
-        order.subtotal += cartItems[i].product.last_price * cartItems[i].quantity;
+        order.subtotal +=
+          cartItems[i].product.last_price * cartItems[i].quantity;
       }
     }
     order.items = cartItems;
@@ -90,6 +92,15 @@ exports.submit = async (req, res) => {
           req.body.user_id,
           itemArray[i].product_id,
           itemArray[i].type
+        );
+        let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+          req.body.user_id,
+          "mt5_account_no"
+        );
+        await sendBuyRequest(
+          mt5AccountNumber.meta_values,
+          itemArray[i].product.symbol,
+          itemArray[i].quantity
         );
       }
     }

@@ -60,6 +60,37 @@ MT5Request.prototype.Get = function (path, callback) {
   });
 };
 
+MT5Request.prototype.Post = function (path, postData, callback) {
+  var options = {
+    hostname: this.server,
+    port: this.port,
+    path: path,
+    method: "POST",
+    agent: this.https,
+    rejectUnauthorized: false,
+    headers: {
+      Connection: "keep-alive",
+      "Content-Type": "application/x-www-form-urlencoded",
+      "Content-Length": postData.length,
+    },
+  };
+  var req = https.request(options, function (res) {
+    res.setEncoding("utf8");
+    var body = "";
+    res.on("data", function (chunk) {
+      body += chunk;
+    });
+    res.on("end", function () {
+      callback(null, res, body);
+    });
+  });
+  req.on("error", function (e) {
+    return callback(e);
+  });
+  req.write(postData);
+  req.end();
+};
+
 MT5Request.prototype.processAuth = function (answer, password) {
   //---
   var pass_md5 = crypto.createHash("md5");
@@ -268,6 +299,76 @@ exports.createMt5Account = async (body) => {
           body.user_id +
           "&leverage=500",
         function (error, res, body) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
+        }
+      );
+    });
+  });
+};
+
+exports.sendBuyRequest = async (account, symbol, quantity, price) => {
+  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  return new Promise((resolve, reject) => {
+    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      let rawBody = JSON.stringify({
+        Action: 200,
+        Login: account,
+        Symbol: symbol,
+        Volume: quantity,
+      });
+      req.Post(
+        "/api/dealer/send_request",
+        rawBody,
+        function (error, res, body) {
+          console.log("body: ", body);
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
+        }
+      );
+    });
+  });
+};
+
+exports.deposit = async (account, type, balance, comment) => {
+  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  return new Promise((resolve, reject) => {
+    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+      if (error) {
+        console.log(error);
+        return;
+      }
+      req.Get(
+        "/api/trade/balance?login=" +
+          account +
+          "&type=" +
+          type +
+          "&balance=" +
+          balance +
+          "&comment=" +
+          comment,
+        function (error, res, body) {
+          console.log("body: ", body);
           if (error) {
             console.log(error);
             return;

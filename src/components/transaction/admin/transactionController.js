@@ -3,6 +3,7 @@ const bankDetailsModel = require("./../../bankDetails/bankDetailsModel");
 const walletModel = require("./../../wallet/walletModel");
 const authModel = require("./../../auth/authModel");
 const profileModel = require("./../../profile/profileModel");
+const { deposit } = require("../../../helpers/mt5");
 
 exports.get = async (req, res) => {
   const transactions = await model.getAllTransactions();
@@ -11,9 +12,13 @@ exports.get = async (req, res) => {
       transactions[i].bankDetails = await bankDetailsModel.getBankById(
         transactions[i].bank_detail_id
       );
-      transactions[i].user = await authModel.getUserById(transactions[i].user_id);
-      transactions[i].user.id = i+1;
-      transactions[i].user.metadata = await profileModel.getUserMetaData(transactions[i].user_id);
+      transactions[i].user = await authModel.getUserById(
+        transactions[i].user_id
+      );
+      transactions[i].user.id = i + 1;
+      transactions[i].user.metadata = await profileModel.getUserMetaData(
+        transactions[i].user_id
+      );
     }
   }
   if (transactions) {
@@ -28,7 +33,20 @@ exports.update = async (req, res) => {
   if (transaction && transaction.status == 0) {
     let wallet = await walletModel.getWalletByUserId(transaction.user_id);
     let walletBalance = wallet.cash_balance + transaction.amount;
-    await model.updateTransaction(req.params.transaction_id, { status: req.body.status });
+    let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+      transaction.user_id,
+      "mt5_account_no"
+    );
+    let mt5Result = await deposit(
+      mt5AccountNumber.meta_values,
+      "2",
+      transaction.amount,
+      "New%20Deposit%20"
+    );
+    await model.updateTransaction(req.params.transaction_id, {
+      status: req.body.status,
+      ticket: mt5Result.ticket,
+    });
     await walletModel.updateWallet(transaction.user_id, {
       cash_balance: walletBalance,
     });
