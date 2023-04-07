@@ -224,30 +224,36 @@ exports.getSymbolPrice = async (products) => {
   }
 };
 
-// exports.getSymbolDetails = async (symbol) => {
-//   var req = new MT5Request("secmt5.afkkarr.com", 443);
-//   return new Promise((resolve, reject) => {
-//     req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
-//       if (error) {
-//         console.log(error);
-//         return;
-//       }
-//       req.Get("/api/symbol/get?symbol=" + symbol, function (error, res, body) {
-//         if (error) {
-//           console.log(error);
-//           return;
-//         }
-//         var answer = req.parseBodyJSON(error, res, body, null);
-//         if (answer.answer) {
-//           console.log("answer.answer", answer.answer);
-//           resolve(answer.answer);
-//         } else {
-//          reject(null);
-//         }
-//       });
-//     });
-//    });
-// };
+exports.getSymbolDetails = async (symbol, request_id) => {
+  if (symbol) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        req.Get(
+          "/api/symbol/get?symbol=" + symbol + "&trans_id=" + request_id,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            if (answer.answer) {
+              resolve(answer.answer);
+            } else {
+              reject(null);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    return [];
+  }
+};
 
 // exports.getAllSymbols = async (symbol) => {
 //   var req = new MT5Request("secmt5.afkkarr.com", 443);
@@ -333,7 +339,6 @@ exports.sendBuyRequest = async (account, symbol, quantity, price) => {
         "/api/dealer/send_request",
         rawBody,
         function (error, res, body) {
-          console.log("body: ", body);
           if (error) {
             console.log(error);
             return;

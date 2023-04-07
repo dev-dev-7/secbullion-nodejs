@@ -78,7 +78,7 @@ exports.submit = async (req, res) => {
         let product = await productModel.getById(itemArray[i].product_id);
         itemArray[i].product = product;
         itemArray[i].price = product.last_price;
-        await orderModel.insertOrderDetails(
+        let orderItem = await orderModel.insertOrderDetails(
           req.body.user_id,
           order.id,
           itemArray[i]
@@ -97,11 +97,17 @@ exports.submit = async (req, res) => {
           req.body.user_id,
           "mt5_account_no"
         );
-        await sendBuyRequest(
-          mt5AccountNumber.meta_values,
-          itemArray[i].product.symbol,
-          itemArray[i].quantity
-        );
+        if (mt5AccountNumber?.meta_values) {
+          let request = await sendBuyRequest(
+            mt5AccountNumber.meta_values,
+            itemArray[i].product.symbol,
+            itemArray[i].quantity
+          );
+          await orderModel.updateOrderProductRequestId(
+            orderItem.id,
+            request.id
+          );
+        }
       }
     }
     order.items = itemArray;

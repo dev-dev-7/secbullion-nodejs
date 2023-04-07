@@ -47,6 +47,10 @@ const getByTaxnId = (txn_token) => {
   return db(orderTable).where("txn_token", txn_token).first();
 };
 
+const getOrderDetailsById = (id) => {
+  return db(orderDetailsTable).where("id", id).first();
+};
+
 const insertOrderDetails = async (
   user_id,
   order_id,
@@ -63,20 +67,26 @@ const insertOrderDetails = async (
     type,
   }
 ) => {
-  return db(orderDetailsTable).insert({
-    user_id: user_id,
-    order_id: order_id,
-    product_id: product_id,
-    quantity: quantity,
-    unit: unit,
-    symbol: symbol,
-    price: price,
-    currency: currency,
-    duration: duration ? duration : 0,
-    duration_type: duration_type ? duration_type : "",
-    delivery_id: delivery_id ? delivery_id : "",
-    status: type,
-  });
+  return db(orderDetailsTable)
+    .insert({
+      user_id: user_id,
+      order_id: order_id,
+      product_id: product_id,
+      quantity: quantity,
+      unit: unit,
+      symbol: symbol,
+      price: price,
+      currency: currency,
+      duration: duration ? duration : 0,
+      duration_type: duration_type ? duration_type : "",
+      delivery_id: delivery_id ? delivery_id : "",
+      status: type,
+    })
+    .then((id) => getOrderDetailsById(id));
+};
+
+const getAllStakes = () => {
+  return db(orderDetailsTable).where("status", "stake");
 };
 
 const getByStatus = (user_id, statuses) => {
@@ -146,9 +156,23 @@ const updateOrderProductPrice = async (product_id, price) => {
     });
 };
 
+const updateStakeSwapValue = async (id, swap) => {
+  return db(orderDetailsTable)
+    .where("id", id)
+    .andWhere("status", "stake")
+    .update({
+      swap: swap,
+    });
+};
+
 const updateOrderProductStatus = async (id, status) => {
   return db(orderDetailsTable).where("id", id).update({
     status: status,
+  });
+};
+const updateOrderProductRequestId = async (id, requestid) => {
+  return db(orderDetailsTable).where("id", id).update({
+    mt5_request_id: requestid,
   });
 };
 
@@ -184,6 +208,7 @@ module.exports = {
   getOrderById,
   getOrderByUserId,
   getAllOrders,
+  getAllStakes,
   getByTaxnId,
   insertOrderDetails,
   getByStatus,
@@ -195,6 +220,8 @@ module.exports = {
   updateOrderProduct,
   updateOrderProductQuantity,
   updateOrderProductPrice,
+  updateStakeSwapValue,
   updateOrderProductStatus,
   getSumOfUserStack,
+  updateOrderProductRequestId,
 };
