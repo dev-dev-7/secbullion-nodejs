@@ -56,9 +56,6 @@ exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  // create MT5 Accounts:
-  req.body.user_id = 12121;
-  let mt5result = await createMt5Account(req.body);
   const user = await authModel.createUser(req.body);
   if (user) {
     var arr = Object.entries(req.body);
@@ -93,6 +90,9 @@ exports.register = async (req, res) => {
         "user_id",
         user.user_id
       );
+      // create MT5 Accounts:
+      req.body.user_id = user.user_id;
+      let mt5result = await createMt5Account(req.body);
       await profileModel.insertUserMetaData(
         user.user_id,
         "mt5_account_no",
