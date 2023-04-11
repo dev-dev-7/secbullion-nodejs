@@ -46,34 +46,34 @@ exports.getAll = async (req, res) => {
     }
   }
   // My Order
-  // const orders = await orderModel.getByStatus(req.params.user_id, [
-  //   "collect",
-  //   "deliver",
-  //   "sell",
-  // ]);
-  // if (orders) {
-  //   for (var o = 0; o < orders.length; o++) {
-  //     orders[o].product = await productModel.getProductWithFile(
-  //       orders[o].product_id
-  //     );
-  //     if (orders[o].product) {
-  //       orders[o].product.value = {
-  //         currency: process.env.DEFAULT_CURRENCY,
-  //         symbol: orders[o].product.symbol,
-  //         unit: orders[o].product.unit,
-  //         quantity: orders[o].quantity,
-  //         price: (orders[o].price * orders[o].quantity).toFixed(2),
-  //         current_rate: orders[o].product.price,
-  //       };
-  //     }
-  //   }
-  // }
+  const orders = await orderModel.getByStatus(req.params.user_id, [
+    "collect",
+    "deliver",
+    "sell",
+  ]);
+  if (orders) {
+    for (var o = 0; o < orders.length; o++) {
+      orders[o].product = await productModel.getProductWithFile(
+        orders[o].product_id
+      );
+      if (orders[o].product) {
+        orders[o].product.value = {
+          currency: process.env.DEFAULT_CURRENCY,
+          symbol: orders[o].product.symbol,
+          unit: orders[o].product.unit,
+          quantity: orders[o].quantity,
+          price: (orders[o].price * orders[o].quantity).toFixed(2),
+          current_rate: orders[o].product.price,
+        };
+      }
+    }
+  }
   let result = {
     symbol: await productModel.getBySymbol("XAUUSD"),
     user_id: req.params.user_id,
     my_stake: stakes,
     my_store: stores,
-    // my_order: orders,
+    my_order: orders,
   };
   return res.status(200).json({ data: result });
 };
