@@ -1,5 +1,6 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
+const walletModel = require("../../wallet/walletModel");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders();
@@ -87,6 +88,9 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       if (req.body.quantity <= selectedProduct.quantity) {
         await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
+    }
+    if (req.body.status == "sell") {
+      // await walletModel.updateOrderProduct(selectedProduct.id, req.body);
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {
