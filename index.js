@@ -6,6 +6,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
 const server = require("http").createServer(app);
+server.keepAliveTimeout = 30 * 1000;
 const port = require("./src/config").PORT;
 const version = require("./src/config").VERSION;
 const router = require("./src/routers/");
