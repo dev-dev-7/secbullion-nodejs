@@ -51,20 +51,14 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         );
         // Add for existing product
         req.body.quantity = existStatusItem.quantity + req.body.quantity;
-        await orderModel.updateOrderProduct(
-          existStatusItem.id,
-          req.body
-        );
+        await orderModel.updateOrderProduct(existStatusItem.id, req.body);
       } else if (
         existStatusItem &&
         req.body.quantity == selectedProduct.quantity
       ) {
         //Add for existing product
         req.body.quantity = req.body.quantity + existStatusItem.quantity;
-        await orderModel.updateOrderProduct(
-          existStatusItem.id,
-          req.body
-        );
+        await orderModel.updateOrderProduct(existStatusItem.id, req.body);
         // Delete selected product
         await orderModel.deleteUserOrderProduct(
           selectedProduct.id,
@@ -88,9 +82,9 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           await orderModel.updateOrderProduct(selectedProduct.id, req.body);
         }
       }
-    }else{
+    } else {
       // Update and overwrite missing details for same status
-      if(req.body.quantity <= selectedProduct.quantity){
+      if (req.body.quantity <= selectedProduct.quantity) {
         await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
     }
