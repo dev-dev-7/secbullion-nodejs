@@ -12,7 +12,7 @@ router
 router
   .route("/profile/address/:user_id")
   .post([verifyToken, validation.add_address], profileController.addAddress)
-  .get([verifyToken], profileController.getAddress)
+  .get([verifyToken], profileController.getAllAddress)
   .put([verifyToken, validation.put_address], profileController.updateAddress)
   .delete(
     [verifyToken, validation.delete_address],
