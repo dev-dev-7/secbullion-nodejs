@@ -1,6 +1,7 @@
 require("dotenv").config();
 const orderModel = require("../orderModel");
 const walletModel = require("../../wallet/walletModel");
+const productModel = require("../../product/productModel");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders();
@@ -90,7 +91,19 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       }
     }
     if (req.body.status == "sell") {
-      // await walletModel.updateOrderProduct(selectedProduct.id, req.body);
+      let product = await productModel.getById(selectedProduct.product_id);
+      let wallet = await walletModel.getWalletByUserId(selectedProduct.user_id);
+      let updatedWalletBalance = wallet.cash_balance + product.last_price;
+      await walletModel.updateWallet(selectedProduct.user_id, {
+        cash_balance: updatedWalletBalance,
+      });
+      await walletModel.insertWalletHistory(
+        selectedProduct.user_id,
+        "sellback",
+        "balance",
+        product.last_price,
+        selectedProduct.id
+      );
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {

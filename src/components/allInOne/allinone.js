@@ -49,7 +49,7 @@ exports.getAll = async (req, res) => {
   const orders = await orderModel.getByStatus(req.params.user_id, [
     "collect",
     "deliver",
-    "sell",
+    "sellback",
   ]);
   if (orders) {
     for (var o = 0; o < orders.length; o++) {

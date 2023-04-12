@@ -160,7 +160,7 @@ exports.getMyOrder = async (req, res) => {
     "collect",
     "deliver",
     "delivered",
-    "sell",
+    "sellback",
   ]);
   if (product) {
     for (var i = 0; i < product.length; i++) {
