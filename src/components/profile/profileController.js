@@ -32,7 +32,7 @@ exports.get = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   let user = await authModel.getUserById(req.params.user_id);
-  if (user.user_id) {
+  if (user) {
     return res
       .status(201)
       .json({ data: await model.getUserMetaData(req.params.user_id) });
