@@ -181,7 +181,7 @@ exports.resendOtp = async (req, res) => {
         "otp_code",
         otp_code
       );
-      // smsglobal.sendMessage(req.body.mobile, otp_code);
+      smsglobal.sendMessage(req.body.mobile, otp_code);
       await profileModel.insertUserHistory(
         mobile.user_id,
         "otp_code",
