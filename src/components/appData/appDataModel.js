@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
 const table = "tbl_app_metadata";
+const tableUserMetadataTable = "tbl_user_metadata";
 
 const create = async ({ meta_key, meta_values }) => {
   return db(table)
@@ -29,6 +30,10 @@ const getByMetaKey = (meta_key) => {
   return db(table).where("meta_key", meta_key).first();
 };
 
+const getByUserMetaKey = (meta_key) => {
+  return db(tableUserMetadataTable).where("meta_key", meta_key);
+};
+
 const getAll = () => {
   return db(table);
 };
@@ -43,6 +48,7 @@ module.exports = {
   remove,
   getById,
   getByMetaKey,
+  getByUserMetaKey,
   getAll,
   getActive,
 };
