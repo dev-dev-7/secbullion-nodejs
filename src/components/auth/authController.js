@@ -225,16 +225,14 @@ exports.resetPassword = async (req, res) => {
       msg: "Password Updated",
     });
   } else {
-    return res
-      .status(400)
-      .json({ errors: [{ msg: "Error in reset password" }] });
+    return res.status(400).json({ errors: [{ msg: "Invalid request" }] });
   }
 };
 
 exports.logout = async (req, res) => {
-  return res.status(200).json({ msg: "logout success" });
+  return res.status(200).json({ msg: "Logout success" });
 };
 
 exports.deleteAccount = async (req, res) => {
-  return res.status(200).json({ msg: "account deleted" });
+  return res.status(200).json({ msg: "Account deleted" });
 };
