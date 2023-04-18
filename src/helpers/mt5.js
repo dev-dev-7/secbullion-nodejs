@@ -224,37 +224,6 @@ exports.getSymbolPrice = async (products) => {
   }
 };
 
-exports.getSymbolDetails = async (symbol, request_id) => {
-  if (symbol) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
-    return new Promise((resolve, reject) => {
-      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
-        if (error) {
-          console.log(error);
-          return;
-        }
-        req.Get(
-          "/api/symbol/get?symbol=" + symbol + "&trans_id=" + request_id,
-          function (error, res, body) {
-            if (error) {
-              console.log(error);
-              return;
-            }
-            var answer = req.parseBodyJSON(error, res, body, null);
-            if (answer.answer) {
-              resolve(answer.answer);
-            } else {
-              reject(null);
-            }
-          }
-        );
-      });
-    });
-  } else {
-    return [];
-  }
-};
-
 // exports.getAllSymbols = async (symbol) => {
 //   var req = new MT5Request("secmt5.afkkarr.com", 443);
 //   return new Promise((resolve, reject) => {
@@ -353,6 +322,71 @@ exports.sendBuyRequest = async (account, symbol, quantity, price) => {
       );
     });
   });
+};
+
+exports.getRequestDetails = async (symbol) => {
+  console.log("symbol: ", symbol);
+  if (symbol) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        let rawBody = JSON.stringify({
+          Position: symbol,
+        });
+        req.Post("/api/position/get", rawBody, function (error, res, body) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          console.log("body: ", body);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
+        });
+      });
+    });
+  } else {
+    return [];
+  }
+};
+
+exports.closeRequest = async (request_id) => {
+  if (request_id) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        req.Get(
+          "/api/dealer/get_request_result?id=" + request_id,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            console.log("body: ", body);
+            if (answer.answer) {
+              resolve(answer.answer);
+            } else {
+              reject(null);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    return [];
+  }
 };
 
 exports.deposit = async (account, type, balance, comment) => {

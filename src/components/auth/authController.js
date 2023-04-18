@@ -231,7 +231,9 @@ exports.resetPassword = async (req, res) => {
         msg: "Password Updated",
       });
     } else {
-      return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+      return res
+        .status(400)
+        .json({ errors: [{ msg: "Error in reset password" }] });
     }
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });

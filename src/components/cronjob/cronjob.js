@@ -3,7 +3,7 @@ const productModel = require("../product/productModel");
 const orderModel = require("../order/orderModel");
 const {
   getSymbolPrice,
-  getSymbolDetails,
+  getRequestDetails,
   getPriceFromSymbol,
 } = require("../../helpers/mt5");
 const {
@@ -45,14 +45,13 @@ exports.stakeUpdate = async (req, res) => {
         );
         if (getNumberOfDays(expiryDate, todayDate) > 0) {
           if (stakes[i].mt5_request_id) {
-            let symbolPrices = await getSymbolDetails(
-              stakes[i].symbol,
+            let symbolDetails = await getRequestDetails(
               stakes[i].mt5_request_id
             );
-            if (symbolPrices) {
+            if (symbolDetails) {
               await orderModel.updateStakeSwapValue(
                 stakes[i].id,
-                symbolPrices.SwapLong
+                symbolDetails.SwapLong
               );
             }
           }
