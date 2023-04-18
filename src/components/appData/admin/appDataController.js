@@ -15,8 +15,10 @@ exports.add = async (req, res) => {
 };
 
 exports.getAll = async (req, res) => {
-  const appData = await model.getAll();
-  return res.status(201).json({ data: appData });
+  let appData = await model.getAll();
+  let branchAddress = await model.getByUserMetaKey("branch_address");
+  const mergeResult = [...appData, ...branchAddress];
+  return res.status(201).json({ data: mergeResult });
 };
 
 exports.update = async (req, res) => {
@@ -30,5 +32,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const appData = await model.remove(req.params.id);
-  return res.status(201).json({ data: appData, msg:"App data has been successfully deleted." });
+  return res
+    .status(201)
+    .json({ data: appData, msg: "App data has been successfully deleted." });
 };
