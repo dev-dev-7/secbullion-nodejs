@@ -25,7 +25,7 @@ router.post(
 
 router.post(
   "/reset-password",
-  validation.reset_password_validation,
+  [verifyToken, validation.reset_password_validation],
   authController.resetPassword
 );
 

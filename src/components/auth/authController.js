@@ -208,35 +208,26 @@ exports.resetPassword = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let otp_code = await profileModel.getUserMetaDataKeyValue(
-    req.body.user_id,
-    "otp_code",
-    req.body.otp_code
-  );
-  if (otp_code) {
-    let user = await authModel.updateUser(req.body.user_id, {
-      password: Hash.make(req.body.password),
+  let user = await authModel.updateUser(req.body.user_id, {
+    password: Hash.make(req.body.password),
+  });
+  if (user) {
+    await profileModel.updateUserMetaData(
+      req.body.user_id,
+      "otp_code",
+      Math.floor(100000 + Math.random() * 900000)
+    );
+    return res.status(201).json({
+      data: {
+        user: user,
+        metadata: await profileModel.getUserMetaData(user.user_id),
+      },
+      msg: "Password Updated",
     });
-    if (user) {
-      await profileModel.updateUserMetaData(
-        req.body.user_id,
-        "otp_code",
-        Math.floor(100000 + Math.random() * 900000)
-      );
-      return res.status(201).json({
-        data: {
-          user: user,
-          metadata: await profileModel.getUserMetaData(user.user_id),
-        },
-        msg: "Password Updated",
-      });
-    } else {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "Error in reset password" }] });
-    }
   } else {
-    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+    return res
+      .status(400)
+      .json({ errors: [{ msg: "Error in reset password" }] });
   }
 };
 
