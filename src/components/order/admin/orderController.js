@@ -68,17 +68,20 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         );
       } else {
         if (req.body.quantity < selectedProduct.quantity) {
-          // Minus from selected item
-          await orderModel.updateOrderProductQuantity(
-            selectedProduct.id,
-            selectedProduct.quantity - req.body.quantity
-          );
           // insert new item if not exist
-          await orderModel.insertOrderDetails(
+          req.body.type = req.body.status;
+          let inserted = await orderModel.insertOrderDetails(
             selectedProduct.user_id,
             selectedProduct.order_id,
             req.body
           );
+          if (inserted) {
+            // Minus from selected item
+            await orderModel.updateOrderProductQuantity(
+              selectedProduct.id,
+              selectedProduct.quantity - req.body.quantity
+            );
+          }
         } else if (req.body.quantity == selectedProduct.quantity) {
           // convert product to new status with same quantity
           await orderModel.updateOrderProduct(selectedProduct.id, req.body);

@@ -45,7 +45,10 @@ exports.stakeUpdate = async (req, res) => {
         );
         if (getNumberOfDays(expiryDate, todayDate) > 0) {
           if (stakes[i].mt5_request_id) {
-            let symbolPrices = await getSymbolDetails(stakes[i].symbol);
+            let symbolPrices = await getSymbolDetails(
+              stakes[i].symbol,
+              stakes[i].mt5_request_id
+            );
             if (symbolPrices) {
               await orderModel.updateStakeSwapValue(
                 stakes[i].id,
