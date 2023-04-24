@@ -257,6 +257,11 @@ exports.createMt5Account = async (body) => {
         return;
       }
       let group = "demo" + "\\" + "Sec" + "\\" + "Sec" + "\\" + "USD";
+      let firtName = body.full_name.split(" ")[0];
+      let lastName = body.full_name.split(" ")[1]
+        ? body.full_name.split(" ")[1]
+        : "";
+      let fullName = firtName + (lastName ? "%20" + lastName : "");
       req.Get(
         "/api/user/add?pass_main=" +
           body.password +
@@ -265,7 +270,7 @@ exports.createMt5Account = async (body) => {
           "&group=" +
           group +
           "&name=" +
-          body.full_name.split(" ")[0] +
+          fullName +
           "&company=Secbullion&phone=" +
           body.mobile +
           "&email=" +
@@ -280,6 +285,7 @@ exports.createMt5Account = async (body) => {
           }
           var answer = req.parseBodyJSON(error, res, body, null);
           if (answer.answer) {
+            console.log(answer.answer);
             resolve(answer.answer);
           } else {
             reject(null);
