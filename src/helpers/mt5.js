@@ -271,6 +271,8 @@ exports.createMt5Account = async (body) => {
           group +
           "&name=" +
           fullName +
+          "&country=" +
+          body.nationality +
           "&company=Secbullion&phone=" +
           body.mobile +
           "&email=" +

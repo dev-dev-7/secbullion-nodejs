@@ -56,8 +56,6 @@ exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  await createMt5Account(req.body);
-  return;
   const user = await authModel.createUser(req.body);
   if (user) {
     var arr = Object.entries(req.body);
