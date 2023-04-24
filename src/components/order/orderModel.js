@@ -171,9 +171,9 @@ const updateOrderProductStatus = async (id, status) => {
     status: status,
   });
 };
-const updateOrderProductRequestId = async (id, requestid) => {
+const updateOrderProductTicketId = async (id, ticket_id) => {
   return db(orderDetailsTable).where("id", id).update({
-    mt5_request_id: requestid,
+    mt5_ticket_id: ticket_id,
   });
 };
 
@@ -224,5 +224,5 @@ module.exports = {
   updateStakeSwapValue,
   updateOrderProductStatus,
   getSumOfUserStack,
-  updateOrderProductRequestId,
+  updateOrderProductTicketId,
 };

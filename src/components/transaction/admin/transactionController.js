@@ -3,7 +3,7 @@ const bankDetailsModel = require("./../../bankDetails/bankDetailsModel");
 const walletModel = require("./../../wallet/walletModel");
 const authModel = require("./../../auth/authModel");
 const profileModel = require("./../../profile/profileModel");
-const { deposit } = require("../../../helpers/mt5");
+const { balance } = require("../../../helpers/mt5");
 
 exports.get = async (req, res) => {
   const transactions = await model.getAllTransactions();
@@ -37,7 +37,7 @@ exports.update = async (req, res) => {
       transaction.user_id,
       "mt5_account_no"
     );
-    let mt5Result = await deposit(
+    let mt5Result = await balance(
       mt5AccountNumber.meta_values,
       "2",
       transaction.amount,

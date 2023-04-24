@@ -2,6 +2,7 @@ require("dotenv").config();
 const orderModel = require("../orderModel");
 const walletModel = require("../../wallet/walletModel");
 const productModel = require("../../product/productModel");
+const { closeRequest } = require("../../../helpers/mt5");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders();
@@ -93,7 +94,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
     }
-    if (req.body.status == "sell") {
+    if (req.body.status == "sellback") {
       let product = await productModel.getById(selectedProduct.product_id);
       let wallet = await walletModel.getWalletByUserId(selectedProduct.user_id);
       let updatedWalletBalance = wallet.cash_balance + product.last_price;
@@ -107,6 +108,9 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         product.last_price,
         selectedProduct.id
       );
+      // await closeRequest(selectedProduct.mt5_ticket_id);
+    } else if (req.body.status == "deliver" || req.body.status == "collect") {
+      // await closeRequest(selectedProduct.mt5_ticket_id);
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {
