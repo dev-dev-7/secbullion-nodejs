@@ -97,9 +97,10 @@ exports.changeMyOrderItemStatus = async (req, res) => {
     if (req.body.status == "sellback") {
       let product = await productModel.getById(selectedProduct.product_id);
       let wallet = await walletModel.getWalletByUserId(selectedProduct.user_id);
-      let updatedWalletBalance = wallet.cash_balance + product.last_price;
+      let updatedBalance =
+        wallet.cash_balance + (product.last_price + req.body.quantity);
       await walletModel.updateWallet(selectedProduct.user_id, {
-        cash_balance: updatedWalletBalance,
+        cash_balance: updatedBalance,
       });
       await walletModel.insertWalletHistory(
         selectedProduct.user_id,

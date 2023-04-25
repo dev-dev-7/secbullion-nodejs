@@ -312,23 +312,19 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
         Symbol: symbol,
         Volume: quantity,
       });
-      req.Post(
-        "/api/dealer/send_request",
-        rawBody,
-        function (error, res, body) {
-          console.log(body);
-          if (error) {
-            console.log(error);
-            return;
-          }
-          var answer = req.parseBodyJSON(error, res, body, null);
-          if (answer.answer) {
-            resolve(answer.answer);
-          } else {
-            reject(null);
-          }
+      req.Post("/api/order", rawBody, function (error, res, body) {
+        console.log("body:", body);
+        if (error) {
+          console.log(error);
+          return;
         }
-      );
+        var answer = req.parseBodyJSON(error, res, body, null);
+        if (answer.answer) {
+          resolve(answer.answer);
+        } else {
+          reject(null);
+        }
+      });
     });
   });
 };
