@@ -301,30 +301,37 @@ exports.createMt5Account = async (body) => {
 exports.sendBuyRequest = async (account, symbol, quantity) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   return new Promise((resolve, reject) => {
-    req.Auth(1000512, "varybpr2", "484", "WebManager", function (error) {
+    req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
       if (error) {
         console.log(error);
         return;
       }
       let rawBody = JSON.stringify({
-        Action: 200,
         Login: account,
-        Symbol: symbol,
+        SourceLogin: account,
+        Action: 200,
+        Type: 2,
         Volume: quantity,
+        Symbol: symbol,
+        PriceOrder: 2000.61,
       });
-      req.Post("/api/order", rawBody, function (error, res, body) {
-        console.log("body:", body);
-        if (error) {
-          console.log(error);
-          return;
+      req.Post(
+        "/api/dealer/send_request",
+        rawBody,
+        function (error, res, body) {
+          console.log("body:", body);
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
         }
-        var answer = req.parseBodyJSON(error, res, body, null);
-        if (answer.answer) {
-          resolve(answer.answer);
-        } else {
-          reject(null);
-        }
-      });
+      );
     });
   });
 };

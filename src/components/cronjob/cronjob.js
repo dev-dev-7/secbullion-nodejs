@@ -16,8 +16,10 @@ const {
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.get();
   if (products) {
-    for (var n = 1; n <= 30; n++) {
+    for (var n = 1; n <= 7; n++) {
       let symbolPrices = await getSymbolPrice(products);
+      console.log(symbolPrices);
+      console.log(n);
       for (var i = 0; i < products.length; i++) {
         let price = await getPriceFromSymbol(symbolPrices, products[i].symbol);
         if (price) {
@@ -34,7 +36,7 @@ exports.priceUpdate = async (req, res) => {
 };
 
 exports.stakeUpdate = async (req, res) => {
-  let result = await sendBuyRequest(1000512, "XAUSSD", 1);
+  let result = await sendBuyRequest(1000526, "xauusd.", 1);
   console.log("result:", result);
   // const stakes = await orderModel.getAllStakes();
   // if (stakes) {
