@@ -16,7 +16,7 @@ const {
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.get();
   if (products) {
-    for (var n = 1; n <= 7; n++) {
+    for (var n = 1; n <= 20; n++) {
       let symbolPrices = await getSymbolPrice(products);
       console.log(symbolPrices);
       console.log(n);
