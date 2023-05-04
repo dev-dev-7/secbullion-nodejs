@@ -6,6 +6,9 @@ const {
   sendBuyRequest,
   getRequestDetails,
   getPriceFromSymbol,
+  getBalance,
+  updateBalance,
+  closeRequest,
 } = require("../../helpers/mt5");
 const {
   getExpiryDate,
@@ -36,7 +39,8 @@ exports.priceUpdate = async (req, res) => {
 };
 
 exports.stakeUpdate = async (req, res) => {
-  let result = await sendBuyRequest(1000526, "xauusd.", 1);
+  // let result = await sendBuyRequest(1000526, "XAUUSD.", 1);
+  let result = await getRequestDetails(59);
   console.log("result:", result);
   // const stakes = await orderModel.getAllStakes();
   // if (stakes) {

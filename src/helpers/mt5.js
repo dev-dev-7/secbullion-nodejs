@@ -307,13 +307,11 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
         return;
       }
       let rawBody = JSON.stringify({
-        Login: account,
-        SourceLogin: account,
         Action: 200,
-        Type: 2,
-        Volume: quantity,
+        Login: account,
         Symbol: symbol,
-        PriceOrder: 2000.61,
+        Volume: quantity + "0000",
+        Type: 0,
       });
       req.Post(
         "/api/dealer/send_request",
@@ -336,8 +334,8 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
-exports.getRequestDetails = async (request_id) => {
-  if (request_id) {
+exports.getRequestDetails = async (id) => {
+  if (id) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -345,8 +343,9 @@ exports.getRequestDetails = async (request_id) => {
           console.log(error);
           return;
         }
+        console.log("id: ", id);
         req.Get(
-          "/api/dealer/get_request_result?id=" + request_id,
+          "/api/dealer/get_request_result?id=" + id,
           function (error, res, body) {
             if (error) {
               console.log(error);
@@ -368,8 +367,8 @@ exports.getRequestDetails = async (request_id) => {
   }
 };
 
-exports.closeRequest = async (ticket_id) => {
-  if (ticket_id) {
+exports.closeRequest = async (account, symbol, quantity, position) => {
+  if (account) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -377,8 +376,18 @@ exports.closeRequest = async (ticket_id) => {
           console.log(error);
           return;
         }
-        req.Get(
-          "/api/dealer/get_request_result?ticket=" + ticket_id,
+        let rawBody = JSON.stringify({
+          SourceLogin: 1005,
+          Action: 200,
+          Login: account,
+          Symbol: symbol,
+          Volume: quantity + "0000",
+          Type: 1,
+          Position: position,
+        });
+        req.Post(
+          "/api/dealer/send_request",
+          rawBody,
           function (error, res, body) {
             if (error) {
               console.log(error);
@@ -399,7 +408,35 @@ exports.closeRequest = async (ticket_id) => {
   }
 };
 
-exports.balance = async (account, type, balance, comment) => {
+exports.getBalance = async (account) => {
+  if (account) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        req.Get("/api/user/get?login=" + account, function (error, res, body) {
+          if (error) {
+            console.log(error);
+            return;
+          }
+          var answer = req.parseBodyJSON(error, res, body, null);
+          if (answer.answer) {
+            resolve(answer.answer);
+          } else {
+            reject(null);
+          }
+        });
+      });
+    });
+  } else {
+    return [];
+  }
+};
+
+exports.updateBalance = async (account, balance, comment) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -410,8 +447,7 @@ exports.balance = async (account, type, balance, comment) => {
       req.Get(
         "/api/trade/balance?login=" +
           account +
-          "&type=" +
-          type +
+          "&type=4" +
           "&balance=" +
           balance +
           "&comment=" +

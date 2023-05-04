@@ -1,8 +1,10 @@
 require("dotenv").config();
+const authorization = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
 const walletModel = require("../../wallet/walletModel");
 const productModel = require("../../product/productModel");
-const { closeRequest } = require("../../../helpers/mt5");
+const profileModel = require("../../profile/profileModel");
+const { updateBalance, closeRequest } = require("../../../helpers/mt5");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders();
@@ -29,6 +31,11 @@ exports.changeMyOrderStatus = async (req, res) => {
 };
 
 exports.changeMyOrderItemStatus = async (req, res) => {
+  let user = await authorization.authorization(req, res);
+  const userMetadata = await profileModel.getUserMetaDataKey(
+    user.user_id,
+    "mt5_account_no"
+  );
   req.body.currency = process.env.DEFAULT_CURRENCY;
   let selectedProduct = await orderModel.isExistOrderProduct(
     req.body.order_product_id,
@@ -109,9 +116,24 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         product.last_price,
         selectedProduct.id
       );
-      // await closeRequest(selectedProduct.mt5_ticket_id);
+      await closeRequest(
+        userMetadata.meta_values,
+        selectedProduct.symbol,
+        selectedProduct.quantity,
+        selectedProduct.mt5_position_id
+      );
+      await updateBalance(
+        userMetadata.meta_values,
+        "-" + product.last_price,
+        "Sellback%20-%20Closed%20Position%20"
+      );
     } else if (req.body.status == "deliver" || req.body.status == "collect") {
-      // await closeRequest(selectedProduct.mt5_ticket_id);
+      await closeRequest(
+        userMetadata.meta_values,
+        selectedProduct.symbol,
+        selectedProduct.quantity,
+        selectedProduct.mt5_position_id
+      );
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {

@@ -97,14 +97,19 @@ exports.submit = async (req, res) => {
           req.body.user_id,
           "mt5_account_no"
         );
-        // if (mt5AccountNumber?.meta_values) {
-        //   let request = await sendBuyRequest(
-        //     mt5AccountNumber.meta_values,
-        //     itemArray[i].product.symbol,
-        //     itemArray[i].quantity
-        //   );
-        //   await orderModel.updateOrderProductTicketId(orderItem.id, request.id);
-        // }
+        if (mt5AccountNumber?.meta_values) {
+          let request = await sendBuyRequest(
+            mt5AccountNumber.meta_values,
+            itemArray[i].product.symbol,
+            itemArray[i].quantity
+          );
+          if (request) {
+            await orderModel.updateOrderProductTicketId(
+              orderItem.id,
+              request.id
+            );
+          }
+        }
       }
     }
     order.items = itemArray;
