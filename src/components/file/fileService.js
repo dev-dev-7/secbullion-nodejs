@@ -3,8 +3,9 @@ const { BlobServiceClient, BlockBlobClient } = require("@azure/storage-blob");
 const { Readable } = require("stream");
 
 const blobServiceClient = BlobServiceClient.fromConnectionString(
-  "DefaultEndpointsProtocol=https;AccountName=ishrostorage;AccountKey=izngZjc9AzX7qgc8XSusGyFNhuy+il2/Fca0zmMDQaNf6eHp7EcQfWMxDj1wiYORp3ILPLkPqNLa+ASttQkk9w==;EndpointSuffix=core.windows.net"
+  process.env.AZURE_CONNECTION_STRING
 );
+
 const containerClient = blobServiceClient.getContainerClient(
   process.env.AZURE_CONTAINER_NAME
 );
