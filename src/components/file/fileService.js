@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { BlobServiceClient, BlockBlobClient } = require("@azure/storage-blob");
-const { Readable } = require("stream");
+// const { Readable } = require("stream");
 
 const blobServiceClient = BlobServiceClient.fromConnectionString(
   process.env.AZURE_CONNECTION_STRING
