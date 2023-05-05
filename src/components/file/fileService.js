@@ -22,6 +22,7 @@ exports.uploadMultiFiles = async (files) => {
         process.env.AZURE_CONTAINER_NAME,
         blobName
       );
+      return files;
       let stream = Readable.from(file.buffer);
       let streamLength = file.buffer.length;
       return await blobService
