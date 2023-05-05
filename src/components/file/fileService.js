@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { BlobServiceClient, BlockBlobClient } = require("@azure/storage-blob");
-// const { Readable } = require("stream");
+const { Readable } = require("stream");
 
 const blobServiceClient = BlobServiceClient.fromConnectionString(
   process.env.AZURE_CONNECTION_STRING
@@ -22,7 +22,6 @@ exports.uploadMultiFiles = async (files) => {
         process.env.AZURE_CONTAINER_NAME,
         blobName
       );
-      return files;
       let stream = Readable.from(file.buffer);
       let streamLength = file.buffer.length;
       return await blobService
