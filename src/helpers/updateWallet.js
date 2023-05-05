@@ -9,8 +9,6 @@ exports.updateWalletAmount = async (
   operation,
   comment = ""
 ) => {
-  console.log(comment.replace(/%20/g, " "));
-  return;
   const userMetadata = await profileModel.getUserMetaDataKey(
     user_id,
     "mt5_account_no"
@@ -31,7 +29,7 @@ exports.updateWalletAmount = async (
   );
   await walletModel.insertWalletHistory(
     user_id,
-    comment,
+    comment.replace(/%20/g, " "),
     eval(operation + amount)
   );
   return;
