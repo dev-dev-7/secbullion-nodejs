@@ -41,7 +41,7 @@ exports.priceUpdate = async (req, res) => {
 
 exports.stakeUpdate = async (req, res) => {
   // let result = await sendBuyRequest(1000526, "XAUUSD.", 1);
-  let result = await updateWalletAmount(1, 100);
+  let result = await getRequestDetails(1);
   console.log("result:", result);
   // const stakes = await orderModel.getAllStakes();
   // if (stakes) {
