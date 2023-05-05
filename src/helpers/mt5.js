@@ -408,7 +408,7 @@ exports.closeRequest = async (account, symbol, quantity, position) => {
   }
 };
 
-exports.getBalance = async (account) => {
+exports.getMT5Balance = async (account) => {
   if (account) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
@@ -436,7 +436,7 @@ exports.getBalance = async (account) => {
   }
 };
 
-exports.updateBalance = async (account, balance, comment) => {
+exports.updateMT5Balance = async (account, balance, comment) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {

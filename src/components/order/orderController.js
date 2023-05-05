@@ -7,13 +7,29 @@ const profileModel = require("../profile/profileModel");
 const { validationResult } = require("express-validator");
 const { deliverEmailNotify } = require("../../helpers/sendEmail");
 const { sendBuyRequest } = require("../../helpers/mt5");
+const { updateWalletAmount } = require("../../helpers/updateWallet");
+const { authorization } = require("../../helpers/authorization");
+
+async function getGrandTotal(cartItems, discount_price) {
+  let grandTotal = 0;
+  if (cartItems.length) {
+    for (var i = 0; i < cartItems.length; i++) {
+      cartItems[i].product = await productModel.getById(
+        cartItems[i].product_id
+      );
+      grandTotal += cartItems[i].product.last_price * cartItems[i].quantity;
+    }
+  }
+  return grandTotal - discount_price;
+}
 
 exports.orderSummary = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
   const order = {};
-  let cartItems = await cartModel.getCartByUserId(req.body.user_id);
+  let cartItems = await cartModel.getCartByUserId(user.user_id);
   let coupon = await cartModel.getCoupon(req.body.coupon_code);
   if (cartItems) {
     (order.currency = process.env.DEFAULT_CURRENCY), (order.subtotal = 0);
@@ -32,7 +48,7 @@ exports.orderSummary = async (req, res) => {
       }
     }
     order.items = cartItems;
-    order.total = order.subtotal - order.coupon_used;
+    order.total = await getGrandTotal(cartItems, order.coupon_used);
     return res.status(201).json({ data: order });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
@@ -43,88 +59,80 @@ exports.submit = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  if (req.body.payment_method == "wallet") {
-    let wallet = await walletModel.getWalletByUserId(req.body.user_id);
-    if (wallet.cash_balance < req.body.total) {
-      return res
-        .status(400)
-        .json({ errors: [{ msg: "Not enough wallet balance" }] });
-    } else {
-      let walletData = { cash_balance: wallet.cash_balance - req.body.total };
-      await walletModel.updateWallet(req.body.user_id, walletData);
-      req.body.txn_token =
-        "wallet-" +
-        req.body.user_id +
-        "-" +
-        wallet.cash_balance +
-        "-" +
-        req.body.total;
-    }
-  } else if (req.body.payment_method == "checkout") {
-    let existOrder = await orderModel.getByTaxnId(req.body.txn_token);
-    if (existOrder) {
+  let user = await authorization(req, res);
+  let cartItems = await cartModel.getCartByUserId(user.user_id);
+  if (cartItems?.length) {
+    let coupon = await cartModel.getCoupon(req.body.coupon_code);
+    req.body.discount_price = coupon ? coupon.discount_price : 0;
+    let grandTotal = await getGrandTotal(cartItems, req.body.discount_price);
+    if (req.body.payment_method == "wallet") {
+      let wallet = await walletModel.getWalletByUserId(user.user_id);
+      if (wallet.cash_balance < grandTotal) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Not enough wallet balance" }] });
+      } else {
+        await updateWalletAmount(
+          user.user_id,
+          req.body.total,
+          "-",
+          "New%20Order"
+        );
+      }
+    } else if (req.body.payment_method == "checkout") {
       return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
     }
-  }
-  // Coupon Code
-  let coupon = await cartModel.getCoupon(req.body.coupon_code);
-  req.body.discount_price = coupon ? coupon.discount_price : 0;
-  // Insert Order
-  let order = await orderModel.create(req.body);
-  if (order) {
-    let itemArray = req.body.items;
-    if (itemArray.length) {
-      for (var i = 0; i < itemArray.length; i++) {
-        let product = await productModel.getById(itemArray[i].product_id);
-        itemArray[i].product = product;
-        itemArray[i].price = product.last_price;
-        let orderItem = await orderModel.insertOrderDetails(
-          req.body.user_id,
-          order.id,
-          itemArray[i]
-        );
-        if (itemArray[i].product) {
-          itemArray[i].product.files = await productModel.getByFilesByProduct(
-            itemArray[i].product_id
+    // Insert Order
+    let order = await orderModel.create(req.body);
+    if (order) {
+      let itemArray = req.body.items;
+      if (itemArray.length) {
+        for (var i = 0; i < itemArray.length; i++) {
+          let product = await productModel.getById(itemArray[i].product_id);
+          itemArray[i].product = product;
+          itemArray[i].price = product.last_price;
+          let orderItem = await orderModel.insertOrderDetails(
+            user.user_id,
+            order.id,
+            itemArray[i]
           );
-        }
-        await cartModel.deleteUserCart(
-          req.body.user_id,
-          itemArray[i].product_id,
-          itemArray[i].type
-        );
-        let mt5AccountNumber = await profileModel.getUserMetaDataKey(
-          req.body.user_id,
-          "mt5_account_no"
-        );
-        if (mt5AccountNumber?.meta_values) {
-          let request = await sendBuyRequest(
-            mt5AccountNumber.meta_values,
-            itemArray[i].product.symbol,
-            itemArray[i].quantity
-          );
-          if (request) {
-            await orderModel.updateOrderProductTicketId(
-              orderItem.id,
-              request.id
+          if (itemArray[i].product) {
+            itemArray[i].product.files = await productModel.getByFilesByProduct(
+              itemArray[i].product_id
             );
+          }
+          await cartModel.deleteUserCart(
+            user.user_id,
+            itemArray[i].product_id,
+            itemArray[i].type
+          );
+          let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+            user.user_id,
+            "mt5_account_no"
+          );
+          if (mt5AccountNumber?.meta_values) {
+            let request = await sendBuyRequest(
+              mt5AccountNumber.meta_values,
+              itemArray[i].product.symbol,
+              itemArray[i].quantity
+            );
+            if (request) {
+              await orderModel.updateOrderProductTicketId(
+                orderItem.id,
+                request.id
+              );
+            }
           }
         }
       }
+      order.items = itemArray;
     }
-    order.items = itemArray;
-    //INSERT WALLET HISTORY
-    await walletModel.insertWalletHistory(
-      req.body.user_id,
-      "purchase",
-      "balance",
-      req.body.total,
-      order.id
-    );
+    return res
+      .status(201)
+      .json({ data: order, msg: "order has been succesfully placed" });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
-  return res
-    .status(201)
-    .json({ data: order, msg: "order has been succesfully placed" });
 };
 
 exports.getMyStake = async (req, res) => {

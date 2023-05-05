@@ -15,6 +15,7 @@ const {
   getDateTime,
   getNumberOfDays,
 } = require("../../helpers/time");
+const { updateWalletAmount } = require("../../helpers/updateWallet");
 
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.get();
@@ -40,7 +41,14 @@ exports.priceUpdate = async (req, res) => {
 
 exports.stakeUpdate = async (req, res) => {
   // let result = await sendBuyRequest(1000526, "XAUUSD.", 1);
-  let result = await getRequestDetails(59);
+  let symbol = "XAUUSD.";
+  let quantity = 4;
+  let result = await updateWalletAmount(
+    1,
+    100,
+    "-",
+    "Sell-back%20" + symbol + "%20x%20" + quantity
+  );
   console.log("result:", result);
   // const stakes = await orderModel.getAllStakes();
   // if (stakes) {

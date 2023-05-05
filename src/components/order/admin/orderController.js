@@ -1,10 +1,10 @@
 require("dotenv").config();
 const authorization = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
-const walletModel = require("../../wallet/walletModel");
 const productModel = require("../../product/productModel");
 const profileModel = require("../../profile/profileModel");
-const { updateBalance, closeRequest } = require("../../../helpers/mt5");
+const { closeRequest } = require("../../../helpers/mt5");
+const { updateWalletAmount } = require("../../../helpers/updateWallet");
 
 exports.get = async (req, res) => {
   let orders = await orderModel.getAllOrders();
@@ -19,6 +19,9 @@ exports.get = async (req, res) => {
 };
 
 exports.changeMyOrderStatus = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
   let existOrder = await orderModel.getOrderById(req.params.order_id);
   if (existOrder) {
     await orderModel.updateOrderStatus(req.params.order_id, req.body.status);
@@ -31,9 +34,11 @@ exports.changeMyOrderStatus = async (req, res) => {
 };
 
 exports.changeMyOrderItemStatus = async (req, res) => {
-  let user = await authorization.authorization(req, res);
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
   const userMetadata = await profileModel.getUserMetaDataKey(
-    user.user_id,
+    req.params.user_id,
     "mt5_account_no"
   );
   req.body.currency = process.env.DEFAULT_CURRENCY;
@@ -101,33 +106,18 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
     }
-    if (req.body.status == "sellback") {
+    if (
+      req.body.status == "sellback" ||
+      req.body.status == "deliver" ||
+      req.body.status == "collect"
+    ) {
       let product = await productModel.getById(selectedProduct.product_id);
-      let wallet = await walletModel.getWalletByUserId(selectedProduct.user_id);
-      let updatedBalance =
-        wallet.cash_balance + (product.last_price + req.body.quantity);
-      await walletModel.updateWallet(selectedProduct.user_id, {
-        cash_balance: updatedBalance,
-      });
-      await walletModel.insertWalletHistory(
-        selectedProduct.user_id,
-        "sellback",
-        "balance",
-        product.last_price,
-        selectedProduct.id
+      await updateWalletAmount(
+        req.params.user_id,
+        product.last_price * req.body.quantity,
+        "+",
+        "Sell-back%20" + product.symbol + "%20x%20" + req.body.quantity
       );
-      await closeRequest(
-        userMetadata.meta_values,
-        selectedProduct.symbol,
-        selectedProduct.quantity,
-        selectedProduct.mt5_position_id
-      );
-      await updateBalance(
-        userMetadata.meta_values,
-        "-" + product.last_price,
-        "Sellback%20-%20Closed%20Position%20"
-      );
-    } else if (req.body.status == "deliver" || req.body.status == "collect") {
       await closeRequest(
         userMetadata.meta_values,
         selectedProduct.symbol,
