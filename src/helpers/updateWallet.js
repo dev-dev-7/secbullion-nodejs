@@ -9,26 +9,26 @@ exports.updateWalletAmount = async (
   operation,
   comment = ""
 ) => {
+  console.log("amount === ", amount);
   const userMetadata = await profileModel.getUserMetaDataKey(
     user_id,
     "mt5_account_no"
   );
-  console.log(amount);
   let wallet = await walletModel.getWalletByUserId(user_id);
   // let mt5Balance = await getMT5Balance(userMetadata.meta_values);
   // console.log("mt5Balance: ", mt5Balance.Balance);
   await walletModel.updateWallet(user_id, {
-    cash_balance:
-      operation == "+"
-        ? wallet.cash_balance + amount
-        : wallet.cash_balance - amount,
+    cash_balance: eval(wallet.cash_balance + operation + amount),
   });
-  let amountTo = operation + "" + amount;
   await walletModel.insertWalletHistory(
     user_id,
     comment.replace(/%20/g, " "),
-    amountTo
+    eval(operation + amount)
   );
-  await updateMT5Balance(userMetadata.meta_values, amountTo, comment);
+  await updateMT5Balance(
+    userMetadata.meta_values,
+    eval(operation + amount),
+    comment
+  );
   return;
 };
