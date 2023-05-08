@@ -333,8 +333,6 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
                 }
                 var answer = req.parseBodyJSON(error, res, body, null);
                 if (answer.answer) {
-                  console.log("request_id: ", request_id);
-                  console.log("get_request_result body: ", answer.answer);
                   let result = answer.answer;
                   resolve(result[request_id][1].answer.Order);
                 } else {
@@ -351,8 +349,8 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
-exports.getRequestDetails = async (id) => {
-  if (id) {
+exports.getRequestDetails = async (account, symbol, quantity, position) => {
+  if (position) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -360,18 +358,43 @@ exports.getRequestDetails = async (id) => {
           console.log(error);
           return;
         }
-        console.log("id: ", id);
-        req.Get(
-          "/api/dealer/get_request_result?id=" + id,
+        let rawBody = JSON.stringify({
+          Action: 200,
+          Login: account,
+          Symbol: symbol,
+          Volume: quantity + "0000",
+          Type: 0,
+          position: position,
+        });
+        req.Post(
+          "/api/dealer/send_request",
+          rawBody,
           function (error, res, body) {
             if (error) {
               console.log(error);
               return;
             }
             var answer = req.parseBodyJSON(error, res, body, null);
-            console.log("body: ", body);
+            console.log("body :", body);
             if (answer.answer) {
-              resolve(answer.answer);
+              let request_id = answer.answer.id;
+              req.Get(
+                "/api/dealer/get_request_result?id=" + request_id,
+                function (error, res, body) {
+                  if (error) {
+                    console.log(error);
+                    return;
+                  }
+                  var answer = req.parseBodyJSON(error, res, body, null);
+                  console.log("answer==", answer);
+                  if (answer.answer) {
+                    let result = answer.answer;
+                    resolve(result);
+                  } else {
+                    reject(null);
+                  }
+                }
+              );
             } else {
               reject(null);
             }

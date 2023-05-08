@@ -40,8 +40,8 @@ exports.priceUpdate = async (req, res) => {
 };
 
 exports.stakeUpdate = async (req, res) => {
-  let result = await sendBuyRequest(1000526, "GOLD.1g", 5);
-  // let result = await getRequestDetails(95);
+  // let result = await sendBuyRequest(1000526, "GOLD.1g", 5);
+  let result = await getRequestDetails(1000526, "GOLD.1g", 5, 25280);
   console.log("result:", result);
   // const stakes = await orderModel.getAllStakes();
   // if (stakes) {
@@ -54,9 +54,9 @@ exports.stakeUpdate = async (req, res) => {
   //         stakes[i].duration_type
   //       );
   //       if (getNumberOfDays(expiryDate, todayDate) > 0) {
-  //         if (stakes[i].mt5_request_id) {
+  //         if (stakes[i].mt5_position_id) {
   //           let symbolDetails = await getRequestDetails(
-  //             stakes[i].mt5_request_id
+  //             stakes[i].mt5_position_id
   //           );
   //           if (symbolDetails) {
   //             await orderModel.updateStakeSwapValue(

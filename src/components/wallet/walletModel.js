@@ -23,10 +23,7 @@ const insertWallet = async (
 };
 
 const updateWallet = async (user_id, data) => {
-  return db(walletTable)
-    .where({ user_id: user_id })
-    .update(data)
-    .then((updated) => getWalletByUserId(user_id));
+  return db(walletTable).where({ user_id: user_id }).update(data);
 };
 
 const insertWalletHistory = async (user_id, comment, amount) => {
