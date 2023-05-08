@@ -106,15 +106,15 @@ exports.submit = async (req, res) => {
             "mt5_account_no"
           );
           if (mt5AccountNumber?.meta_values) {
-            let orderId = await sendBuyRequest(
+            let mt5OrderId = await sendBuyRequest(
               mt5AccountNumber.meta_values,
               itemArray[i].product.symbol,
               itemArray[i].quantity
             );
-            if (request) {
+            if (mt5OrderId) {
               await orderModel.updateOrderProductTicketId(
                 orderItem.id,
-                orderId
+                mt5OrderId
               );
             }
           }
