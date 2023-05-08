@@ -72,12 +72,7 @@ exports.submit = async (req, res) => {
           .status(400)
           .json({ errors: [{ msg: "Not enough wallet balance" }] });
       } else {
-        await updateWalletAmount(
-          user.user_id,
-          req.body.total,
-          "-",
-          "New%20Order"
-        );
+        await updateWalletAmount(user.user_id, grandTotal, "-", "New%20Order");
       }
     } else if (req.body.payment_method == "checkout") {
       return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
