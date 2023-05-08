@@ -349,7 +349,7 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
-exports.getRequestDetails = async (account, symbol, quantity, position) => {
+exports.getRequestDetails = async (symbol, position) => {
   if (position) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
@@ -358,43 +358,16 @@ exports.getRequestDetails = async (account, symbol, quantity, position) => {
           console.log(error);
           return;
         }
-        let rawBody = JSON.stringify({
-          Action: 200,
-          Login: account,
-          Symbol: symbol,
-          Volume: quantity + "0000",
-          Type: 0,
-          position: position,
-        });
-        req.Post(
-          "/api/dealer/send_request",
-          rawBody,
+        req.Get(
+          "/api/symbol/get?symbol=" + symbol + "&trans_id=" + position,
           function (error, res, body) {
             if (error) {
               console.log(error);
               return;
             }
             var answer = req.parseBodyJSON(error, res, body, null);
-            console.log("body :", body);
             if (answer.answer) {
-              let request_id = answer.answer.id;
-              req.Get(
-                "/api/dealer/get_request_result?id=" + request_id,
-                function (error, res, body) {
-                  if (error) {
-                    console.log(error);
-                    return;
-                  }
-                  var answer = req.parseBodyJSON(error, res, body, null);
-                  console.log("answer==", answer);
-                  if (answer.answer) {
-                    let result = answer.answer;
-                    resolve(result);
-                  } else {
-                    reject(null);
-                  }
-                }
-              );
+              resolve(answer.answer);
             } else {
               reject(null);
             }
