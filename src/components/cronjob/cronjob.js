@@ -40,36 +40,36 @@ exports.priceUpdate = async (req, res) => {
 };
 
 exports.stakeUpdate = async (req, res) => {
-  // let result = await sendBuyRequest(1000526, "GOLD.1g", 5);
-  // let result = await getRequestDetails("GOLD.1g", 25280);
-  // console.log("result:", result);
-  const stakes = await orderModel.getAllStakes();
-  if (stakes) {
-    for (var i = 0; i < stakes.length; i++) {
-      if (stakes[i].duration > 0) {
-        let todayDate = getDateTime();
-        let expiryDate = await getExpiryDate(
-          stakes[i].created_at,
-          parseInt(stakes[i].duration),
-          stakes[i].duration_type
-        );
-        if (getNumberOfDays(expiryDate, todayDate) > 0) {
-          if (stakes[i].mt5_position_id) {
-            let symbolDetails = await getRequestDetails(
-              stakes[i].mt5_position_id
-            );
-            if (symbolDetails) {
-              await orderModel.updateStakeSwapValue(
-                stakes[i].id,
-                symbolDetails.SwapLong
-              );
-            }
-          }
-        } else {
-          await orderModel.updateOrderProductStatus(stakes[i].id, "store");
-        }
-      }
-    }
-  }
-  return res.status(200).json({ data: result });
+  // let stakes = await sendBuyRequest(1000526, "GOLD.ttb", 1);
+  let stakes = await getRequestDetails(1000526, 25292);
+  console.log("result:", stakes);
+  // const stakes = await orderModel.getAllStakes();
+  // if (stakes) {
+  //   for (var i = 0; i < stakes.length; i++) {
+  //     if (stakes[i].duration > 0) {
+  //       let todayDate = getDateTime();
+  //       let expiryDate = await getExpiryDate(
+  //         stakes[i].created_at,
+  //         parseInt(stakes[i].duration),
+  //         stakes[i].duration_type
+  //       );
+  //       if (getNumberOfDays(expiryDate, todayDate) > 0) {
+  //         if (stakes[i].mt5_position_id) {
+  //           let symbolDetails = await getRequestDetails(
+  //             stakes[i].mt5_position_id
+  //           );
+  //           if (symbolDetails) {
+  //             await orderModel.updateStakeSwapValue(
+  //               stakes[i].id,
+  //               symbolDetails.Storage
+  //             );
+  //           }
+  //         }
+  //       } else {
+  //         await orderModel.updateOrderProductStatus(stakes[i].id, "store");
+  //       }
+  //     }
+  //   }
+  // }
+  return res.status(200).json({ data: stakes });
 };

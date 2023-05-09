@@ -322,6 +322,7 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
             return;
           }
           var answer = req.parseBodyJSON(error, res, body, null);
+          console.log("body ====", body);
           if (answer.answer) {
             let request_id = answer.answer.id;
             req.Get(
@@ -349,7 +350,7 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
-exports.getRequestDetails = async (symbol, position) => {
+exports.getRequestDetails = async (account, position) => {
   if (position) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
@@ -359,7 +360,7 @@ exports.getRequestDetails = async (symbol, position) => {
           return;
         }
         req.Get(
-          "/api/symbol/get?symbol=" + symbol + "&trans_id=" + position,
+          "/api/position/get_page?login=" + account,
           function (error, res, body) {
             if (error) {
               console.log(error);
@@ -367,7 +368,15 @@ exports.getRequestDetails = async (symbol, position) => {
             }
             var answer = req.parseBodyJSON(error, res, body, null);
             if (answer.answer) {
-              resolve(answer.answer);
+              let positionIds = [position];
+              console.log("answer.answer.length = ", answer.answer.length);
+              console.log("positionIds = ", positionIds);
+              console.log("answer.answer = ", answer.answer);
+              var filteredArray = answer.answer.filter(function (itm) {
+                return positionIds.indexOf(itm.Position) > -1;
+              });
+              console.log("filteredArray = ", filteredArray);
+              resolve(filteredArray);
             } else {
               reject(null);
             }
