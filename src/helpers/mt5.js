@@ -368,14 +368,11 @@ exports.getRequestDetails = async (account, position) => {
             }
             var answer = req.parseBodyJSON(error, res, body, null);
             if (answer.answer) {
-              let positionIds = [position];
-              console.log("answer.answer.length = ", answer.answer.length);
-              console.log("positionIds = ", positionIds);
-              console.log("answer.answer = ", answer.answer);
-              var filteredArray = answer.answer.filter(function (itm) {
-                return positionIds.indexOf(itm.Position) > -1;
-              });
-              console.log("filteredArray = ", filteredArray);
+              let data = answer.answer;
+              console.log(position);
+              var filteredArray = data.filter(
+                (item) => item.Position === position.toString()
+              );
               resolve(filteredArray);
             } else {
               reject(null);
