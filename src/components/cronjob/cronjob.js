@@ -40,9 +40,6 @@ exports.priceUpdate = async (req, res) => {
 };
 
 exports.stakeUpdate = async (req, res) => {
-  // let stakes = await sendBuyRequest(1000526, "GOLD.1g", 1);
-  // let stakes = await getRequestDetails(1000526, 25379);
-  // console.log("result:", stakes);
   const stakes = await orderModel.getAllStakes();
   if (stakes) {
     for (var i = 0; i < stakes.length; i++) {
@@ -71,5 +68,12 @@ exports.stakeUpdate = async (req, res) => {
       }
     }
   }
+  return res.status(200).json({ data: stakes });
+};
+
+exports.test = async (req, res) => {
+   // let stakes = await sendBuyRequest(1000526, "GOLD.1g", 1);
+   // let stakes = await getRequestDetails(1000526, 25379);
+  // console.log("result:", stakes);
   return res.status(200).json({ data: stakes });
 };
