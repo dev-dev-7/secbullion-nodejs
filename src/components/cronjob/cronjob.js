@@ -3,8 +3,8 @@ const productModel = require("../product/productModel");
 const orderModel = require("../order/orderModel");
 const {
   getSymbolPrice,
-  sendBuyRequest,
-  updatePosition,
+  buyPosition,
+  sellPosition,
   getRequestDetails,
   getPriceFromSymbol,
   getBalance,
@@ -73,9 +73,9 @@ exports.stakeUpdate = async (req, res) => {
 };
 
 exports.test = async (req, res) => {
-  // let stakes = await sendBuyRequest(1000532, "GOLD.1g", 1);
-  let stakes = await updatePosition(1000532, "GOLD.1g", 2, 25821);
+  // let stakes = await buyPosition(1000532, "GOLD.1g", 10);
+  // let stakes = await sellPosition(1000532, "GOLD.1g", 5, 25858);
   // let stakes = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
-  return res.status(200).json({ data: stakes });
+  // return res.status(200).json({ data: stakes });
 };

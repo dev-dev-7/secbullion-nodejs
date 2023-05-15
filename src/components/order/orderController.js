@@ -6,7 +6,7 @@ const walletModel = require("../wallet/walletModel");
 const profileModel = require("../profile/profileModel");
 const { validationResult } = require("express-validator");
 const { deliverEmailNotify } = require("../../helpers/sendEmail");
-const { sendBuyRequest } = require("../../helpers/mt5");
+const { buyPosition } = require("../../helpers/mt5");
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 const { authorization } = require("../../helpers/authorization");
 
@@ -106,7 +106,7 @@ exports.submit = async (req, res) => {
             "mt5_account_no"
           );
           if (mt5AccountNumber?.meta_values) {
-            let mt5OrderId = await sendBuyRequest(
+            let mt5OrderId = await buyPosition(
               mt5AccountNumber.meta_values,
               itemArray[i].product.symbol,
               itemArray[i].quantity

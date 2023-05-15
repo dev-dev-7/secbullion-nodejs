@@ -298,7 +298,7 @@ exports.createMt5Account = async (body) => {
   });
 };
 
-exports.sendBuyRequest = async (account, symbol, quantity) => {
+exports.buyPosition = async (account, symbol, quantity) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -350,7 +350,7 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
-exports.updatePosition = async (account, symbol, quantity, position) => {
+exports.sellPosition = async (account, symbol, quantity, position) => {
   if (position) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
