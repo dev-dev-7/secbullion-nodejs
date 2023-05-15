@@ -4,7 +4,7 @@ const authorization = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
 const productModel = require("../../product/productModel");
 const profileModel = require("../../profile/profileModel");
-const { closeRequest } = require("../../../helpers/mt5");
+const { closeRequest, updatePosition } = require("../../../helpers/mt5");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
 
 exports.get = async (req, res) => {
@@ -119,12 +119,21 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         "+",
         "Sell-back%20" + product.symbol + "%20x%20" + req.body.quantity
       );
-      await closeRequest(
-        userMetadata.meta_values,
-        selectedProduct.symbol,
-        selectedProduct.quantity,
-        selectedProduct.mt5_position_id
-      );
+      if (selectedProduct.quantity > req.body.quantity) {
+        await updatePosition(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          req.body.quantity,
+          selectedProduct.mt5_position_id
+        );
+      } else {
+        await closeRequest(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          selectedProduct.quantity,
+          selectedProduct.mt5_position_id
+        );
+      }
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {

@@ -4,6 +4,7 @@ const orderModel = require("../order/orderModel");
 const {
   getSymbolPrice,
   sendBuyRequest,
+  updatePosition,
   getRequestDetails,
   getPriceFromSymbol,
   getBalance,
@@ -72,8 +73,9 @@ exports.stakeUpdate = async (req, res) => {
 };
 
 exports.test = async (req, res) => {
-   // let stakes = await sendBuyRequest(1000526, "GOLD.1g", 1);
-   // let stakes = await getRequestDetails(1000526, 25379);
+  // let stakes = await sendBuyRequest(1000532, "GOLD.1g", 1);
+  let stakes = await updatePosition(1000532, "GOLD.1g", 2, 25821);
+  // let stakes = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
   return res.status(200).json({ data: stakes });
 };

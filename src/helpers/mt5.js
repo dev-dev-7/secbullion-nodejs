@@ -350,6 +350,47 @@ exports.sendBuyRequest = async (account, symbol, quantity) => {
   });
 };
 
+exports.updatePosition = async (account, symbol, quantity, position) => {
+  if (position) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          console.log(error);
+          return;
+        }
+        let rawBody = JSON.stringify({
+          SourceLogin: 1005,
+          Action: 200,
+          Login: account,
+          Symbol: symbol,
+          Volume: quantity + "0000",
+          Type: 1,
+          Position: position,
+        });
+        req.Post(
+          "/api/dealer/send_request",
+          rawBody,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            if (answer.answer) {
+              resolve(answer.answer);
+            } else {
+              reject(null);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    return [];
+  }
+};
+
 exports.getRequestDetails = async (account, position) => {
   if (position) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
