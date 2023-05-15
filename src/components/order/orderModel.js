@@ -116,7 +116,7 @@ const getUserOrderByType = (user_id, order_id, product_id, status) => {
     .andWhere("order_id", order_id)
     .andWhere("product_id", product_id)
     .andWhere("status", status)
-    .andWhere("status", "!=", "sell")
+    .andWhere("status", "!=", "sellback")
     .first();
 };
 

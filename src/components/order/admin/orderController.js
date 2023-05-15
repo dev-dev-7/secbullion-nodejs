@@ -90,10 +90,10 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             req.body
           );
           if (inserted) {
-            // await orderModel.updateOrderProductTicketId(
-            //   inserted.id,
-            //   selectedProduct.mt5_position_id
-            // );
+            await orderModel.updateOrderProductTicketId(
+              inserted.id,
+              selectedProduct.mt5_position_id
+            );
             // Minus from selected item
             await orderModel.updateOrderProductQuantity(
               selectedProduct.id,
