@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const smsglobal = require('../../../helpers/smsglobal')
 const config = require('../../../config/index')
 const { validationResult } = require('express-validator')
+const { authorization } = require('../../../helpers/authorization')
 const { JWT_SECRETE_KEY } = config.tokens
 
 exports.login = async (req, res) => {
@@ -56,14 +57,15 @@ exports.getUser = async (req, res) => {
 }
 
 exports.status = async (req, res) => {
-  const user = await authModel.getUserById(req.params.user_id)
+  let user = await authorization(req, res)
   if (user) {
-    await authModel.updateUser(user.user_id, {
+    await authModel.updateUser(req.params.user_id, {
       status: req.body.status,
       verified: req.body.verified,
+      verified_by: user.user_id,
     })
     return res.status(200).json({
-      data: await authModel.getUserById(user.user_id),
+      data: await authModel.getUserById(req.params.user_id),
       msg: 'Status has been updated!',
     })
   } else {
