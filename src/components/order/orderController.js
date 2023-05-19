@@ -5,7 +5,6 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const profileModel = require("../profile/profileModel");
 const { validationResult } = require("express-validator");
-const { deliverEmailNotify } = require("../../helpers/sendEmail");
 const { buyPosition } = require("../../helpers/mt5");
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 const { authorization } = require("../../helpers/authorization");
