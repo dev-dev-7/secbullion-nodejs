@@ -125,12 +125,13 @@ const isExistProduct = (symbol) => {
   return db(table).where("symbol", symbol).first();
 };
 
-const updateProductPrice = async (id, symbol, price) => {
+const updateProductPrice = async (id, symbol, ask_price, bid_price) => {
   return db(table)
     .where("id", id)
     .andWhere("symbol", symbol)
     .update({
-      last_price: price,
+      last_price: ask_price,
+      bid_price: bid_price
     })
     .then((updated) => getById(id));
 };

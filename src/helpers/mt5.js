@@ -176,7 +176,7 @@ exports.getPriceFromSymbol = async (symbols = "", key = "", price = "") => {
     let result = symbols.filter(function (symbol) {
       return symbol.Symbol == key;
     });
-    return result[0]?.Ask;
+    return result[0];
   } else {
     return price;
   }

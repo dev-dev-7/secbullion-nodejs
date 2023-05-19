@@ -23,15 +23,14 @@ exports.priceUpdate = async (req, res) => {
   if (products) {
     for (var n = 1; n <= 15; n++) {
       let symbolPrices = await getSymbolPrice(products);
-      console.log(symbolPrices);
-      console.log(n);
       for (var i = 0; i < products.length; i++) {
         let price = await getPriceFromSymbol(symbolPrices, products[i].symbol);
         if (price) {
           await productModel.updateProductPrice(
             products[i].id,
             products[i].symbol,
-            price
+            price.Ask,
+            price.Bid
           );
         }
       }
