@@ -110,7 +110,7 @@ exports.register = async (req, res) => {
     let token =
       process.env.DASHBOARD_URL +
       "/validate?=" +
-      Buffer.from(req.body.password).toString("base64");
+      Buffer.from(user.password).toString("base64");
     await sendEmail(req.body.full_name, req.body.email, token);
     return res.status(201).json({
       data: {
@@ -237,12 +237,13 @@ exports.resetPassword = async (req, res) => {
 exports.validateToken = async (req, res) => {
   if (req.query.token) {
     let password = Buffer.from(req.query.token, "base64").toString("ascii");
-    console.log(password);
     let user = await authModel.getUserByPassword(password);
     if (user) {
       return res.status(200).json({
         data: user,
       });
+    }else{
+      return res.status(400).json({ errors: [{ msg: "Token Invalid" }] });
     }
   } else {
     return res.status(400).json({ errors: [{ msg: "Invalid request" }] });
