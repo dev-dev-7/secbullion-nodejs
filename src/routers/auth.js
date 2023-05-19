@@ -37,4 +37,15 @@ router.post(
   authController.deleteAccount
 );
 
+router.get(
+  "/validate",
+  authController.validateToken
+);
+
+router.post(
+  "/upload-documents",
+  [validation.document_validation],
+  authController.uploadDocuments
+);
+
 module.exports = router;

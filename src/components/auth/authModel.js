@@ -23,6 +23,10 @@ const getUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).first();
 };
 
+const getUserByPassword = (password) => {
+  return db(userTable).where("password", password).first();
+};
+
 const deleteUserById = (user_id) => {
   return db(userTable).where("user_id", user_id).del();
 };
@@ -32,5 +36,6 @@ module.exports = {
   updateUser,
   getUsers,
   getUserById,
+  getUserByPassword,
   deleteUserById,
 };

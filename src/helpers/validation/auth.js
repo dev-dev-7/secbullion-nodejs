@@ -67,3 +67,10 @@ exports.put_address = [
 ];
 
 exports.delete_address = [check("address_id").notEmpty()];
+
+exports.document_validation = [
+  check("user_id").notEmpty(),
+  check("passport").notEmpty(),
+  check("emirates_id").notEmpty(),
+  check("utility_bill").notEmpty()
+];
