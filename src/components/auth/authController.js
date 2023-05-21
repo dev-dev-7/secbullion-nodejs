@@ -109,7 +109,7 @@ exports.register = async (req, res) => {
     }
     let token =
       process.env.DASHBOARD_URL +
-      "/validate?=" +
+      "/validate?token=" +
       Buffer.from(user.password).toString("base64");
     await sendEmail(req.body.full_name, req.body.email, token);
     return res.status(201).json({
