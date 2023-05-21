@@ -260,10 +260,9 @@ exports.uploadDocuments = async (req, res) => {
       var arr = Object.entries(req.body);
       for (var i = 0; i < arr.length; i++) {
         if (arr[i][0] != "user_id") {
-          let exist = await profileModel.getUserMetaDataKeyValue(
+          let exist = await profileModel.getUserMetaDatasKey(
             user.user_id,
-            arr[i][0],
-            arr[i][1]
+            arr[i][0]
           );
           if (exist) {
             await profileModel.updateUserMetaData(
