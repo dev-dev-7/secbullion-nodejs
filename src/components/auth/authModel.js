@@ -16,7 +16,7 @@ const updateUser = async (user_id, data) => {
 };
 
 const getUsers = () => {
-  return db(userTable);
+  return db(userTable).orderBy("user_id", "DESC");
 };
 
 const getUserById = (user_id) => {
