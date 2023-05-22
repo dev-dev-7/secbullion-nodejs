@@ -100,7 +100,7 @@ const getProductWithFile = (product_id) => {
 };
 
 const get = () => {
-  return db(table);
+  return db(table).where("status", "!=", 4).orderBy("id", "DESC");
 };
 
 const insertFiles = async (product_id, file) => {
