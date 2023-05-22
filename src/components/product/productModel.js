@@ -39,6 +39,7 @@ const update = async (
     symbol,
     quantity,
     unit,
+    price,
   }
 ) => {
   return db(table)
@@ -52,6 +53,7 @@ const update = async (
       symbol: symbol,
       quantity: quantity,
       unit: unit,
+      price: price,
     })
     .then((updated) => deleteByFilesByProduct(id));
 };
