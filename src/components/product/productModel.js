@@ -11,6 +11,7 @@ const create = async ({
   symbol,
   quantity,
   unit,
+  price,
 }) => {
   return db(table)
     .insert({
@@ -22,6 +23,7 @@ const create = async ({
       symbol: symbol,
       quantity: quantity,
       unit: unit,
+      price: price,
     })
     .then((id) => getById(id));
 };
@@ -131,7 +133,7 @@ const updateProductPrice = async (id, symbol, ask_price, bid_price) => {
     .andWhere("symbol", symbol)
     .update({
       last_price: ask_price,
-      bid_price: bid_price
+      bid_price: bid_price,
     })
     .then((updated) => getById(id));
 };
