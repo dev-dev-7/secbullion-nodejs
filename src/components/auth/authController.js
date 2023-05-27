@@ -250,6 +250,17 @@ exports.validateToken = async (req, res) => {
   }
 };
 
+exports.getUser = async (req, res) => {
+  let user = await authModel.getUserById(req.params.user_id);
+  if (user) {
+    return res.status(200).json({
+      data: user,
+    });
+  }else{
+    return res.status(400).json({ errors: [{ msg: "Invalid Request" }] });
+  }
+};
+
 exports.uploadDocuments = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())

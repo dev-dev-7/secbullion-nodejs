@@ -42,6 +42,8 @@ router.get(
   authController.validateToken
 );
 
+router.get("/user/:user_id", authController.getUser);
+
 router.post(
   "/upload-documents",
   [validation.document_validation],
