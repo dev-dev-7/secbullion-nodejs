@@ -290,6 +290,9 @@ exports.uploadDocuments = async (req, res) => {
           }
         }
       }
+      await authModel.updateUser(req.body.user_id, {
+        verified: 0
+      })
       return res.status(200).json({
         msg: "Documents has been successfully submitted.",
       });
