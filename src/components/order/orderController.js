@@ -79,6 +79,10 @@ exports.submit = async (req, res) => {
     // Insert Order
     let order = await orderModel.create(req.body);
     if (order) {
+      let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+        user.user_id,
+        "mt5_account_no"
+      );
       let itemArray = req.body.items;
       if (itemArray.length) {
         for (var i = 0; i < itemArray.length; i++) {
@@ -100,21 +104,19 @@ exports.submit = async (req, res) => {
             itemArray[i].product_id,
             itemArray[i].type
           );
-          let mt5AccountNumber = await profileModel.getUserMetaDataKey(
-            user.user_id,
-            "mt5_account_no"
-          );
-          if (mt5AccountNumber?.meta_values) {
-            let mt5OrderId = await buyPosition(
-              mt5AccountNumber.meta_values,
-              itemArray[i].product.symbol,
-              itemArray[i].quantity
-            );
-            if (mt5OrderId) {
-              await orderModel.updateOrderProductTicketId(
-                orderItem.id,
-                mt5OrderId
+          if (itemArray[i].type === "store" && itemArray[i].type === "stake") {
+            if (mt5AccountNumber?.meta_values) {
+              let mt5OrderId = await buyPosition(
+                mt5AccountNumber.meta_values,
+                itemArray[i].product.symbol,
+                itemArray[i].quantity
               );
+              if (mt5OrderId) {
+                await orderModel.updateOrderProductTicketId(
+                  orderItem.id,
+                  mt5OrderId
+                );
+              }
             }
           }
         }
