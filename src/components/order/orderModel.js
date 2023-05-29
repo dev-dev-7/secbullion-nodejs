@@ -152,6 +152,7 @@ const updateOrderProductPrice = async (product_id, price) => {
     .where("product_id", product_id)
     .andWhere("status", "!=", "collect")
     .andWhere("status", "!=", "deliver")
+    .andWhere("status", "!=", "sellback")
     .update({
       price: price,
     });

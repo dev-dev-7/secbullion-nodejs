@@ -32,6 +32,7 @@ exports.priceUpdate = async (req, res) => {
             price.Ask,
             price.Bid
           );
+          await orderModel.updateOrderProductPrice(products[i].id, price.Ask);
         }
       }
     }
