@@ -105,6 +105,10 @@ const get = () => {
   return db(table).where("status", "!=", 4).orderBy("id", "DESC");
 };
 
+const getAll = () => {
+  return db(table);
+};
+
 const insertFiles = async (product_id, file) => {
   return db(tableFiles)
     .insert({
@@ -146,6 +150,7 @@ const getFilesByProductId = (product_id) => {
 
 module.exports = {
   get,
+  getAll,
   create,
   update,
   remove,

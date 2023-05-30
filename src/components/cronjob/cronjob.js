@@ -19,7 +19,7 @@ const {
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 
 exports.priceUpdate = async (req, res) => {
-  const products = await productModel.get();
+  const products = await productModel.getAll();
   if (products) {
     for (var n = 1; n <= 15; n++) {
       let symbolPrices = await getSymbolPrice(products);
