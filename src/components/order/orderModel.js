@@ -141,6 +141,10 @@ const deleteUserOrderProduct = (id, user_id) => {
     .del();
 };
 
+const deleteOrder = (id) => {
+  return db(orderTable).where("id", id).del();
+};
+
 const updateOrderProductQuantity = async (id, quantity) => {
   return db(orderDetailsTable).where("id", id).update({
     quantity: quantity,
@@ -226,4 +230,5 @@ module.exports = {
   updateOrderProductStatus,
   getSumOfUserStack,
   updateOrderProductTicketId,
+  deleteOrder,
 };

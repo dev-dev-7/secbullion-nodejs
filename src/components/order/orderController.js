@@ -89,35 +89,51 @@ exports.submit = async (req, res) => {
           let product = await productModel.getById(itemArray[i].product_id);
           itemArray[i].product = product;
           itemArray[i].price = product.last_price;
-          let orderItem = await orderModel.insertOrderDetails(
-            user.user_id,
-            order.id,
-            itemArray[i]
-          );
-          if (itemArray[i].product) {
-            itemArray[i].product.files = await productModel.getByFilesByProduct(
-              itemArray[i].product_id
-            );
-          }
-          await cartModel.deleteUserCart(
-            user.user_id,
-            itemArray[i].product_id,
-            itemArray[i].type
-          );
-          if (itemArray[i].type === "store" && itemArray[i].type === "stake") {
+
+          if (itemArray[i].type === "store" || itemArray[i].type === "stake") {
+            console.log(itemArray[i].type);
             if (mt5AccountNumber?.meta_values) {
               let mt5OrderId = await buyPosition(
                 mt5AccountNumber.meta_values,
                 itemArray[i].product.symbol,
                 itemArray[i].quantity
               );
-              if (mt5OrderId) {
-                await orderModel.updateOrderProductTicketId(
-                  orderItem.id,
-                  mt5OrderId
+              console.log("mt5OrderId: ", mt5OrderId);
+              if (mt5OrderId != 0) {
+                let orderItem = await orderModel.insertOrderDetails(
+                  user.user_id,
+                  order.id,
+                  itemArray[i]
                 );
+                if (orderItem) {
+                  await orderModel.updateOrderProductTicketId(
+                    orderItem.id,
+                    mt5OrderId
+                  );
+                }
               }
             }
+          } else {
+            await orderModel.insertOrderDetails(
+              user.user_id,
+              order.id,
+              itemArray[i]
+            );
+          }
+          let numOrderItems = await orderModel.getDetailsByOrderId(order.id);
+          if (numOrderItems.length > 0) {
+            if (itemArray[i].product) {
+              itemArray[i].product.files =
+                await productModel.getByFilesByProduct(itemArray[i].product_id);
+            }
+            await cartModel.deleteUserCart(
+              user.user_id,
+              itemArray[i].product_id,
+              itemArray[i].type
+            );
+          } else {
+            await orderModel.deleteOrder(order.id);
+            return res.status(400).json({ errors: [{ msg: "Error" }] });
           }
         }
       }

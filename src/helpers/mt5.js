@@ -322,7 +322,7 @@ exports.buyPosition = async (account, symbol, quantity) => {
             return;
           }
           var answer = req.parseBodyJSON(error, res, body, null);
-          console.log("body ====", body);
+          console.log("BUY POSITION MT5 RES:", body);
           if (answer.answer) {
             let request_id = answer.answer.id;
             req.Get(
