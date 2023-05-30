@@ -91,14 +91,12 @@ exports.submit = async (req, res) => {
           itemArray[i].price = product.last_price;
 
           if (itemArray[i].type === "store" || itemArray[i].type === "stake") {
-            console.log(itemArray[i].type);
             if (mt5AccountNumber?.meta_values) {
               let mt5OrderId = await buyPosition(
                 mt5AccountNumber.meta_values,
                 itemArray[i].product.symbol,
                 itemArray[i].quantity
               );
-              console.log("mt5OrderId: ", mt5OrderId);
               if (mt5OrderId != 0) {
                 let orderItem = await orderModel.insertOrderDetails(
                   user.user_id,
@@ -111,6 +109,13 @@ exports.submit = async (req, res) => {
                     mt5OrderId
                   );
                 }
+              } else {
+                await updateWalletAmount(
+                  user.user_id,
+                  product.last_price,
+                  "+",
+                  "Position%20failed%20cashback"
+                );
               }
             }
           } else {
