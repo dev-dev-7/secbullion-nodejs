@@ -128,7 +128,7 @@ const getDetailsByOrderId = (order_id) => {
       "d.quantity as quantity",
       "d.status as status",
       "d.id as id",
-      "p.last_price as price"
+      "d.price as price"
     )
     .where("d.order_id", order_id)
     .leftJoin(productTable + " as p", "p.id", "d.product_id");
