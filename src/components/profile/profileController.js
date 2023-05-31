@@ -10,7 +10,7 @@ exports.update = async (req, res) => {
   if (user.user_id) {
     var arr = Object.entries(req.body);
     for (var i = 0; i < arr.length; i++) {
-      if (arr[i][0] != "password") {
+      if (arr[i][0] != "password" && arr[i][0] != "mobile") {
         let exist = await model.getUserMetaDataKey(user.user_id, arr[i][0]);
         if (exist) {
           await model.updateUserMetaData(user.user_id, arr[i][0], arr[i][1]);
