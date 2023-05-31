@@ -1,6 +1,6 @@
 require("dotenv").config();
 const model = require("../dashboardModel");
-const { getDateUS, getAddMonth } = require("../../../helpers/time");
+const { getDateUS, getAddMonth, createdAt } = require("../../../helpers/time");
 
 exports.get = async (req, res) => {
   let todayDate = getDateUS();
@@ -19,6 +19,7 @@ exports.get = async (req, res) => {
     monthly_orders: monthOrders.total,
     total_business: business.total,
     total_orders: orders.total,
+    default_time: createdAt(),
   };
   return res.status(201).json({ data: result });
 };
