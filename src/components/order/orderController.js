@@ -13,8 +13,7 @@ async function getGrandTotal(cartItems, discount_price) {
   let grandTotal = 0
   if (cartItems.length) {
     for (var i = 0; i < cartItems.length; i++) {
-      cartItems[i].product = await productModel.getById(cartItems[i].product_id)
-      grandTotal += cartItems[i].product.last_price * cartItems[i].quantity
+      grandTotal += cartItems[i].price * cartItems[i].quantity
     }
   }
   return grandTotal - discount_price
