@@ -13,12 +13,12 @@ exports.get = async (req, res) => {
   let orders = await model.getSumOfOrders();
   let result = {
     currency: process.env.DEFAULT_CURRENCY,
-    today_business: dayBusiness.total,
-    today_orders: dayOrders.total,
-    monthly_business: monthBusiness.total,
-    monthly_orders: monthOrders.total,
-    total_business: business.total,
-    total_orders: orders.total,
+    today_business: dayBusiness.total ? dayBusiness.total : 0,
+    today_orders: dayOrders.total ? dayOrders.total : 0,
+    monthly_business: monthBusiness.total ? monthBusiness.total : 0,
+    monthly_orders: monthOrders.total ? monthOrders.total : 0,
+    total_business: business.total ? business.total : 0,
+    total_orders: orders.total ? orders.total : 0,
     default_time: createdAt(),
   };
   return res.status(201).json({ data: result });

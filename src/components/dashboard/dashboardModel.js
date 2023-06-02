@@ -18,16 +18,16 @@ const getSumOfOrdersToday = (date) => {
 const getSumOfBusinessMonth = (fromDate, toDate) => {
   return db(orderTable)
     .sum("subtotal as total")
-    .where("created_at", "like", `%${fromDate}%`)
-    .orWhere("created_at", "like", `%${toDate}%`)
+    .where("created_at", ">=", `%${fromDate}%`)
+    .orWhere("created_at", "<=", `%${toDate}%`)
     .first();
 };
 
 const getSumOfOrdersMonth = (fromDate, toDate) => {
   return db(orderTable)
     .count("id as total")
-    .where("created_at", "like", `%${fromDate}%`)
-    .orWhere("created_at", "like", `%${toDate}%`)
+    .where("created_at", ">=", `%${fromDate}%`)
+    .orWhere("created_at", "<=", `%${toDate}%`)
     .first();
 };
 
