@@ -13,8 +13,7 @@ async function getGrandTotal(cartItems, discount_price) {
   let grandTotal = 0
   if (cartItems.length) {
     for (var i = 0; i < cartItems.length; i++) {
-      cartItems[i].product = await productModel.getById(cartItems[i].product_id)
-      grandTotal += cartItems[i].product.last_price * cartItems[i].quantity
+      grandTotal += cartItems[i].price * cartItems[i].quantity
     }
   }
   return grandTotal - discount_price
@@ -59,7 +58,7 @@ exports.submit = async (req, res) => {
   if (cartItems?.length) {
     let coupon = await cartModel.getCoupon(req.body.coupon_code)
     req.body.discount_price = coupon ? coupon.discount_price : 0
-    let grandTotal = await getGrandTotal(cartItems, req.body.discount_price)
+    let grandTotal = await getGrandTotal(req.body.items, req.body.discount_price)
     if (req.body.payment_method == 'wallet') {
       let wallet = await walletModel.getWalletByUserId(user.user_id)
       if (wallet.cash_balance < grandTotal) {
