@@ -19,12 +19,7 @@ exports.register_validation = [
       if (await profileModel.getMetaDataKeyValue("email", value))
         return Promise.reject("E-mail already exists");
     }),
-  check("mobile")
-    .notEmpty()
-    .custom(async (value) => {
-      if (await profileModel.getMetaDataKeyValue("mobile", value))
-        return Promise.reject("Mobile already exists");
-    }),
+  check("mobile").notEmpty(),
   check("password")
     .notEmpty()
     .bail()
@@ -72,5 +67,5 @@ exports.document_validation = [
   check("user_id").notEmpty(),
   check("passport").notEmpty(),
   check("emirates_id").notEmpty(),
-  check("utility_bill").notEmpty()
+  check("utility_bill").notEmpty(),
 ];
