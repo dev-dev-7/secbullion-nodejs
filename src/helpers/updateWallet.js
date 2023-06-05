@@ -18,6 +18,7 @@ exports.updateWalletAmount = async (
   );
   // let mt5Balance = await getMT5Balance(userMetadata.meta_values);
   // console.log("mt5Balance: ", mt5Balance.Balance);
+  await updateMT5Balance(userMetadata.meta_values, updateAmount, comment);
   await walletModel.updateWallet(user_id, {
     cash_balance: updateWalletAmount,
   });
@@ -26,6 +27,5 @@ exports.updateWalletAmount = async (
     comment.replace(/%20/g, " "),
     updateAmount
   );
-  await updateMT5Balance(userMetadata.meta_values, updateAmount, comment);
   return;
 };
