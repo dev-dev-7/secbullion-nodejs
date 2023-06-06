@@ -121,15 +121,13 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "deliver" ||
       req.body.status == "collect"
     ) {
-      let product = await productModel.getById(selectedProduct.product_id);
-      let currentPrice =
-        req.body.status == "sellback" ? product.bid_price : product.last_price;
+      let currentPrice = selectedProduct.price;
       let totalPrice = currentPrice * req.body.quantity;
       await updateWalletAmount(
         req.params.user_id,
         totalPrice,
         "+",
-        "Sell-back%20" + product.symbol + "%20x%20" + req.body.quantity
+        "Sell-back%20" + selectedProduct.symbol + "%20x%20" + req.body.quantity
       );
       if (selectedProduct.quantity > req.body.quantity) {
         await sellPosition(
