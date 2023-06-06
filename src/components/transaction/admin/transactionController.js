@@ -3,7 +3,7 @@ const bankDetailsModel = require("./../../bankDetails/bankDetailsModel");
 const authModel = require("./../../auth/authModel");
 const profileModel = require("./../../profile/profileModel");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
-const authorization = require("../../../helpers/authorization");
+const { authorization } = require("../../../helpers/authorization");
 
 exports.get = async (req, res) => {
   const transactions = await model.getAllTransactions();
@@ -38,6 +38,10 @@ exports.update = async (req, res) => {
       "+",
       "New%20Deposit"
     );
+    console.log({
+      status: 1,
+      action_taken_by: user.user_id,
+    });
     await model.updateTransaction(req.params.transaction_id, {
       status: 1,
       action_taken_by: user.user_id,
