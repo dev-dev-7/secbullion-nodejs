@@ -23,9 +23,14 @@ exports.changeMyOrderStatus = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
   let existOrder = await orderModel.getOrderById(req.params.order_id);
   if (existOrder) {
-    await orderModel.updateOrderStatus(req.params.order_id, req.body.status);
+    await orderModel.updateOrderStatus(
+      req.params.order_id,
+      req.body.status,
+      user.user_id
+    );
     return res
       .status(201)
       .json({ msg: "Order status has been updated successfully" });
@@ -117,7 +122,8 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "collect"
     ) {
       let product = await productModel.getById(selectedProduct.product_id);
-      let currentPrice = req.body.status == "sellback"?product.bid_price:product.last_price;
+      let currentPrice =
+        req.body.status == "sellback" ? product.bid_price : product.last_price;
       let totalPrice = currentPrice * req.body.quantity;
       await updateWalletAmount(
         req.params.user_id,

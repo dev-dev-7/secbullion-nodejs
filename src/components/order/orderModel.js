@@ -25,9 +25,10 @@ const create = async ({
     .then((id) => getOrderById(id));
 };
 
-const updateOrderStatus = async (id, status) => {
+const updateOrderStatus = async (id, status, user_id) => {
   return db(orderTable).where("id", id).update({
     status: status,
+    action_taken_by: user_id,
   });
 };
 

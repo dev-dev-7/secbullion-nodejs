@@ -3,6 +3,7 @@ const bankDetailsModel = require("./../../bankDetails/bankDetailsModel");
 const authModel = require("./../../auth/authModel");
 const profileModel = require("./../../profile/profileModel");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
+const authorization = require("../../../helpers/authorization");
 
 exports.get = async (req, res) => {
   const transactions = await model.getAllTransactions();
@@ -28,6 +29,7 @@ exports.get = async (req, res) => {
 };
 
 exports.update = async (req, res) => {
+  let user = await authorization(req, res);
   const transaction = await model.getTransactionById(req.params.transaction_id);
   if (transaction && transaction.status == 0) {
     await updateWalletAmount(
@@ -38,6 +40,7 @@ exports.update = async (req, res) => {
     );
     await model.updateTransaction(req.params.transaction_id, {
       status: 1,
+      action_taken_by: user.user_id,
     });
     return res.status(200).json({
       data: await model.getTransactionById(req.params.transaction_id),
