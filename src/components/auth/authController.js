@@ -242,7 +242,7 @@ exports.validateToken = async (req, res) => {
       return res.status(200).json({
         data: user,
       });
-    }else{
+    } else {
       return res.status(400).json({ errors: [{ msg: "Token Invalid" }] });
     }
   } else {
@@ -256,7 +256,7 @@ exports.getUser = async (req, res) => {
     return res.status(200).json({
       data: user,
     });
-  }else{
+  } else {
     return res.status(400).json({ errors: [{ msg: "Invalid Request" }] });
   }
 };
@@ -275,7 +275,7 @@ exports.uploadDocuments = async (req, res) => {
             user.user_id,
             arr[i][0]
           );
-          if (exist) {
+          if (exist.length) {
             await profileModel.updateUserMetaData(
               user.user_id,
               arr[i][0],
@@ -291,8 +291,8 @@ exports.uploadDocuments = async (req, res) => {
         }
       }
       await authModel.updateUser(req.body.user_id, {
-        verified: 3
-      })
+        verified: 3,
+      });
       return res.status(200).json({
         msg: "Documents has been successfully submitted.",
       });
