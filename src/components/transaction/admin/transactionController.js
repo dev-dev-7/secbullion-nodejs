@@ -31,15 +31,25 @@ exports.get = async (req, res) => {
 exports.update = async (req, res) => {
   let user = await authorization(req, res);
   const transaction = await model.getTransactionById(req.params.transaction_id);
-  if (transaction && transaction.status == 0) {
-    await updateWalletAmount(
-      transaction.user_id,
-      transaction.amount,
-      "+",
-      "New%20Deposit"
-    );
+  console.log(transaction);
+  if (transaction) {
+    if (req.body.status == 1) {
+      await updateWalletAmount(
+        transaction.user_id,
+        transaction.amount,
+        "+",
+        "New%20Deposit"
+      );
+    } else {
+      await updateWalletAmount(
+        transaction.user_id,
+        transaction.amount,
+        "-",
+        "New%20Deposit"
+      );
+    }
     await model.updateTransaction(req.params.transaction_id, {
-      status: 1,
+      status: req.body.status,
       action_taken_by: user.user_id,
     });
     return res.status(200).json({
