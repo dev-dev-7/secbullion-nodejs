@@ -38,10 +38,6 @@ exports.update = async (req, res) => {
       "+",
       "New%20Deposit"
     );
-    console.log({
-      status: 1,
-      action_taken_by: user.user_id,
-    });
     await model.updateTransaction(req.params.transaction_id, {
       status: 1,
       action_taken_by: user.user_id,
