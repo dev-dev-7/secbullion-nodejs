@@ -17,9 +17,14 @@ exports.register_validation = [
     .isEmail()
     .custom(async (value) => {
       if (await profileModel.getMetaDataKeyValue("email", value))
-        return Promise.reject("E-mail already exists");
+        return Promise.reject("E-mail already used");
     }),
-  check("mobile").notEmpty(),
+  check("mobile")
+    .notEmpty()
+    .custom(async (value) => {
+      if (await profileModel.getMetaDataKeyValue("mobile", value))
+        return Promise.reject("Mobile already used");
+    }),
   check("password")
     .notEmpty()
     .bail()
