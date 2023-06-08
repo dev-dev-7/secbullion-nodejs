@@ -224,6 +224,39 @@ exports.getSymbolPrice = async (products) => {
   }
 };
 
+exports.getSingleSymbolPrice = async (symbol) => {
+  let symbols = [symbol];
+  if (symbols?.length) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          // console.log(error);
+          return;
+        }
+        req.Get(
+          "/api/tick/last?symbol=" + symbols,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            if (answer.answer) {
+              // console.log("answer.answer", answer.answer);
+              resolve(answer.answer);
+            } else {
+              reject(null);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    return [];
+  }
+};
+
 // exports.getAllSymbols = async (symbol) => {
 //   var req = new MT5Request("secmt5.afkkarr.com", 443);
 //   return new Promise((resolve, reject) => {
@@ -311,7 +344,7 @@ exports.buyPosition = async (account, symbol, quantity, price = "") => {
         Login: account,
         Symbol: symbol,
         Volume: quantity + "0000",
-        PriceOrder: price,
+        PriceOrder: price.toString(),
         Type: 0,
       });
       req.Post(
@@ -323,7 +356,6 @@ exports.buyPosition = async (account, symbol, quantity, price = "") => {
             return;
           }
           var answer = req.parseBodyJSON(error, res, body, null);
-          console.log("BUY POSITION MT5 RES:", body);
           if (answer.answer) {
             let request_id = answer.answer.id;
             req.Get(
@@ -336,7 +368,7 @@ exports.buyPosition = async (account, symbol, quantity, price = "") => {
                 var answer = req.parseBodyJSON(error, res, body, null);
                 if (answer.answer) {
                   let result = answer.answer;
-                  resolve(result[request_id][1].answer.Order);
+                  resolve(result[request_id][1].answer);
                 } else {
                   reject(null);
                 }

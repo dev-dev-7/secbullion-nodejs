@@ -5,7 +5,7 @@ const productModel = require("../product/productModel");
 const walletModel = require("../wallet/walletModel");
 const profileModel = require("../profile/profileModel");
 const { validationResult } = require("express-validator");
-const { buyPosition } = require("../../helpers/mt5");
+const { buyPosition, getSingleSymbolPrice } = require("../../helpers/mt5");
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 const { authorization } = require("../../helpers/authorization");
 
@@ -71,7 +71,8 @@ exports.submit = async (req, res) => {
         cartItems[i].product.files = await productModel.getByFilesByProduct(
           cartItems[i].product_id
         );
-        cartItems[i].price = product.last_price;
+        let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
+        cartItems[i].price = symbolLatestPrice[0].Ask;
       }
     }
   } else {
@@ -109,6 +110,7 @@ exports.submit = async (req, res) => {
       user.user_id,
       "mt5_account_no"
     );
+    let priceOrder = 0;
     if (cartItems.length) {
       for (var i = 0; i < cartItems.length; i++) {
         cartItems[i].currency = process.env.DEFAULT_CURRENCY;
@@ -120,7 +122,8 @@ exports.submit = async (req, res) => {
               cartItems[i].quantity,
               cartItems[i].price
             );
-            if (mt5OrderId != 0) {
+            priceOrder = mt5OrderId.PriceOrder;
+            if (mt5OrderId?.Order != 0) {
               let orderItem = await orderModel.insertOrderDetails(
                 user.user_id,
                 order.id,
@@ -129,7 +132,7 @@ exports.submit = async (req, res) => {
               if (orderItem) {
                 await orderModel.updateOrderProductTicketId(
                   orderItem.id,
-                  mt5OrderId
+                  mt5OrderId.Order
                 );
               }
             } else {
@@ -155,6 +158,11 @@ exports.submit = async (req, res) => {
         );
       }
     }
+    await orderModel.updateOrderAmount(
+      order.id,
+      priceOrder,
+      req.body.discount_price
+    );
     let numOrderItems = await orderModel.getDetailsByOrderId(order.id);
     if (!numOrderItems.length) {
       await orderModel.deleteOrder(order.id);

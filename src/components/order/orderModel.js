@@ -32,6 +32,15 @@ const updateOrderStatus = async (id, status, user_id) => {
   });
 };
 
+const updateOrderAmount = async (id, amount, discount) => {
+  return db(orderTable)
+    .where("id", id)
+    .update({
+      subtotal: amount,
+      total: amount - discount,
+    });
+};
+
 const getAllOrders = () => {
   return db(orderTable).orderBy("id", "DESC");
 };
@@ -232,4 +241,5 @@ module.exports = {
   getSumOfUserStack,
   updateOrderProductTicketId,
   deleteOrder,
+  updateOrderAmount,
 };
