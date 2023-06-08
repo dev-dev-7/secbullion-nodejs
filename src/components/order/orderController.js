@@ -68,9 +68,6 @@ exports.submit = async (req, res) => {
       let product = await productModel.getById(cartItems[i].product_id);
       if (product) {
         cartItems[i].product = product;
-        cartItems[i].product.files = await productModel.getByFilesByProduct(
-          cartItems[i].product_id
-        );
         let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
         cartItems[i].price = symbolLatestPrice[0].Ask;
       }
