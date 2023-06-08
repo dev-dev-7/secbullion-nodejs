@@ -122,7 +122,7 @@ exports.submit = async (req, res) => {
               cartItems[i].quantity,
               cartItems[i].price
             );
-            priceOrder = mt5OrderId.PriceOrder;
+            priceOrder = mt5OrderId.PriceOrder * cartItems[i].quantity;
             if (mt5OrderId?.Order != 0) {
               let orderItem = await orderModel.insertOrderDetails(
                 user.user_id,
