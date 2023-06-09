@@ -1,6 +1,7 @@
 require("dotenv").config();
 const productModel = require("../product/productModel");
 const orderModel = require("../order/orderModel");
+const profileModel = require("../profile/profileModel");
 const {
   getSymbolPrice,
   buyPosition,
@@ -53,13 +54,19 @@ exports.stakeUpdate = async (req, res) => {
         );
         if (getNumberOfDays(expiryDate, todayDate) > 0) {
           if (stakes[i].mt5_position_id) {
+            let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+              stakes[i].user_id,
+              "mt5_account_no"
+            );
             let symbolDetails = await getRequestDetails(
+              mt5AccountNumber.meta_values,
               stakes[i].mt5_position_id
             );
             if (symbolDetails) {
               await orderModel.updateStakeSwapValue(
                 stakes[i].id,
-                symbolDetails.Storage
+                symbolDetails.Storage,
+                symbolDetails.toString()
               );
             }
           }

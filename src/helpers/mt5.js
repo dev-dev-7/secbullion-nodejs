@@ -430,7 +430,7 @@ exports.getRequestDetails = async (account, position) => {
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
-          console.log(error);
+          console.log("auth", error);
           return;
         }
         req.Get(
