@@ -107,20 +107,21 @@ exports.submit = async (req, res) => {
       user.user_id,
       "mt5_account_no"
     );
-    let priceOrder = 0;
+    let priceOrder = sum.subTotal;
     if (cartItems.length) {
       for (var i = 0; i < cartItems.length; i++) {
         cartItems[i].currency = process.env.DEFAULT_CURRENCY;
         if (cartItems[i].type === "store" || cartItems[i].type === "stake") {
+          priceOrder = priceOrder - cartItems[i].price * cartItems[i].quantity;
           if (mt5AccountNumber?.meta_values) {
-            let mt5OrderId = await buyPosition(
+            let mt5Order = await buyPosition(
               mt5AccountNumber.meta_values,
               cartItems[i].product.symbol,
               cartItems[i].quantity,
               cartItems[i].price
             );
-            priceOrder = mt5OrderId.PriceOrder * cartItems[i].quantity;
-            if (mt5OrderId?.Order != 0) {
+            priceOrder += mt5Order.PriceOrder * cartItems[i].quantity;
+            if (mt5Order?.Order != 0) {
               let orderItem = await orderModel.insertOrderDetails(
                 user.user_id,
                 order.id,
@@ -129,7 +130,7 @@ exports.submit = async (req, res) => {
               if (orderItem) {
                 await orderModel.updateOrderProductTicketId(
                   orderItem.id,
-                  mt5OrderId.Order
+                  mt5Order.Order
                 );
               }
             } else {
