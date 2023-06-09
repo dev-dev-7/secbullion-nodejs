@@ -2,9 +2,12 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const { authorization } = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
-const productModel = require("../../product/productModel");
 const profileModel = require("../../profile/profileModel");
-const { closeRequest, sellPosition } = require("../../../helpers/mt5");
+const {
+  closeRequest,
+  sellPosition,
+  buyPosition,
+} = require("../../../helpers/mt5");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
 
 exports.get = async (req, res) => {
@@ -144,6 +147,13 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           selectedProduct.mt5_position_id
         );
       }
+    } else {
+      await buyPosition(
+        userMetadata.meta_values,
+        selectedProduct.symbol,
+        req.body.quantity,
+        selectedProduct.price
+      );
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });
   } else {
