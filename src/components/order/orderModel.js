@@ -172,7 +172,7 @@ const updateOrderProductPrice = async (product_id, price) => {
     });
 };
 
-const updateStakeSwapValue = async (id, swap, comission) => {
+const updateStakeSwapValue = async (id, swap="0", comission="0") => {
   return db(orderDetailsTable)
     .where("id", id)
     .andWhere("status", "stake")
