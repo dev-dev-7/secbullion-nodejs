@@ -47,22 +47,22 @@ exports.stakeUpdate = async (req, res) => {
     for (var i = 0; i < stakes.length; i++) {
       if (stakes[i].duration > 0) {
         if (stakes[i].mt5_position_id) {
-          // let mt5AccountNumber = await profileModel.getUserMetaDataKey(
-          //   stakes[i].user_id,
-          //   'mt5_account_no',
-          // )
+          let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+            stakes[i].user_id,
+            'mt5_account_no',
+          )
           // // let symbolDetails = await getRequestDetails(
           // //   mt5AccountNumber.meta_values,
           // //   stakes[i].mt5_position_id
           // // );
           // let symbolDetails = mt5AccountNumber
-          // if (symbolDetails) {
-          //   await orderModel.updateStakeSwapValue(
-          //     stakes[i].id,
-          //     symbolDetails.Storage,
-          //     symbolDetails.toString(),
-          //   )
-          // }
+          if (mt5AccountNumber) {
+            await orderModel.updateStakeSwapValue(
+              stakes[i].id,
+              0,
+              mt5AccountNumber
+            )
+          }
         }
       }
     }
