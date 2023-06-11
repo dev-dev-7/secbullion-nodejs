@@ -8,6 +8,7 @@ const {
   sellPosition,
   getRequestDetails,
   getPriceFromSymbol,
+  getSingleSymbolPrice,
   getBalance,
   updateBalance,
   closeRequest,
@@ -51,14 +52,14 @@ exports.stakeUpdate = async (req, res) => {
             stakes[i].user_id,
             'mt5_account_no',
           )
-          let symbolDetails = await getRequestDetails(
+          let symbolDetails = await getSingleSymbolPrice(
             mt5AccountNumber.meta_values,
             stakes[i].mt5_position_id
           );
           if (symbolDetails) {
             await orderModel.updateStakeSwapValue(
               stakes[i].id,
-              symbolDetails[0].Storage,
+              0,
               JSON.stringify(symbolDetails)
             )
           }
