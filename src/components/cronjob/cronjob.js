@@ -8,7 +8,6 @@ const {
   sellPosition,
   getRequestDetails,
   getPriceFromSymbol,
-  getSingleSymbolPrice,
   getBalance,
   updateBalance,
   closeRequest,
@@ -53,12 +52,13 @@ exports.stakeUpdate = async (req, res) => {
             'mt5_account_no',
           )
           let symbolDetails = await getSingleSymbolPrice(
-            "PAMPSuisse-10gm"
+            mt5AccountNumber.meta_values,
+            stakes[i].mt5_position_id
           );
           if (symbolDetails) {
             await orderModel.updateStakeSwapValue(
               stakes[i].id,
-              0,
+              symbolDetails[0].Storage,
               JSON.stringify(symbolDetails)
             )
           }
