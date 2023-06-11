@@ -58,15 +58,16 @@ exports.stakeUpdate = async (req, res) => {
               stakes[i].user_id,
               "mt5_account_no"
             );
-            let symbolDetails = await getRequestDetails(
-              mt5AccountNumber.meta_values,
-              stakes[i].mt5_position_id
-            );
+            // let symbolDetails = await getRequestDetails(
+            //   mt5AccountNumber.meta_values,
+            //   stakes[i].mt5_position_id
+            // );
+            let symbolDetails = mt5AccountNumber;
             if (symbolDetails) {
               await orderModel.updateStakeSwapValue(
                 stakes[i].id,
                 symbolDetails.Storage,
-                "symbolDetails.toString()"
+                symbolDetails.toString()
               );
             }
           }
