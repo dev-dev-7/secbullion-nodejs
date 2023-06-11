@@ -43,30 +43,30 @@ exports.priceUpdate = async (req, res) => {
 
 exports.stakeUpdate = async (req, res) => {
   const stakes = await orderModel.getAllStakes()
-  if (stakes) {
-    for (var i = 0; i < stakes.length; i++) {
-      if (stakes[i].duration > 0) {
-        if (stakes[i].mt5_position_id) {
-          let mt5AccountNumber = await profileModel.getUserMetaDataKey(
-            stakes[i].user_id,
-            'mt5_account_no',
-          )
-          // let symbolDetails = await getRequestDetails(
-          //   mt5AccountNumber.meta_values,
-          //   stakes[i].mt5_position_id
-          // );
-          let symbolDetails = mt5AccountNumber
-          if (symbolDetails) {
-            await orderModel.updateStakeSwapValue(
-              stakes[i].id,
-              symbolDetails.Storage,
-              symbolDetails.toString(),
-            )
-          }
-        }
-      }
-    }
-  }
+  // if (stakes) {
+  //   for (var i = 0; i < stakes.length; i++) {
+  //     if (stakes[i].duration > 0) {
+  //       if (stakes[i].mt5_position_id) {
+  //         let mt5AccountNumber = await profileModel.getUserMetaDataKey(
+  //           stakes[i].user_id,
+  //           'mt5_account_no',
+  //         )
+  //         // let symbolDetails = await getRequestDetails(
+  //         //   mt5AccountNumber.meta_values,
+  //         //   stakes[i].mt5_position_id
+  //         // );
+  //         let symbolDetails = mt5AccountNumber
+  //         if (symbolDetails) {
+  //           await orderModel.updateStakeSwapValue(
+  //             stakes[i].id,
+  //             symbolDetails.Storage,
+  //             symbolDetails.toString(),
+  //           )
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
   return res.status(200).json({ data: stakes })
 }
 
