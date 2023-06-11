@@ -56,13 +56,13 @@ exports.stakeUpdate = async (req, res) => {
           // //   stakes[i].mt5_position_id
           // // );
           // let symbolDetails = mt5AccountNumber
-          if (mt5AccountNumber) {
-            await orderModel.updateStakeSwapValue(
-              stakes[i].id,
-              0,
-              mt5AccountNumber
-            )
-          }
+          // if (mt5AccountNumber) {
+          //   await orderModel.updateStakeSwapValue(
+          //     stakes[i].id,
+          //     0,
+          //     mt5AccountNumber
+          //   )
+          // }
         }
       }
     }
