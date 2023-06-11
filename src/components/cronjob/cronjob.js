@@ -58,7 +58,7 @@ exports.stakeUpdate = async (req, res) => {
           if (symbolDetails) {
             await orderModel.updateStakeSwapValue(
               stakes[i].id,
-              JSON.stringify(symbolDetails)[0].Profit,
+              symbolDetails.Profit,
               JSON.stringify(symbolDetails)
             )
           }
