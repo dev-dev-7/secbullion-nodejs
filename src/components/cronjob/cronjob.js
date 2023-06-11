@@ -53,7 +53,7 @@ exports.stakeUpdate = async (req, res) => {
             'mt5_account_no',
           )
           let symbolDetails = await getSingleSymbolPrice(
-            stakes[i].symbol
+            "PAMPSuisse-10gm"
           );
           if (symbolDetails) {
             await orderModel.updateStakeSwapValue(
