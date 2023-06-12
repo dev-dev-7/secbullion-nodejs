@@ -460,6 +460,37 @@ exports.getRequestDetails = async (account, position) => {
   }
 };
 
+exports.getSymbolDetails = async (symbol) => {
+  if (symbol) {
+    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    return new Promise((resolve, reject) => {
+      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+        if (error) {
+          return;
+        }
+        req.Get(
+          "/api/symbol/get?symbol=" + symbol,
+          function (error, res, body) {
+            if (error) {
+              console.log(error);
+              return;
+            }
+            var answer = req.parseBodyJSON(error, res, body, null);
+            if (answer.answer) {
+              let data = answer.answer;
+              resolve(data);
+            } else {
+              reject(null);
+            }
+          }
+        );
+      });
+    });
+  } else {
+    return [];
+  }
+};
+
 exports.closeRequest = async (account, symbol, quantity, position) => {
   if (account) {
     var req = new MT5Request("secmt5.afkkarr.com", 443);
