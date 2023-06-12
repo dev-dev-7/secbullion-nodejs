@@ -19,7 +19,7 @@ const {
 //   getDateTime,
 //   getNumberOfDays,
 // } = require('../../helpers/time')
-// const { updateWalletAmount } = require('../../helpers/updateWallet')
+const { updateWalletAmount } = require("../../helpers/updateWallet");
 
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.getAll();
@@ -73,9 +73,9 @@ exports.stakeUpdate = async (req, res) => {
 };
 
 exports.test = async (req, res) => {
-  let stakes = await buyPosition(1000535, "PAMPSuisse-1oz", 1);
+  let test = await updateWalletAmount(28, 100, "+", "xxx");
   // let stakes = await sellPosition(1000532, "GOLD.1g", 5, 25858);
   // let stakes = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
-  return res.status(200).json({ data: stakes });
+  return res.status(200).json({ data: test });
 };
