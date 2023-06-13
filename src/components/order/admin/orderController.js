@@ -3,6 +3,7 @@ const { validationResult } = require("express-validator");
 const { authorization } = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
 const profileModel = require("../../profile/profileModel");
+const productModel = require("../../product/productModel");
 const {
   closeRequest,
   sellPosition,
@@ -132,6 +133,21 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         "+",
         "Sell-back%20" + selectedProduct.symbol + "%20x%20" + req.body.quantity
       );
+      if (req.body.status == "sellback") {
+        let product = await productModel.getById(selectedProduct.product_id);
+        let totalCommision = req.body.quantity * product.commission;
+        if (totalCommision > 0) {
+          await updateWalletAmount(
+            req.params.user_id,
+            totalCommision,
+            "-",
+            "Commission%20" +
+              selectedProduct.symbol +
+              "%20x%20" +
+              req.body.quantity
+          );
+        }
+      }
       if (selectedProduct.quantity > req.body.quantity) {
         await sellPosition(
           userMetadata.meta_values,
