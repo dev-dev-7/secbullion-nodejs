@@ -135,8 +135,8 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       );
       if (req.body.status == "sellback") {
         let product = await productModel.getById(selectedProduct.product_id);
-        let totalCommision = req.body.quantity * product.commission;
-        if (totalCommision > 0) {
+        if (product?.commission > 0) {
+          let totalCommision = req.body.quantity * product.commission;
           await updateWalletAmount(
             req.params.user_id,
             totalCommision,
