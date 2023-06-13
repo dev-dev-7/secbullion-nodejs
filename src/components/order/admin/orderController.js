@@ -151,8 +151,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       await buyPosition(
         userMetadata.meta_values,
         selectedProduct.symbol,
-        req.body.quantity,
-        selectedProduct.price
+        req.body.quantity
       );
     }
     return res.status(201).json({ msg: "Order has been updated successfully" });

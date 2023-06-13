@@ -331,7 +331,7 @@ exports.createMt5Account = async (body) => {
   });
 };
 
-exports.buyPosition = async (account, symbol, quantity, price = "") => {
+exports.buyPosition = async (account, symbol, quantity) => {
   var req = new MT5Request("secmt5.afkkarr.com", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
@@ -344,7 +344,6 @@ exports.buyPosition = async (account, symbol, quantity, price = "") => {
         Login: account,
         Symbol: symbol,
         Volume: quantity + "0000",
-        PriceOrder: price.toString(),
         Type: 0,
       });
       req.Post(

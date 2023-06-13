@@ -117,8 +117,7 @@ exports.submit = async (req, res) => {
             let mt5Order = await buyPosition(
               mt5AccountNumber.meta_values,
               cartItems[i].product.symbol,
-              cartItems[i].quantity,
-              cartItems[i].price
+              cartItems[i].quantity
             );
             priceOrder += mt5Order.PriceOrder * cartItems[i].quantity;
             if (mt5Order?.Order != 0) {
