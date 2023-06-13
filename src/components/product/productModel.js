@@ -12,6 +12,7 @@ const create = async ({
   quantity,
   unit,
   price,
+  commission,
 }) => {
   return db(table)
     .insert({
@@ -24,6 +25,7 @@ const create = async ({
       quantity: quantity,
       unit: unit,
       price: price,
+      commission: commission,
     })
     .then((id) => getById(id));
 };
@@ -40,6 +42,7 @@ const update = async (
     quantity,
     unit,
     price,
+    commission,
   }
 ) => {
   return db(table)
@@ -54,6 +57,7 @@ const update = async (
       quantity: quantity,
       unit: unit,
       price: price,
+      commission: commission,
     })
     .then((updated) => deleteByFilesByProduct(id));
 };
