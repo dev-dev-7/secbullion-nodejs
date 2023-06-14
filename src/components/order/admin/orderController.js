@@ -3,12 +3,10 @@ const { validationResult } = require('express-validator')
 const { authorization } = require('../../../helpers/authorization')
 const orderModel = require('../orderModel')
 const profileModel = require('../../profile/profileModel')
-const productModel = require('../../product/productModel')
 const {
   closeRequest,
   sellPosition,
   buyPosition,
-  getSingleSymbolPrice,
 } = require('../../../helpers/mt5')
 const { updateWalletAmount } = require('../../../helpers/updateWallet')
 
@@ -124,9 +122,9 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == 'deliver' ||
       req.body.status == 'collect'
     ) {
-      let symbolLatestPrice = await getSingleSymbolPrice(selectedProduct.symbol)
-      let totalPrice = symbolLatestPrice[0].Ask * req.body.quantity
-      if (totalPrice > 0) {
+      if (req.body.status == 'sellback') {
+        let currentPrice = selectedProduct.price
+        let totalPrice = currentPrice * req.body.quantity
         await updateWalletAmount(
           req.params.user_id,
           totalPrice,
@@ -136,42 +134,28 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             '%20x%20' +
             req.body.quantity,
         )
-        if (req.body.status == 'sellback') {
-          let product = await productModel.getById(selectedProduct.product_id)
-          if (product?.commission > 0) {
-            let totalCommision = req.body.quantity * product.commission
-            await updateWalletAmount(
-              req.params.user_id,
-              totalCommision,
-              '-',
-              'Commission%20' +
-                selectedProduct.symbol +
-                '%20x%20' +
-                req.body.quantity,
-            )
-          }
-        }
-        if (selectedProduct.quantity > req.body.quantity) {
-          await sellPosition(
-            userMetadata.meta_values,
-            selectedProduct.symbol,
-            req.body.quantity,
-            selectedProduct.mt5_position_id,
-          )
-        } else {
-          await closeRequest(
-            userMetadata.meta_values,
-            selectedProduct.symbol,
-            selectedProduct.quantity,
-            selectedProduct.mt5_position_id,
-          )
-        }
+      }
+      if (selectedProduct.quantity > req.body.quantity) {
+        await sellPosition(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          req.body.quantity,
+          selectedProduct.mt5_position_id,
+        )
+      } else {
+        await closeRequest(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          selectedProduct.quantity,
+          selectedProduct.mt5_position_id,
+        )
       }
     } else {
       await buyPosition(
         userMetadata.meta_values,
         selectedProduct.symbol,
         req.body.quantity,
+        selectedProduct.price,
       )
     }
     return res.status(201).json({ msg: 'Order has been updated successfully' })
