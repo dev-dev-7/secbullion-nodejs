@@ -172,7 +172,13 @@ const updateOrderProductPrice = async (product_id, price) => {
     });
 };
 
-const updateStakeSwapValue = async (id, swap="0", commission="0") => {
+const updateOrderProductLatestPrice = async (product_id, price) => {
+  return db(orderDetailsTable).where("product_id", product_id).update({
+    price: price,
+  });
+};
+
+const updateStakeSwapValue = async (id, swap = "0", commission = "0") => {
   return db(orderDetailsTable)
     .where("id", id)
     .andWhere("status", "stake")
@@ -237,6 +243,7 @@ module.exports = {
   updateOrderProduct,
   updateOrderProductQuantity,
   updateOrderProductPrice,
+  updateOrderProductLatestPrice,
   updateStakeSwapValue,
   updateOrderProductStatus,
   getSumOfUserStack,

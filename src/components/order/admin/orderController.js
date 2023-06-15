@@ -8,6 +8,7 @@ const {
   closeRequest,
   sellPosition,
   buyPosition,
+  getSingleSymbolPrice,
 } = require("../../../helpers/mt5");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
 
@@ -125,15 +126,24 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "deliver" ||
       req.body.status == "collect"
     ) {
-      let currentPrice = selectedProduct.price;
-      let totalPrice = currentPrice * req.body.quantity;
-      await updateWalletAmount(
-        req.params.user_id,
-        totalPrice,
-        "+",
-        "Sell-back%20" + selectedProduct.symbol + "%20x%20" + req.body.quantity
-      );
       if (req.body.status == "sellback") {
+        let symbolLatestPrice = await getSingleSymbolPrice(
+          selectedProduct.symbol
+        );
+        let totalPrice = symbolLatestPrice[0].Bid * req.body.quantity;
+        await updateWalletAmount(
+          req.params.user_id,
+          totalPrice,
+          "+",
+          "Sell-back%20" +
+            selectedProduct.symbol +
+            "%20x%20" +
+            req.body.quantity
+        );
+        await orderModel.updateOrderProductLatestPrice(
+          selectedProduct.product_id,
+          symbolLatestPrice[0].Bid
+        );
         let product = await productModel.getById(selectedProduct.product_id);
         if (product?.commission > 0) {
           let totalCommision = req.body.quantity * product.commission;
