@@ -102,7 +102,6 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           );
           if (inserted) {
             sellBackId = inserted.id;
-            console.log("sellBackId:", sellBackId);
             await orderModel.updateOrderProductTicketId(
               inserted.id,
               selectedProduct.mt5_position_id
@@ -147,10 +146,12 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             "%20x%20" +
             req.body.quantity
         );
-        await orderModel.updateOrderProductLatestPrice(
-          sellBackId,
-          symbolLatestPrice[0].Bid
-        );
+        if (sellBackId) {
+          await orderModel.updateOrderProductLatestPrice(
+            sellBackId,
+            symbolLatestPrice[0].Bid
+          );
+        }
         let product = await productModel.getById(selectedProduct.product_id);
         if (product?.commission > 0) {
           let totalCommision = req.body.quantity * product.commission;
