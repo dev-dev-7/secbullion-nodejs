@@ -147,6 +147,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             req.body.quantity
         );
         if (sellBackId) {
+          console.log("sellBackId:", sellBackId);
           await orderModel.updateOrderProductLatestPrice(
             sellBackId,
             symbolLatestPrice[0].Bid
