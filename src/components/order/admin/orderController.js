@@ -102,6 +102,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           );
           if (inserted) {
             sellBackId = inserted.id;
+            console.log("sellBackId:", sellBackId);
             await orderModel.updateOrderProductTicketId(
               inserted.id,
               selectedProduct.mt5_position_id
