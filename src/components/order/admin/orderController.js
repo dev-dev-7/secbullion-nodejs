@@ -126,7 +126,9 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "collect"
     ) {
       if (req.body.status == "sellback") {
-        let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
+        let symbolLatestPrice = await getSingleSymbolPrice(
+          selectedProduct.symbol
+        );
         let totalPrice = symbolLatestPrice[0].Bid * req.body.quantity;
         await updateWalletAmount(
           req.params.user_id,
