@@ -48,6 +48,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  let sellBackId = 0;
   const userMetadata = await profileModel.getUserMetaDataKey(
     req.params.user_id,
     "mt5_account_no"
@@ -100,6 +101,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             req.body
           );
           if (inserted) {
+            sellBackId = inserted.id;
             await orderModel.updateOrderProductTicketId(
               inserted.id,
               selectedProduct.mt5_position_id
@@ -112,7 +114,11 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           }
         } else if (req.body.quantity == selectedProduct.quantity) {
           // convert product to new status with same quantity
-          await orderModel.updateOrderProduct(selectedProduct.id, req.body);
+          let updated = await orderModel.updateOrderProduct(
+            selectedProduct.id,
+            req.body
+          );
+          sellBackId = updated.id;
         }
       }
     } else {
@@ -141,7 +147,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
             req.body.quantity
         );
         await orderModel.updateOrderProductLatestPrice(
-          selectedProduct.product_id,
+          sellBackId,
           symbolLatestPrice[0].Bid
         );
         let product = await productModel.getById(selectedProduct.product_id);

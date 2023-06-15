@@ -213,7 +213,8 @@ const updateOrderProduct = async (
       duration_type: duration_type ? duration_type : "",
       delivery_id: delivery_id ? delivery_id : "",
       status: status,
-    });
+    })
+    .then((id) => getOrderDetailsById(id));
 };
 
 const getSumOfUserStack = async (user_id, type) => {
