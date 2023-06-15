@@ -2,6 +2,7 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const { authorization } = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
+const productModel = require("../../product/productModel");
 const profileModel = require("../../profile/profileModel");
 const {
   closeRequest,
