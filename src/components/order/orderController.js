@@ -69,6 +69,7 @@ exports.submit = async (req, res) => {
       if (product) {
         cartItems[i].product = product;
         let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
+        console.log(symbolLatestPrice);
         cartItems[i].price = symbolLatestPrice[0].Ask;
       }
     }
@@ -112,7 +113,7 @@ exports.submit = async (req, res) => {
               cartItems[i].product.symbol,
               cartItems[i].quantity
             );
-            let comment = "New%20Order%20-%20";
+            let comment = "New%20Order%20-%20" + cartItems[i].product.symbol;
             await updateWalletAmount(
               user.user_id,
               mt5Order.PriceOrder,
@@ -142,7 +143,7 @@ exports.submit = async (req, res) => {
             }
           }
         } else {
-          let comment = "New%20Order%20-%20";
+          let comment = "New%20Order%20-%20" + cartItems[i].product.symbol;
           await updateWalletAmount(
             user.user_id,
             cartItems[i].price,
@@ -163,7 +164,7 @@ exports.submit = async (req, res) => {
       }
     }
     if (req.body.discount_price > 0) {
-      let comment = "Order%20Discount%20-%20";
+      let comment = "Order%20Discount%20-%20" + order.id;
       await updateWalletAmount(
         user.user_id,
         req.body.discount_price,

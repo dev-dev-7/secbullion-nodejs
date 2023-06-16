@@ -231,7 +231,7 @@ exports.getSingleSymbolPrice = async (symbol) => {
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
-          // console.log(error);
+          console.log(error);
           return;
         }
         req.Get(
