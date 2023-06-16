@@ -115,7 +115,7 @@ exports.submit = async (req, res) => {
             let comment = "New%20Order%20-%20" + cartItems[i].product.symbol;
             await updateWalletAmount(
               user.user_id,
-              mt5Order.PriceOrder,
+              mt5Order.PriceOrder * cartItems[i].quantity,
               "-",
               comment
             );
@@ -135,7 +135,7 @@ exports.submit = async (req, res) => {
             } else {
               await updateWalletAmount(
                 user.user_id,
-                cartItems[i].product.last_price,
+                cartItems[i].product.last_price * cartItems[i].quantity,
                 "+",
                 "Position%20failed%20cashback"
               );
@@ -145,7 +145,7 @@ exports.submit = async (req, res) => {
           let comment = "New%20Order%20-%20" + cartItems[i].product.symbol;
           await updateWalletAmount(
             user.user_id,
-            cartItems[i].price,
+            cartItems[i].price * cartItems[i].quantity,
             "-",
             comment
           );
