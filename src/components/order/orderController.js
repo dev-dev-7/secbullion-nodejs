@@ -83,13 +83,6 @@ exports.submit = async (req, res) => {
       return res
         .status(400)
         .json({ errors: [{ msg: "Not enough wallet balance" }] });
-    } else {
-      await updateWalletAmount(
-        user.user_id,
-        sum.grandTotal,
-        "-",
-        "New%20Order"
-      );
     }
   } else if (req.body.payment_method == "checkout") {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
@@ -119,6 +112,12 @@ exports.submit = async (req, res) => {
               cartItems[i].product.symbol,
               cartItems[i].quantity
             );
+            await updateWalletAmount(
+              user.user_id,
+              mt5Order.PriceOrder,
+              "-",
+              "New%20Order%20-%20" + cartItems[i].product.symbol
+            );
             priceOrder += mt5Order.PriceOrder * cartItems[i].quantity;
             if (mt5Order?.Order != 0) {
               let orderItem = await orderModel.insertOrderDetails(
@@ -142,6 +141,12 @@ exports.submit = async (req, res) => {
             }
           }
         } else {
+          await updateWalletAmount(
+            user.user_id,
+            cartItems[i].price,
+            "-",
+            "New%20Order%20-%20" + cartItems[i].product.symbol
+          );
           await orderModel.insertOrderDetails(
             user.user_id,
             order.id,
@@ -154,6 +159,14 @@ exports.submit = async (req, res) => {
           cartItems[i].type
         );
       }
+    }
+    if (req.body.discount_price) {
+      await updateWalletAmount(
+        user.user_id,
+        req.body.discount_price,
+        "+",
+        "Order%20Discount%20-%20" + order.id
+      );
     }
     await orderModel.updateOrderAmount(
       order.id,
