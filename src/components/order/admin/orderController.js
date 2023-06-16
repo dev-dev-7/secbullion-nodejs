@@ -190,7 +190,10 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         selectedProduct.price
       );
     }
-    return res.status(201).json({ msg: "Order has been updated successfully" });
+    return res.status(201).json({
+      msg: "Order has been updated successfully",
+      sellBackId: sellBackId,
+    });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
