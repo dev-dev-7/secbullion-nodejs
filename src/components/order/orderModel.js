@@ -214,7 +214,7 @@ const updateOrderProduct = async (
       delivery_id: delivery_id ? delivery_id : "",
       status: status,
     })
-    .then((id) => getOrderDetailsById(id));
+    .then(() => getOrderDetailsById(id));
 };
 
 const getSumOfUserStack = async (user_id, type) => {
