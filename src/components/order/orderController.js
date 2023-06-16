@@ -135,7 +135,7 @@ exports.submit = async (req, res) => {
             } else {
               await updateWalletAmount(
                 user.user_id,
-                product.last_price,
+                cartItems[i].product.last_price,
                 "+",
                 "Position%20failed%20cashback"
               );
