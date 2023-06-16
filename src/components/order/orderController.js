@@ -69,7 +69,6 @@ exports.submit = async (req, res) => {
       if (product) {
         cartItems[i].product = product;
         let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
-        console.log(symbolLatestPrice);
         cartItems[i].price = symbolLatestPrice[0].Ask;
       }
     }
