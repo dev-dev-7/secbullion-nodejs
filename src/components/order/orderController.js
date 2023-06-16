@@ -68,8 +68,9 @@ exports.submit = async (req, res) => {
       let product = await productModel.getById(cartItems[i].product_id);
       if (product) {
         cartItems[i].product = product;
-        let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
-        cartItems[i].price = symbolLatestPrice[0].Ask;
+        // let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
+        // cartItems[i].price = symbolLatestPrice[0].Ask;
+        cartItems[i].price = cartItems[i].product.last_price;
       }
     }
   } else {
@@ -100,12 +101,10 @@ exports.submit = async (req, res) => {
       user.user_id,
       "mt5_account_no"
     );
-    let priceOrder = sum.subTotal;
     if (cartItems.length) {
       for (var i = 0; i < cartItems.length; i++) {
         cartItems[i].currency = process.env.DEFAULT_CURRENCY;
         if (cartItems[i].type === "store" || cartItems[i].type === "stake") {
-          priceOrder = priceOrder - cartItems[i].price * cartItems[i].quantity;
           if (mt5AccountNumber?.meta_values) {
             let mt5Order = await buyPosition(
               mt5AccountNumber.meta_values,
@@ -115,11 +114,10 @@ exports.submit = async (req, res) => {
             let comment = "New%20Order%20-%20" + cartItems[i].product.symbol;
             await updateWalletAmount(
               user.user_id,
-              mt5Order.PriceOrder * cartItems[i].quantity,
+              cartItems[i].price * cartItems[i].quantity,
               "-",
               comment
             );
-            priceOrder += mt5Order.PriceOrder * cartItems[i].quantity;
             if (mt5Order?.Order != 0) {
               let orderItem = await orderModel.insertOrderDetails(
                 user.user_id,
@@ -135,7 +133,7 @@ exports.submit = async (req, res) => {
             } else {
               await updateWalletAmount(
                 user.user_id,
-                cartItems[i].product.last_price * cartItems[i].quantity,
+                cartItems[i].price * cartItems[i].quantity,
                 "+",
                 "Position%20failed%20cashback"
               );
@@ -171,11 +169,6 @@ exports.submit = async (req, res) => {
         comment
       );
     }
-    await orderModel.updateOrderAmount(
-      order.id,
-      priceOrder,
-      req.body.discount_price
-    );
     let numOrderItems = await orderModel.getDetailsByOrderId(order.id);
     if (!numOrderItems.length) {
       await orderModel.deleteOrder(order.id);
