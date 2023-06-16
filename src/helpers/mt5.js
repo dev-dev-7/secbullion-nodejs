@@ -410,7 +410,24 @@ exports.sellPosition = async (account, symbol, quantity, position) => {
             }
             var answer = req.parseBodyJSON(error, res, body, null);
             if (answer.answer) {
-              resolve(answer.answer);
+              //resolve(answer.answer);
+              let request_id = answer.answer.id;
+              req.Get(
+                "/api/dealer/get_request_result?id=" + request_id,
+                function (error, res, body) {
+                  if (error) {
+                    console.log(error);
+                    return;
+                  }
+                  var answer = req.parseBodyJSON(error, res, body, null);
+                  if (answer.answer) {
+                    let result = answer.answer;
+                    resolve(result[request_id][1].answer);
+                  } else {
+                    reject(null);
+                  }
+                }
+              );
             } else {
               reject(null);
             }
@@ -518,7 +535,24 @@ exports.closeRequest = async (account, symbol, quantity, position) => {
             }
             var answer = req.parseBodyJSON(error, res, body, null);
             if (answer.answer) {
-              resolve(answer.answer);
+              //resolve(answer.answer);
+              let request_id = answer.answer.id;
+              req.Get(
+                "/api/dealer/get_request_result?id=" + request_id,
+                function (error, res, body) {
+                  if (error) {
+                    console.log(error);
+                    return;
+                  }
+                  var answer = req.parseBodyJSON(error, res, body, null);
+                  if (answer.answer) {
+                    let result = answer.answer;
+                    resolve(result[request_id][1].answer);
+                  } else {
+                    reject(null);
+                  }
+                }
+              );
             } else {
               reject(null);
             }

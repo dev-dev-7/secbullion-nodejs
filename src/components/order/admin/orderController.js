@@ -132,24 +132,39 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "deliver" ||
       req.body.status == "collect"
     ) {
-      if (req.body.status == "sellback") {
-        let symbolLatestPrice = await getSingleSymbolPrice(
-          selectedProduct.symbol
+      let position;
+      if (selectedProduct.quantity > req.body.quantity) {
+        position = await sellPosition(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          req.body.quantity,
+          selectedProduct.mt5_position_id
         );
-        let totalPrice = symbolLatestPrice[0].Bid * req.body.quantity;
+      } else {
+        position = await closeRequest(
+          userMetadata.meta_values,
+          selectedProduct.symbol,
+          selectedProduct.quantity,
+          selectedProduct.mt5_position_id
+        );
+      }
+      if (req.body.status == "sellback") {
+        let comment =
+          "Sellback%20" +
+          selectedProduct.symbol +
+          "%20x%20" +
+          req.body.quantity;
+        let sellbackprice = position.ResultDealerBid * req.body.quantity;
         await updateWalletAmount(
           req.params.user_id,
-          totalPrice,
+          sellbackprice,
           "+",
-          "Sell-back%20" +
-            selectedProduct.symbol +
-            "%20x%20" +
-            req.body.quantity
+          comment
         );
         if (sellBackId) {
           await orderModel.updateOrderProductLatestPrice(
             sellBackId,
-            symbolLatestPrice[0].Bid
+            position.ResultDealerBid
           );
         }
         let product = await productModel.getById(selectedProduct.product_id);
@@ -165,21 +180,6 @@ exports.changeMyOrderItemStatus = async (req, res) => {
               req.body.quantity
           );
         }
-      }
-      if (selectedProduct.quantity > req.body.quantity) {
-        await sellPosition(
-          userMetadata.meta_values,
-          selectedProduct.symbol,
-          req.body.quantity,
-          selectedProduct.mt5_position_id
-        );
-      } else {
-        await closeRequest(
-          userMetadata.meta_values,
-          selectedProduct.symbol,
-          selectedProduct.quantity,
-          selectedProduct.mt5_position_id
-        );
       }
     } else {
       await buyPosition(
