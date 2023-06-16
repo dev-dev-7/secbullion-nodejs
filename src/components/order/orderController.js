@@ -160,7 +160,7 @@ exports.submit = async (req, res) => {
         );
       }
     }
-    if (req.body.discount_price) {
+    if (req.body.discount_price > 0) {
       await updateWalletAmount(
         user.user_id,
         req.body.discount_price,
