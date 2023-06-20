@@ -16,7 +16,7 @@ exports.get = async (req, res) => {
     currency: process.env.DEFAULT_CURRENCY,
     cash_balance: wallet.cash_balance.toFixed(2),
     commodities: store?.price ? store.price.toFixed(2) : "0.00",
-    staking: stake?.price ? stake.price.toFixed(2) :"0.00",
+    staking: stake?.price ? stake.price.toFixed(2) : "0.00",
   };
   if (result) {
     return res.status(200).json({ data: result });
@@ -44,4 +44,9 @@ exports.getTransaction = async (req, res) => {
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
+};
+
+exports.checkouCallback = async (req, res) => {
+  await walletModel.insertCallback("checkout", req);
+  return res.status(200).json({ msg: "callback inserted." });
 };
