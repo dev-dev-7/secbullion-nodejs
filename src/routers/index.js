@@ -11,6 +11,7 @@ const wallet = require("./wallet");
 const order = require("./order");
 const bankDetails = require("./bankDetails");
 const transaction = require("./transaction");
+const card = require("./card");
 const appData = require("./appData");
 
 //Admin
@@ -39,6 +40,7 @@ router.use("/", wallet);
 router.use("/", order);
 router.use("/", bankDetails);
 router.use("/", transaction);
+router.use("/", card);
 router.use("/", appData);
 router.use("/admin", adminAuth);
 router.use("/admin", adminDashboard);
