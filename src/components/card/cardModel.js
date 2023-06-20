@@ -1,16 +1,31 @@
 const db = require("../../config/connection");
 const table = "tbl_payments";
 
-const create = async ({ title }) => {
+const create = async ({ user_id, method, type, token, last_digit }) => {
   return db(table)
-    .insert({ title: title })
+    .insert({
+      user_id: user_id,
+      method: method,
+      type: type,
+      token: token,
+      last_digit: last_digit,
+    })
     .then((id) => getById(id));
 };
 
-const update = async (id, { title, status }) => {
+const getById = (id) => {
+  return db(table).where("id", id).first();
+};
+
+const update = async (id, { method, type, token, last_digit }) => {
   return db(table)
     .where("id", id)
-    .update({ title: title, status: status })
+    .update({
+      method: method,
+      type: type,
+      token: token,
+      last_digit: last_digit,
+    })
     .then((updated) => getById(id));
 };
 
@@ -18,11 +33,7 @@ const remove = async (id) => {
   return db(table)
     .del()
     .where("id", id)
-    .then((updated) => getById(id));
-};
-
-const getById = (id) => {
-  return db(table).where("id", id).first();
+    .then(() => getById(id));
 };
 
 const getAll = (user_id) => {
