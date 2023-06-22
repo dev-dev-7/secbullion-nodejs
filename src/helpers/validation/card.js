@@ -5,4 +5,5 @@ exports.card = [
   check("type").notEmpty(),
   check("token").notEmpty(),
   check("last_digit").notEmpty(),
+  check("expiry_date").notEmpty(),
 ];

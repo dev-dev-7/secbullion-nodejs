@@ -1,7 +1,7 @@
 const db = require("../../config/connection");
 const table = "tbl_user_cards";
 
-const create = async ({ user_id, method, type, token, last_digit }) => {
+const create = async ({ user_id, method, type, token, last_digit, expiry_date }) => {
   return db(table)
     .insert({
       user_id: user_id,
@@ -9,6 +9,7 @@ const create = async ({ user_id, method, type, token, last_digit }) => {
       type: type,
       token: token,
       last_digit: last_digit,
+      expiry_date: expiry_date
     })
     .then((id) => getById(id));
 };
