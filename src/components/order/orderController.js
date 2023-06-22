@@ -68,9 +68,7 @@ exports.submit = async (req, res) => {
       let product = await productModel.getById(cartItems[i].product_id);
       if (product) {
         cartItems[i].product = product;
-        let symbolLatestPrice = await getSingleSymbolPrice(cartItems[i].symbol);
         cartItems[i].price = cartItems[i].product.last_price;
-        cartItems[i].order_price = symbolLatestPrice[0].Ask;
       }
     }
   } else {
@@ -119,6 +117,10 @@ exports.submit = async (req, res) => {
               comment
             );
             if (mt5Order?.Order != 0) {
+              let symbolLatestPrice = await getSingleSymbolPrice(
+                cartItems[i].symbol
+              );
+              cartItems[i].order_price = symbolLatestPrice[0].Ask;
               let orderItem = await orderModel.insertOrderDetails(
                 user.user_id,
                 order.id,
@@ -147,6 +149,10 @@ exports.submit = async (req, res) => {
             "-",
             comment
           );
+          let symbolLatestPrice = await getSingleSymbolPrice(
+            cartItems[i].symbol
+          );
+          cartItems[i].order_price = symbolLatestPrice[0].Ask;
           await orderModel.insertOrderDetails(
             user.user_id,
             order.id,
