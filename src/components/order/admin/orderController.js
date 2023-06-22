@@ -154,7 +154,8 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           selectedProduct.symbol +
           "%20x%20" +
           req.body.quantity;
-        let sellbackprice = position.ResultDealerBid * req.body.quantity;
+        let sellbackprice = selectedProduct.order_price * req.body.quantity;
+        console.log("sellbackprice: ", sellbackprice);
         await updateWalletAmount(
           req.params.user_id,
           sellbackprice,

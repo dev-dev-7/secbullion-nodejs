@@ -1,5 +1,5 @@
 const db = require("../../config/connection");
-const table = "tbl_payments";
+const table = "tbl_user_cards";
 
 const create = async ({ user_id, method, type, token, last_digit }) => {
   return db(table)
@@ -15,6 +15,14 @@ const create = async ({ user_id, method, type, token, last_digit }) => {
 
 const getById = (id) => {
   return db(table).where("id", id).first();
+};
+
+const isExistCard = ({ user_id, type, last_digit }) => {
+  return db(table)
+    .where("user_id", user_id)
+    .andWhere("type", type)
+    .andWhere("last_digit", last_digit)
+    .first();
 };
 
 const update = async (id, { method, type, token, last_digit }) => {
@@ -46,4 +54,5 @@ module.exports = {
   remove,
   getById,
   getAll,
+  isExistCard,
 };

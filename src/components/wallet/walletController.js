@@ -4,6 +4,7 @@ const orderModel = require("../order/orderModel");
 const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const { validationResult } = require("express-validator");
+const { authorization } = require("../../helpers/authorization");
 
 exports.get = async (req, res) => {
   const errors = validationResult(req);
@@ -47,6 +48,14 @@ exports.getTransaction = async (req, res) => {
 };
 
 exports.checkouCallback = async (req, res) => {
-  await walletModel.insertCallback("checkout", req);
+  await walletModel.insertCallback("checkout", req.body);
   return res.status(200).json({ msg: "callback inserted." });
+};
+
+exports.payment = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
+  return res.status(200).json({ msg: "payment created." });
 };

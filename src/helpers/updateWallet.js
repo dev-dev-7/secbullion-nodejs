@@ -9,8 +9,6 @@ exports.updateWalletAmount = async (
   operation,
   comment = ""
 ) => {
-  let wallet = await walletModel.getWalletByUserId(user_id);
-  // var updateWalletAmount = eval(wallet.cash_balance + operation + amount);
   var updateAmount = eval(operation + amount);
   const userMetadata = await profileModel.getUserMetaDataKey(
     user_id,
