@@ -195,9 +195,10 @@ const updateOrderProductStatus = async (id, status) => {
     status: status,
   });
 };
-const updateOrderProductTicketId = async (id, position_id) => {
+const updateOrderProductTicketId = async (id, position_id, order_price) => {
   return db(orderDetailsTable).where("id", id).update({
     mt5_position_id: position_id,
+    order_price: order_price,
   });
 };
 
