@@ -58,8 +58,8 @@ exports.checkouCallback = async (req, res) => {
   if (req.body.type === "payment_captured") {
     await updateWalletAmount(
       req.body.data.metadata.user_id,
-      req.body.data.amount,
-      "-",
+      req.body.data.amount / 100,
+      "+",
       "card_payment"
     );
   }
