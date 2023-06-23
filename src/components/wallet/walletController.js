@@ -6,6 +6,7 @@ const transactionModel = require("../transaction/transactionModel");
 const bankDetailsModel = require("../bankDetails/bankDetailsModel");
 const { validationResult } = require("express-validator");
 const { authorization } = require("../../helpers/authorization");
+const { updateWalletAmount } = require("../../helpers/updateWallet");
 const { Checkout } = require("checkout-sdk-node");
 const cko = new Checkout(process.env.CHECKOUT_SECRETE_KEY, {
   pk: process.env.CHECKOUT_PUBLIC_KEY,
@@ -54,6 +55,14 @@ exports.getTransaction = async (req, res) => {
 };
 
 exports.checkouCallback = async (req, res) => {
+  if (req.body.type === "payment_captured") {
+    await updateWalletAmount(
+      req.body.data.metadata.user_id,
+      req.body.data.amount,
+      "-",
+      "card_payment"
+    );
+  }
   await walletModel.insertCallback("checkout", req.body);
   return res.status(200).json({ msg: "callback inserted." });
 };
