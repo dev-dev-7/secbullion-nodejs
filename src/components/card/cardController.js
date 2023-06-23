@@ -11,7 +11,7 @@ exports.get = async (req, res) => {
   let user = await authorization(req, res);
   let cards = await model.getAll(user.user_id);
   return res
-    .status(201)
+    .status(200)
     .json({ data: cards, pk_token: "pk_sbox_4pruzwhxn4t2ytyu5itz5qyfzym" });
 };
 
