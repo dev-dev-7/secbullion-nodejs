@@ -86,7 +86,7 @@ exports.payment = async (req, res) => {
           user_id: user.user_id,
         },
       });
-      return res.status(200).json({ msg: action });
+      return res.status(200).json({ msg: "payment has been done" });
     } catch (error) {
       // console.log(error.name, error.http_code, error.body)
       return res.status(200).json({ msg: error.name });
