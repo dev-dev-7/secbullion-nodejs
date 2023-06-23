@@ -55,6 +55,7 @@ exports.getTransaction = async (req, res) => {
 };
 
 exports.checkouCallback = async (req, res) => {
+  await walletModel.insertCallback("checkout", req.body);
   if (req.body.type === "payment_captured") {
     await updateWalletAmount(
       req.body.data.metadata.user_id,
@@ -63,7 +64,6 @@ exports.checkouCallback = async (req, res) => {
       "card_payment"
     );
   }
-  await walletModel.insertCallback("checkout", req.body);
   return res.status(200).json({ msg: "callback inserted." });
 };
 
