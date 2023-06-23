@@ -33,10 +33,12 @@ exports.create = async (req, res) => {
       req.body.expiry_date =
         instrument.expiry_month + "/" + instrument.expiry_year;
       let card = await model.isExistCard(req.body);
-      if (!card) {
+      if (card) {
+        return res.status(400).json({ msg: "Already added same card" });
+      } else {
         await model.create(req.body);
+        return res.status(201).json({ msg: "New card has been added." });
       }
-      return res.status(201).json({ msg: "New card has been added." });
     } else {
       return res.status(400).json({ msg: "Error in add new card" });
     }
