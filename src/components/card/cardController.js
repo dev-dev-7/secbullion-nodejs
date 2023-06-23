@@ -10,7 +10,9 @@ const cko = new Checkout("sk_sbox_tkktnryd57sile3lkoxcmyd7hax", {
 exports.get = async (req, res) => {
   let user = await authorization(req, res);
   let cards = await model.getAll(user.user_id);
-  return res.status(201).json({ data: cards });
+  return res
+    .status(201)
+    .json({ data: cards, pk_token: "pk_sbox_4pruzwhxn4t2ytyu5itz5qyfzym" });
 };
 
 exports.create = async (req, res) => {
