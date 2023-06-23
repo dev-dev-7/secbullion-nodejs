@@ -30,6 +30,8 @@ exports.create = async (req, res) => {
       req.body.token = instrument.id;
       req.body.type = instrument.scheme.toLowerCase();
       req.body.last_digit = instrument.last4;
+      req.body.expiry_date =
+        instrument.expiry_month + "/" + instrument.expiry_year;
       let card = await model.isExistCard(req.body);
       if (!card) {
         await model.create(req.body);
