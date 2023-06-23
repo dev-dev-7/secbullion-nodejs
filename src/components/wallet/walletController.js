@@ -64,7 +64,7 @@ exports.payment = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let user = await authorization(req, res);
   let card = await cardModel.getById(req.body.card_id);
-  if (user.user_id == card.user_id) {
+  if (user.user_id == card?.user_id) {
     console.log("token:", card.token);
     try {
       // some async request made with the SDK
