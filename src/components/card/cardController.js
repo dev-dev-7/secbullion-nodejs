@@ -1,9 +1,10 @@
+require("dotenv").config();
 const model = require("./cardModel");
 const { authorization } = require("../../helpers/authorization");
 const { validationResult } = require("express-validator");
 const { Checkout } = require("checkout-sdk-node");
-const cko = new Checkout("sk_sbox_tkktnryd57sile3lkoxcmyd7hax", {
-  pk: "pk_sbox_4pruzwhxn4t2ytyu5itz5qyfzym",
+const cko = new Checkout(process.env.CHECKOUT_SECRETE_KEY, {
+  pk: process.env.CHECKOUT_PUBLIC_KEY,
   // environment: "sandbox", // or 'production'
 });
 
@@ -12,7 +13,7 @@ exports.get = async (req, res) => {
   let cards = await model.getAll(user.user_id);
   return res
     .status(200)
-    .json({ data: cards, pk_token: "pk_sbox_4pruzwhxn4t2ytyu5itz5qyfzym" });
+    .json({ data: cards, pk_token: process.env.CHECKOUT_PUBLIC_KEY });
 };
 
 exports.create = async (req, res) => {
