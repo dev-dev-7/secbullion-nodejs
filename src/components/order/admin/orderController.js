@@ -57,44 +57,30 @@ exports.changeMyOrderItemStatus = async (req, res) => {
     // MT5 Command Execution start
     let sellBackId = 0;
     let position;
-    if (
-      req.body.status == "sellback" ||
-      req.body.status == "deliver" ||
-      req.body.status == "collect"
-    ) {
-      position = await sellPosition(
-        userMetadata.meta_values,
-        selectedProduct.symbol,
-        req.body.quantity,
-        selectedProduct.mt5_position_id
-      );
-      // UPDATE WALLET AMOUNT IN CASE POSITION CLOSED
-      if (req.body.status == "sellback" && position?.ResultDealerBid > 0) {
-        let comment =
-          "Sellback%20" +
-          selectedProduct.symbol +
-          "%20x%20" +
-          req.body.quantity;
-        let sellbackprice = selectedProduct.order_price * req.body.quantity;
+    position = await sellPosition(
+      userMetadata.meta_values,
+      selectedProduct.symbol,
+      req.body.quantity,
+      selectedProduct.mt5_position_id
+    );
+    // UPDATE WALLET AMOUNT IN CASE POSITION CLOSED
+    if (req.body.status == "sellback" && position?.ResultDealerBid > 0) {
+      let comment =
+        "Sellback%20" + selectedProduct.symbol + "%20x%20" + req.body.quantity;
+      let sellbackprice = selectedProduct.order_price * req.body.quantity;
+      await updateWalletAmount(req.params.user_id, sellbackprice, "+", comment);
+      let product = await productModel.getById(selectedProduct.product_id);
+      if (product?.commission > 0) {
+        let totalCommision = req.body.quantity * product.commission;
         await updateWalletAmount(
           req.params.user_id,
-          sellbackprice,
-          "+",
-          comment
+          totalCommision,
+          "-",
+          "Commission%20" +
+            selectedProduct.symbol +
+            "%20x%20" +
+            req.body.quantity
         );
-        let product = await productModel.getById(selectedProduct.product_id);
-        if (product?.commission > 0) {
-          let totalCommision = req.body.quantity * product.commission;
-          await updateWalletAmount(
-            req.params.user_id,
-            totalCommision,
-            "-",
-            "Commission%20" +
-              selectedProduct.symbol +
-              "%20x%20" +
-              req.body.quantity
-          );
-        }
       }
     }
     // DB Execution start
