@@ -75,7 +75,7 @@ exports.stakeUpdate = async (req, res) => {
 
 exports.test = async (req, res) => {
   // let test = await updateWalletAmount(28, 100, "+", "xxx");
-  let test = await closePosition(1000552, "PAMPSuisse-5gm", 1, 27120);
+  let test = await closePosition(1000552, "PAMPSuisse-5gm", 1, 27130);
   // let test = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
   return res.status(200).json({ data: test });
