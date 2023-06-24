@@ -4,12 +4,7 @@ const { authorization } = require("../../../helpers/authorization");
 const orderModel = require("../orderModel");
 const productModel = require("../../product/productModel");
 const profileModel = require("../../profile/profileModel");
-const {
-  closeRequest,
-  sellPosition,
-  buyPosition,
-  getSingleSymbolPrice,
-} = require("../../../helpers/mt5");
+const { closeRequest, sellPosition } = require("../../../helpers/mt5");
 const { updateWalletAmount } = require("../../../helpers/updateWallet");
 
 exports.get = async (req, res) => {
@@ -81,109 +76,109 @@ exports.changeMyOrderItemStatus = async (req, res) => {
           selectedProduct.mt5_position_id
         );
       }
-    } else {
-      position = await buyPosition(
-        userMetadata.meta_values,
-        selectedProduct.symbol,
-        req.body.quantity,
-        selectedProduct.price
-      );
-    }
-    // UPDATE WALLET AMOUNT IN CASE POSITION CLOSED
-    if (req.body.status == "sellback" && position?.ResultDealerBid > 0) {
-      let comment =
-        "Sellback%20" + selectedProduct.symbol + "%20x%20" + req.body.quantity;
-      let sellbackprice = selectedProduct.order_price * req.body.quantity;
-      await updateWalletAmount(req.params.user_id, sellbackprice, "+", comment);
-      let product = await productModel.getById(selectedProduct.product_id);
-      if (product?.commission > 0) {
-        let totalCommision = req.body.quantity * product.commission;
+      // UPDATE WALLET AMOUNT IN CASE POSITION CLOSED
+      if (req.body.status == "sellback" && position?.ResultDealerBid > 0) {
+        let comment =
+          "Sellback%20" +
+          selectedProduct.symbol +
+          "%20x%20" +
+          req.body.quantity;
+        let sellbackprice = selectedProduct.order_price * req.body.quantity;
         await updateWalletAmount(
           req.params.user_id,
-          totalCommision,
-          "-",
-          "Commission%20" +
-            selectedProduct.symbol +
-            "%20x%20" +
-            req.body.quantity
+          sellbackprice,
+          "+",
+          comment
         );
+        let product = await productModel.getById(selectedProduct.product_id);
+        if (product?.commission > 0) {
+          let totalCommision = req.body.quantity * product.commission;
+          await updateWalletAmount(
+            req.params.user_id,
+            totalCommision,
+            "-",
+            "Commission%20" +
+              selectedProduct.symbol +
+              "%20x%20" +
+              req.body.quantity
+          );
+        }
       }
     }
-    if (position?.Order) {
-      if (
-        selectedProduct.status != req.body.status &&
-        req.body.quantity <= selectedProduct.quantity
+
+    if (
+      selectedProduct.status != req.body.status &&
+      req.body.quantity <= selectedProduct.quantity
+    ) {
+      let existStatusItem = await orderModel.getUserOrderByType(
+        selectedProduct.user_id,
+        selectedProduct.order_id,
+        selectedProduct.product_id,
+        req.body.status
+      );
+      if (existStatusItem && req.body.quantity < selectedProduct.quantity) {
+        // Minus from selected product
+        await orderModel.updateOrderProductQuantity(
+          selectedProduct.id,
+          selectedProduct.quantity - req.body.quantity
+        );
+        // Add for existing product
+        req.body.quantity = existStatusItem.quantity + req.body.quantity;
+        await orderModel.updateOrderProduct(existStatusItem.id, req.body);
+      } else if (
+        existStatusItem &&
+        req.body.quantity == selectedProduct.quantity
       ) {
-        let existStatusItem = await orderModel.getUserOrderByType(
-          selectedProduct.user_id,
-          selectedProduct.order_id,
-          selectedProduct.product_id,
-          req.body.status
+        //Add for existing product
+        req.body.quantity = req.body.quantity + existStatusItem.quantity;
+        await orderModel.updateOrderProduct(existStatusItem.id, req.body);
+        // Delete selected product
+        await orderModel.deleteUserOrderProduct(
+          selectedProduct.id,
+          selectedProduct.user_id
         );
-        if (existStatusItem && req.body.quantity < selectedProduct.quantity) {
-          // Minus from selected product
-          await orderModel.updateOrderProductQuantity(
-            selectedProduct.id,
-            selectedProduct.quantity - req.body.quantity
-          );
-          // Add for existing product
-          req.body.quantity = existStatusItem.quantity + req.body.quantity;
-          await orderModel.updateOrderProduct(existStatusItem.id, req.body);
-        } else if (
-          existStatusItem &&
-          req.body.quantity == selectedProduct.quantity
-        ) {
-          //Add for existing product
-          req.body.quantity = req.body.quantity + existStatusItem.quantity;
-          await orderModel.updateOrderProduct(existStatusItem.id, req.body);
-          // Delete selected product
-          await orderModel.deleteUserOrderProduct(
-            selectedProduct.id,
-            selectedProduct.user_id
-          );
-        } else {
-          if (req.body.quantity < selectedProduct.quantity) {
-            // insert new item if not exist
-            req.body.type = req.body.status;
-            let inserted = await orderModel.insertOrderDetails(
-              selectedProduct.user_id,
-              selectedProduct.order_id,
-              req.body
-            );
-            if (inserted) {
-              sellBackId = inserted.id;
-              await orderModel.updateOrderProductTicketId(
-                inserted.id,
-                selectedProduct.mt5_position_id
-              );
-              // Minus from selected item
-              await orderModel.updateOrderProductQuantity(
-                selectedProduct.id,
-                selectedProduct.quantity - req.body.quantity
-              );
-            }
-          } else if (req.body.quantity == selectedProduct.quantity) {
-            // convert product to new status with same quantity
-            let updated = await orderModel.updateOrderProduct(
-              selectedProduct.id,
-              req.body
-            );
-            sellBackId = updated.id;
-          }
-        }
       } else {
-        // Update and overwrite missing details for same status
-        if (req.body.quantity <= selectedProduct.quantity) {
-          await orderModel.updateOrderProduct(selectedProduct.id, req.body);
+        if (req.body.quantity < selectedProduct.quantity) {
+          // insert new item if not exist
+          req.body.type = req.body.status;
+          let inserted = await orderModel.insertOrderDetails(
+            selectedProduct.user_id,
+            selectedProduct.order_id,
+            req.body
+          );
+          if (inserted) {
+            sellBackId = inserted.id;
+            await orderModel.updateOrderProductTicketId(
+              inserted.id,
+              selectedProduct.mt5_position_id
+            );
+            // Minus from selected item
+            await orderModel.updateOrderProductQuantity(
+              selectedProduct.id,
+              selectedProduct.quantity - req.body.quantity
+            );
+          }
+        } else if (req.body.quantity == selectedProduct.quantity) {
+          // convert product to new status with same quantity
+          let updated = await orderModel.updateOrderProduct(
+            selectedProduct.id,
+            req.body
+          );
+          sellBackId = updated.id;
         }
       }
-      // Update Sellback Price into DB
-      if (sellBackId) {
-        await orderModel.updateOrderProductLatestPrice(
-          sellBackId,
-          position.ResultDealerBid
-        );
+    } else {
+      // Update and overwrite missing details for same status
+      if (req.body.quantity <= selectedProduct.quantity) {
+        await orderModel.updateOrderProduct(selectedProduct.id, req.body);
       }
+    }
+    // Update Sellback Price into DB
+    if (sellBackId) {
+      await orderModel.updateOrderProductLatestPrice(
+        sellBackId,
+        position?.ResultDealerBid
+      );
     }
     return res.status(201).json({
       msg: "Order has been updated successfully",
