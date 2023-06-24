@@ -13,6 +13,7 @@ const {
   getBalance,
   updateBalance,
   updatePosition,
+  closePosition,
 } = require("../../helpers/mt5");
 // const {
 //   getExpiryDate,
@@ -74,7 +75,7 @@ exports.stakeUpdate = async (req, res) => {
 
 exports.test = async (req, res) => {
   // let test = await updateWalletAmount(28, 100, "+", "xxx");
-  let test = await updatePosition(1000552, "PAMPSuisse-5gm", 2, 27096);
+  let test = await closePosition(1000552, "PAMPSuisse-5gm", 0.5, 27096);
   // let test = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
   return res.status(200).json({ data: test });

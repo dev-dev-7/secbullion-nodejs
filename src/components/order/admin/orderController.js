@@ -103,32 +103,34 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.quantity <= selectedProduct.quantity
     ) {
       if (req.body.quantity < selectedProduct.quantity) {
-        position = await buyPosition(
-          userMetadata.meta_values,
-          selectedProduct.symbol,
-          req.body.quantity
-        );
-        // insert new item if not exist
-        if (position?.Order) {
-          req.body.type = req.body.status;
-          let inserted = await orderModel.insertOrderDetails(
-            selectedProduct.user_id,
-            selectedProduct.order_id,
-            req.body
+        if (req.body.status == "stake" || req.body.status == "store") {
+          position = await buyPosition(
+            userMetadata.meta_values,
+            selectedProduct.symbol,
+            req.body.quantity
           );
-          if (inserted) {
-            sellBackId = inserted.id;
+        }
+        // insert new item
+        req.body.type = req.body.status;
+        let inserted = await orderModel.insertOrderDetails(
+          selectedProduct.user_id,
+          selectedProduct.order_id,
+          req.body
+        );
+        if (inserted) {
+          sellBackId = inserted.id;
+          if (position?.Order) {
             await orderModel.updateOrderProductTicketId(
               inserted.id,
               position?.Order,
               position?.PriceOrder
             );
-            // Minus from selected item
-            await orderModel.updateOrderProductQuantity(
-              selectedProduct.id,
-              selectedProduct.quantity - req.body.quantity
-            );
           }
+          // Minus from selected item
+          await orderModel.updateOrderProductQuantity(
+            selectedProduct.id,
+            selectedProduct.quantity - req.body.quantity
+          );
         }
       } else if (req.body.quantity == selectedProduct.quantity) {
         // convert product to new status with same quantity
