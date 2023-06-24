@@ -54,6 +54,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
     req.body.product_id
   );
   if (selectedProduct) {
+    // MT5 Command Execution start
     let sellBackId = 0;
     let position;
     if (
@@ -61,18 +62,11 @@ exports.changeMyOrderItemStatus = async (req, res) => {
       req.body.status == "deliver" ||
       req.body.status == "collect"
     ) {
-      if (selectedProduct.quantity > req.body.quantity) {
+      if (req.body.quantity <= selectedProduct.quantity) {
         position = await sellPosition(
           userMetadata.meta_values,
           selectedProduct.symbol,
           req.body.quantity,
-          selectedProduct.mt5_position_id
-        );
-      } else {
-        position = await closeRequest(
-          userMetadata.meta_values,
-          selectedProduct.symbol,
-          selectedProduct.quantity,
           selectedProduct.mt5_position_id
         );
       }
@@ -105,7 +99,7 @@ exports.changeMyOrderItemStatus = async (req, res) => {
         }
       }
     }
-
+    // DB Execution start
     if (
       selectedProduct.status != req.body.status &&
       req.body.quantity <= selectedProduct.quantity

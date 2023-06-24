@@ -73,9 +73,9 @@ exports.stakeUpdate = async (req, res) => {
 };
 
 exports.test = async (req, res) => {
-  let test = await updateWalletAmount(28, 100, "+", "xxx");
-  // let stakes = await sellPosition(1000532, "GOLD.1g", 5, 25858);
-  // let stakes = await getRequestDetails(1000526, 25379);
+  // let test = await updateWalletAmount(28, 100, "+", "xxx");
+  let test = await sellPosition(1000552, "PAMPSuisse-5gm", 1, 27082);
+  // let test = await getRequestDetails(1000526, 25379);
   // console.log("result:", stakes);
   return res.status(200).json({ data: test });
 };
