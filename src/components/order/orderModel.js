@@ -76,6 +76,7 @@ const insertOrderDetails = async (
     duration_type,
     delivery_id,
     type,
+    position_id,
   }
 ) => {
   return db(orderDetailsTable)
@@ -92,6 +93,7 @@ const insertOrderDetails = async (
       duration: duration ? duration : 0,
       duration_type: duration_type ? duration_type : "",
       delivery_id: delivery_id ? delivery_id : "",
+      mt5_position_id: position_id ? position_id : 0,
       status: type,
     })
     .then((id) => getOrderDetailsById(id));
@@ -204,7 +206,17 @@ const updateOrderProductTicketId = async (id, position_id, order_price) => {
 
 const updateOrderProduct = async (
   id,
-  { quantity, unit, price, duration, duration_type, delivery_id, status }
+  {
+    quantity,
+    unit,
+    order_price,
+    price,
+    duration,
+    duration_type,
+    delivery_id,
+    status,
+    position_id,
+  }
 ) => {
   return db(orderDetailsTable)
     .where("id", id)
@@ -212,9 +224,11 @@ const updateOrderProduct = async (
       quantity: quantity,
       unit: unit,
       price: price,
+      order_price: order_price,
       duration: duration ? duration : 0,
       duration_type: duration_type ? duration_type : "",
       delivery_id: delivery_id ? delivery_id : "",
+      mt5_position_id: position_id ? position_id : 0,
       status: status,
     })
     .then(() => getOrderDetailsById(id));

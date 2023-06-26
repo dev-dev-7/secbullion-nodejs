@@ -119,18 +119,13 @@ exports.submit = async (req, res) => {
               comment
             );
             if (mt5Order?.Order != 0) {
-              let orderItem = await orderModel.insertOrderDetails(
+              cartItems[i].order_price = mt5Order.PriceOrder;
+              cartItems[i].position_id = mt5Order.Order;
+              await orderModel.insertOrderDetails(
                 user.user_id,
                 order.id,
                 cartItems[i]
               );
-              if (orderItem) {
-                await orderModel.updateOrderProductTicketId(
-                  orderItem.id,
-                  mt5Order.Order,
-                  mt5Order.PriceOrder
-                );
-              }
             } else {
               await updateWalletAmount(
                 user.user_id,
@@ -148,6 +143,8 @@ exports.submit = async (req, res) => {
             "-",
             comment
           );
+          cartItems[i].order_price = cartItems[i].price;
+          cartItems[i].position_id = 0;
           await orderModel.insertOrderDetails(
             user.user_id,
             order.id,
