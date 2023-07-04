@@ -194,7 +194,7 @@ exports.getSymbolPrice = async (products) => {
     }
   }
   if (symbols?.length) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -227,7 +227,7 @@ exports.getSymbolPrice = async (products) => {
 exports.getSingleSymbolPrice = async (symbol) => {
   let symbols = [symbol];
   if (symbols?.length) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -258,7 +258,7 @@ exports.getSingleSymbolPrice = async (symbol) => {
 };
 
 // exports.getAllSymbols = async (symbol) => {
-//   var req = new MT5Request("secmt5.afkkarr.com", 443);
+//   var req = new MT5Request("20.157.112.215", 443);
 //   return new Promise((resolve, reject) => {
 //     req.Auth(1005, "varybpr2", "484", "WebManager", symbol, function (error) {
 //       if (error) {
@@ -282,7 +282,7 @@ exports.getSingleSymbolPrice = async (symbol) => {
 // };
 
 exports.createMt5Account = async (body) => {
-  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  var req = new MT5Request("20.157.112.215", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
       if (error) {
@@ -320,7 +320,6 @@ exports.createMt5Account = async (body) => {
           }
           var answer = req.parseBodyJSON(error, res, body, null);
           if (answer.answer) {
-            console.log(answer.answer);
             resolve(answer.answer);
           } else {
             reject(null);
@@ -332,7 +331,7 @@ exports.createMt5Account = async (body) => {
 };
 
 exports.buyPosition = async (account, symbol, quantity) => {
-  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  var req = new MT5Request("20.157.112.215", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
       if (error) {
@@ -384,7 +383,7 @@ exports.buyPosition = async (account, symbol, quantity) => {
 
 exports.sellPosition = async (account, symbol, quantity, position) => {
   if (position) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -442,7 +441,7 @@ exports.sellPosition = async (account, symbol, quantity, position) => {
 
 exports.updatePosition = async (account, symbol, quantity, position) => {
   if (account) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -500,7 +499,7 @@ exports.updatePosition = async (account, symbol, quantity, position) => {
 
 exports.closePosition = async (account, symbol, quantity, position) => {
   if (account) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -558,7 +557,7 @@ exports.closePosition = async (account, symbol, quantity, position) => {
 
 exports.getRequestDetails = async (account, position) => {
   if (position) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -594,9 +593,10 @@ exports.getRequestDetails = async (account, position) => {
 
 exports.getSymbolDetails = async (symbol) => {
   if (symbol) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
+    // var req = new MT5Request("secmt5.afkkarr.com", 443);
     return new Promise((resolve, reject) => {
-      req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
+      req.Auth(1017, "b6yjwcfy", "484", "WebManager", function (error) {
         if (error) {
           return;
         }
@@ -625,7 +625,7 @@ exports.getSymbolDetails = async (symbol) => {
 
 exports.getMT5Balance = async (account) => {
   if (account) {
-    var req = new MT5Request("secmt5.afkkarr.com", 443);
+    var req = new MT5Request("20.157.112.215", 443);
     return new Promise((resolve, reject) => {
       req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
         if (error) {
@@ -652,7 +652,7 @@ exports.getMT5Balance = async (account) => {
 };
 
 exports.updateMT5Balance = async (account, balance, comment) => {
-  var req = new MT5Request("secmt5.afkkarr.com", 443);
+  var req = new MT5Request("20.157.112.215", 443);
   return new Promise((resolve, reject) => {
     req.Auth(1005, "varybpr2", "484", "WebManager", function (error) {
       if (error) {
