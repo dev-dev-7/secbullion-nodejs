@@ -289,7 +289,16 @@ exports.createMt5Account = async (body) => {
         console.log(error);
         return;
       }
-      let group = "demo" + "\\" + "Sec" + "\\" + "Sec" + "\\" + "USD";
+      let group =
+        "real" +
+        "\\" +
+        "Sec" +
+        "\\" +
+        "Real" +
+        "\\" +
+        "Sec" +
+        "\\" +
+        "USD-Synthetic";
       let firtName = body.full_name.split(" ")[0];
       let lastName = body.full_name.split(" ")[1]
         ? body.full_name.split(" ")[1]

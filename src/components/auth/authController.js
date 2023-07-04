@@ -34,7 +34,7 @@ exports.login = async (req, res) => {
       if (user.status == 0) {
         smsglobal.sendMessage(userMobile.meta_values, otp_code);
       }
-      await profileModel.insertUserMetaData(
+      await profileModel.updateUserMetaData(
         userMobile.user_id,
         "otp_code",
         otp_code
@@ -56,70 +56,81 @@ exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  const user = await authModel.createUser(req.body);
-  if (user) {
-    var arr = Object.entries(req.body);
-    for (var i = 0; i < arr.length; i++) {
-      if (arr[i][0] != "password") {
-        let exist = await profileModel.getUserMetaDataKeyValue(
-          user.user_id,
-          arr[i][0],
-          arr[i][1]
-        );
-        if (exist) {
-          await profileModel.updateUserMetaData(
+  let mt5result = await createMt5Account(req.body);
+  if (mt5result?.Login) {
+    const user = await authModel.createUser(req.body);
+    if (user) {
+      var arr = Object.entries(req.body);
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i][0] != "password") {
+          let exist = await profileModel.getUserMetaDataKeyValue(
             user.user_id,
             arr[i][0],
             arr[i][1]
           );
-        } else {
-          await profileModel.insertUserMetaData(
-            user.user_id,
-            arr[i][0],
-            arr[i][1]
-          );
+          if (exist) {
+            await profileModel.updateUserMetaData(
+              user.user_id,
+              arr[i][0],
+              arr[i][1]
+            );
+          } else {
+            await profileModel.insertUserMetaData(
+              user.user_id,
+              arr[i][0],
+              arr[i][1]
+            );
+          }
         }
       }
+      // Addtional fields
+      let otp_code = Math.floor(100000 + Math.random() * 900000);
+      if (user.user_id) {
+        await profileModel.insertUserMetaData(
+          user.user_id,
+          "otp_code",
+          otp_code
+        );
+        await profileModel.insertUserMetaData(
+          user.user_id,
+          "user_id",
+          user.user_id
+        );
+        // create MT5 Accounts:
+        req.body.user_id = user.user_id;
+
+        await profileModel.insertUserMetaData(
+          user.user_id,
+          "mt5_account_no",
+          mt5result.Login
+        );
+        await walletModel.insertWallet(
+          user.user_id,
+          0,
+          0,
+          0,
+          process.env.DEFAULT_CURRENCY
+        );
+        smsglobal.sendMessage(req.body.mobile, otp_code);
+      }
+      let token =
+        process.env.DASHBOARD_URL +
+        "/validate?token=" +
+        Buffer.from(user.password).toString("base64");
+      await sendEmail(req.body.full_name, req.body.email, token);
+      return res.status(201).json({
+        data: {
+          user: user,
+          metadata: await profileModel.getUserMetaData(user.user_id),
+        },
+      });
+    } else {
+      return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
     }
-    // Addtional fields
-    let otp_code = Math.floor(100000 + Math.random() * 900000);
-    if (user.user_id) {
-      await profileModel.insertUserMetaData(user.user_id, "otp_code", otp_code);
-      await profileModel.insertUserMetaData(
-        user.user_id,
-        "user_id",
-        user.user_id
-      );
-      // create MT5 Accounts:
-      req.body.user_id = user.user_id;
-      let mt5result = await createMt5Account(req.body);
-      await profileModel.insertUserMetaData(
-        user.user_id,
-        "mt5_account_no",
-        mt5result.Login
-      );
-      await walletModel.insertWallet(
-        user.user_id,
-        0,
-        0,
-        0,
-        process.env.DEFAULT_CURRENCY
-      );
-      smsglobal.sendMessage(req.body.mobile, otp_code);
-    }
-    let token =
-      process.env.DASHBOARD_URL +
-      "/validate?token=" +
-      Buffer.from(user.password).toString("base64");
-    await sendEmail(req.body.full_name, req.body.email, token);
-    return res.status(201).json({
-      data: {
-        user: user,
-        metadata: await profileModel.getUserMetaData(user.user_id),
-      },
-    });
   } else {
-    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+    return res
+      .status(400)
+      .json({ errors: [{ msg: "MT5 Account Creation Failed" }] });
   }
 };
 
