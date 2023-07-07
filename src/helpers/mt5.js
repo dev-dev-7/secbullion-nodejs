@@ -400,7 +400,7 @@ exports.sellPosition = async (account, symbol, quantity, position) => {
           return;
         }
         let rawBody = JSON.stringify({
-          SourceLogin: 1005,
+          SourceLogin: 1017,
           Action: 200,
           Login: account,
           Symbol: symbol,
@@ -458,7 +458,7 @@ exports.updatePosition = async (account, symbol, quantity, position) => {
           return;
         }
         let rawBody = JSON.stringify({
-          SourceLogin: 1005,
+          SourceLogin: 1017,
           Action: 200,
           Login: account,
           Symbol: symbol,
@@ -516,7 +516,7 @@ exports.closePosition = async (account, symbol, quantity, position) => {
           return;
         }
         let rawBody = JSON.stringify({
-          SourceLogin: 1005,
+          SourceLogin: 1017,
           Action: 200,
           Login: account,
           Symbol: symbol,
