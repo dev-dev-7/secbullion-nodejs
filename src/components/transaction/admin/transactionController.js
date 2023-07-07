@@ -31,7 +31,6 @@ exports.get = async (req, res) => {
 exports.update = async (req, res) => {
   let user = await authorization(req, res);
   const transaction = await model.getTransactionById(req.params.transaction_id);
-  console.log(transaction);
   if (transaction) {
     if (req.body.status == 1) {
       await updateWalletAmount(
