@@ -69,6 +69,7 @@ exports.getAll = async (req, res) => {
     }
   }
   let result = {
+    usd_to_aed: 3.678,
     symbol: await productModel.getBySymbol("XAUUSD"),
     user_id: req.params.user_id,
     my_stake: stakes,
