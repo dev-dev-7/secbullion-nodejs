@@ -1,5 +1,0 @@
-dispatch:
-  - url: "afkkarr.com/*"
-    service: default
-  - url: "sec.afkkarr.com/*"
-    service: sec
