@@ -8,9 +8,11 @@ const { validationResult } = require("express-validator");
 const { authorization } = require("../../helpers/authorization");
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 const { Checkout } = require("checkout-sdk-node");
+
 const cko = new Checkout(process.env.CHECKOUT_SECRETE_KEY, {
   pk: process.env.CHECKOUT_PUBLIC_KEY,
-  // environment: "sandbox", // or 'production'
+  scope: ['gateway'],
+  environment: "production", // or 'production'
 });
 
 exports.get = async (req, res) => {
@@ -84,8 +86,8 @@ exports.payment = async (req, res) => {
         currency: "USD",
         amount: req.body.amount * 100,
         payment_type: "Regular",
-        reference: "ORDER 1234",
-        description: "SEC PRODUCTS",
+        reference: "ORDER-"+user?.user_id+"-"+card?.id,
+        description: "SEC WALLET",
         // customer: {
         //   email: 'new_user@email.com',
         //   name: 'John Smith',
@@ -98,7 +100,7 @@ exports.payment = async (req, res) => {
         .status(200)
         .json({ data: action, msg: "payment has been done" });
     } catch (error) {
-      // console.log(error.name, error.http_code, error.body)
+     console.log(error.name, error.http_code, error.body)
       return res.status(200).json({ msg: error.name });
     }
   } else {
