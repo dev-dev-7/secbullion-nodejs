@@ -59,7 +59,7 @@ exports.getTransaction = async (req, res) => {
 exports.checkouCallback = async (req, res) => {
   await walletModel.insertCallback("checkout", req.body);
   if (req.body.type === "payment_captured") {
-    let amount = req.body.data.amount / 100;
+    let amount = (req.body.data.amount / 100) / 3.675;
     await updateWalletAmount(
       req.body.data.metadata.user_id,
       amount,
