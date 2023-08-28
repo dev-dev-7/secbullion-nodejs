@@ -15,11 +15,11 @@ const {
   updatePosition,
   closePosition,
 } = require("../../helpers/mt5");
-// const {
-//   getExpiryDate,
-//   getDateTime,
-//   getNumberOfDays,
-// } = require('../../helpers/time')
+const {
+  getExpiryDate,
+  getDateTime,
+  getNumberOfDays,
+} = require("../../helpers/time");
 const { updateWalletAmount } = require("../../helpers/updateWallet");
 
 exports.priceUpdate = async (req, res) => {
@@ -50,21 +50,25 @@ exports.stakeUpdate = async (req, res) => {
     for (var i = 0; i < stakes.length; i++) {
       if (stakes[i].duration > 0) {
         if (stakes[i].mt5_position_id) {
-          // let mt5AccountNumber = await profileModel.getUserMetaDataKey(
-          //   stakes[i].user_id,
-          //   "mt5_account_no"
-          // );
-          // let symbolDetails = await getRequestDetails(
-          //   mt5AccountNumber.meta_values,
-          //   stakes[i].mt5_position_id
-          // );
-          let symbolDetails = await getSymbolDetails(stakes[i].symbol);
-          if (symbolDetails) {
-            await orderModel.updateStakeSwapValue(
-              stakes[i].id,
-              symbolDetails.SwapLong,
-              0
-            );
+          let todayDate = getDateTime();
+          let expiryDate = await getExpiryDate(
+            stakes[i].created_at,
+            parseInt(stakes[i].duration),
+            stakes[i].duration_type
+          );
+          if (getNumberOfDays(expiryDate, todayDate) > 0) {
+            if (stakes[i].mt5_position_id) {
+              let symbolDetails = await getSymbolDetails(stakes[i].symbol);
+              if (symbolDetails) {
+                await orderModel.updateStakeSwapValue(
+                  stakes[i].id,
+                  symbolDetails.SwapLong,
+                  0
+                );
+              }
+            }
+          } else {
+            await orderModel.updateOrderProductStatus(stakes[i].id, "store");
           }
         }
       }
