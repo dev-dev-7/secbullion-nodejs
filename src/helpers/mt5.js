@@ -607,6 +607,7 @@ exports.getSymbolDetails = async (symbol) => {
     return new Promise((resolve, reject) => {
       req.Auth(1017, "b6yjwcfy", "484", "WebManager", function (error) {
         if (error) {
+          console.log("error:", error)
           return;
         }
         req.Get(
