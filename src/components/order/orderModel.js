@@ -11,6 +11,7 @@ const create = async ({
   txn_token,
   coupon_code,
   discount_price,
+  delivery_fee
 }) => {
   return db(orderTable)
     .insert({
@@ -21,6 +22,7 @@ const create = async ({
       txn_token: txn_token,
       coupon_code: coupon_code,
       discount_price: discount_price,
+      delivery_fee: delivery_fee
     })
     .then((id) => getOrderById(id));
 };
