@@ -2,6 +2,7 @@ const db = require("../../config/connection");
 const productTable = "tbl_products";
 const orderTable = "tbl_product_orders";
 const orderDetailsTable = "tbl_product_order_details";
+const orderActivityTable = "tbl_product_order_activity";
 
 const create = async ({
   user_id,
@@ -11,7 +12,7 @@ const create = async ({
   txn_token,
   coupon_code,
   discount_price,
-  delivery_fee
+  delivery_fee,
 }) => {
   return db(orderTable)
     .insert({
@@ -22,7 +23,7 @@ const create = async ({
       txn_token: txn_token,
       coupon_code: coupon_code,
       discount_price: discount_price,
-      delivery_fee: delivery_fee
+      delivery_fee: delivery_fee,
     })
     .then((id) => getOrderById(id));
 };
@@ -245,6 +246,21 @@ const getSumOfUserStack = async (user_id, type) => {
     .first();
 };
 
+const insertOrderActivity = async (user_id, order_product_id, data) => {
+  return db(orderActivityTable).insert({
+    user_id: user_id,
+    order_product_id: order_product_id,
+    data: data,
+  });
+};
+
+const getActivity = (order_product_id) => {
+  return db(orderActivityTable)
+    .where("order_product_id", order_product_id)
+    .limit(40)
+    .orderBy("id", "DESC");
+};
+
 module.exports = {
   create,
   updateOrderStatus,
@@ -270,4 +286,6 @@ module.exports = {
   updateOrderProductTicketId,
   deleteOrder,
   updateOrderAmount,
+  insertOrderActivity,
+  getActivity,
 };

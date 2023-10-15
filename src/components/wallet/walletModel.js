@@ -1,5 +1,6 @@
 const db = require("../../config/connection");
 const walletTable = "tbl_user_wallets";
+const walletWithdrawalTable = "tbl_user_wallet_withdrawal";
 const walletHistoryTable = "tbl_user_wallet_history";
 const callbackTable = "tbl_callback";
 
@@ -42,10 +43,40 @@ const insertCallback = async (type, data) => {
   });
 };
 
+// Withdrawal
+const insertWithdrawal = async ({ user_id, amount, currency }) => {
+  return db(walletWithdrawalTable).insert({
+    user_id: user_id,
+    amount: amount ? amount : 0,
+    currency: currency,
+  });
+};
+
+const getAllWithdrawal = () => {
+  return db(walletWithdrawalTable).orderBy("id", "DESC");
+};
+
+const getWithdrawalById = (id) => {
+  return db(walletWithdrawalTable).where("id", id).first();
+};
+
+const getWithdrawalByUserId = (user_id) => {
+  return db(walletWithdrawalTable).where("user_id", user_id);
+};
+
+const updateWithdrawalStatus = async (id, status) => {
+  return db(walletWithdrawalTable).where({ id: id }).update({ status: status });
+};
+
 module.exports = {
   getWalletByUserId,
   insertWallet,
   updateWallet,
   insertWalletHistory,
   insertCallback,
+  insertWithdrawal,
+  getAllWithdrawal,
+  getWithdrawalById,
+  getWithdrawalByUserId,
+  updateWithdrawalStatus,
 };

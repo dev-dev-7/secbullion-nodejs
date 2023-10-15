@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const walletController = require("../components/wallet/walletController");
-const verifyToken = require("./../helpers/verifyToken");
-const validation = require("../helpers/validation/checkout");
+const verifyToken = require("../helpers/verifyToken");
+const validation = require("../helpers/validation/wallet");
 
 // Wallet
 router.route("/wallet/:user_id").get([verifyToken], walletController.get);
@@ -17,5 +17,12 @@ router
 router
   .route("/transactions/:user_id")
   .get([verifyToken], walletController.getTransaction);
+
+// Withdrawal
+router.route("/wallet/withdraw/:user_id").get([verifyToken], walletController.getMyWithdraws);
+
+router
+  .route("/wallet/withdraw")
+  .post([verifyToken, validation.withdraw], walletController.withdraw);
 
 module.exports = router;

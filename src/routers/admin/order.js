@@ -11,5 +11,8 @@ router
 router
   .route("/order/change-order-status/:order_id")
   .put([verifyToken], adminOrderController.changeMyOrderStatus);
+router
+  .route("/order/activity/:order_product_id")
+  .get([verifyToken], adminOrderController.activity);
 
 module.exports = router;

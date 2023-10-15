@@ -43,6 +43,12 @@ exports.changeMyOrderItemStatus = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
+  await orderModel.insertOrderActivity(
+    user.user_id,
+    req.body.order_product_id,
+    req.body
+  );
   const userMetadata = await profileModel.getUserMetaDataKey(
     req.params.user_id,
     "mt5_account_no"
@@ -138,6 +144,23 @@ exports.changeMyOrderItemStatus = async (req, res) => {
     return res.status(201).json({
       msg: "Order has been updated successfully",
     });
+  } else {
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
+  }
+};
+
+exports.activity = async (req, res) => {
+  if (req.params.order_product_id) {
+    let activities = await orderModel.getActivity(req.params.order_product_id);
+    if (activities?.length) {
+      for (var i = 0; i < activities?.length; i++) {
+        activities[i].data = JSON.parse(activities[i].data)
+        activities[i].user = await profileModel.getUserMetaData(
+          activities[i]?.user_id
+        );
+      }
+    }
+    return res.status(201).json({ data: activities });
   } else {
     return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
