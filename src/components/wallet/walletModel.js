@@ -53,7 +53,7 @@ const insertWithdrawal = async ({ user_id, amount, currency }) => {
 };
 
 const getAllWithdrawal = () => {
-  return db(walletWithdrawalTable).orderBy("id", "DESC");
+  return db(walletWithdrawalTable).orderBy("id", "DESC").limit(500);
 };
 
 const getWithdrawalById = (id) => {
@@ -68,6 +68,13 @@ const updateWithdrawalStatus = async (id, status) => {
   return db(walletWithdrawalTable).where({ id: id }).update({ status: status });
 };
 
+const existWithdrawalRequest = (user_id) => {
+  return db(walletWithdrawalTable)
+    .where("user_id", user_id)
+    .andWhere("status", 0)
+    .first();
+};
+
 module.exports = {
   getWalletByUserId,
   insertWallet,
@@ -79,4 +86,5 @@ module.exports = {
   getWithdrawalById,
   getWithdrawalByUserId,
   updateWithdrawalStatus,
+  existWithdrawalRequest
 };
