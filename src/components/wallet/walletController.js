@@ -107,3 +107,25 @@ exports.payment = async (req, res) => {
     return res.status(404).json({ errors: [{ msg: "Invalid Request" }] });
   }
 };
+
+exports.getMyWithdraws = async (req, res) => {
+  let user = await authorization(req, res);
+  if (user.user_id) {
+    let withdraws = await walletModel.getWithdrawalByUserId(user.user_id);
+    return res.status(200).json({ data: withdraws });
+  } else {
+    return res.status(404).json({ msg: "Invalid Request" });
+  }
+};
+
+exports.withdraw = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let wallet = await walletModel.insertWithdrawal(req.body);
+  if (wallet) {
+    return res.status(200).json({ msg: "Withdraw requested" });
+  } else {
+    return res.status(404).json({ msg: "Invalid Request" });
+  }
+};
