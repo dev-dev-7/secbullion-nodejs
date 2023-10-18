@@ -18,11 +18,4 @@ router
   .route("/transactions/:user_id")
   .get([verifyToken], walletController.getTransaction);
 
-// Withdrawal
-router.route("/wallet/withdraw/:user_id").get([verifyToken], walletController.getMyWithdraws);
-
-router
-  .route("/wallet/withdraw")
-  .post([verifyToken, validation.withdraw], walletController.withdraw);
-
 module.exports = router;

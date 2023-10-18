@@ -24,7 +24,6 @@ const adminTransaction = require("./admin/transaction");
 const fileProduct = require("./admin/file");
 const adminAppData = require("./admin/appData");
 const cronjobAuth = require("./admin/cronjob");
-const adminWallet = require("./admin/wallet");
 
 // Home Page
 router.get("/", (req, res) => {
@@ -52,6 +51,5 @@ router.use("/admin", adminTransaction);
 router.use("/admin", fileProduct);
 router.use("/admin", adminAppData);
 router.use("/admin", cronjobAuth);
-router.use("/admin", adminWallet);
 
 module.exports = router;
