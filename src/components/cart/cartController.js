@@ -1,6 +1,7 @@
 require("dotenv").config();
 const cartModel = require("./cartModel");
 const productModel = require("../product/productModel");
+const appDataModel = require("../appData/appDataModel");
 const { validationResult } = require("express-validator");
 
 exports.create = async (req, res) => {
@@ -62,6 +63,7 @@ exports.get = async (req, res) => {
     cart.discount_price = coupon ? coupon.discount_price : 0;
     cart.coupon_code = req.body.coupon_code;
     cart.total = 0;
+    cart.delivery_fee = 0;
     if (cartItems.length) {
       for (var c = 0; c < cartItems.length; c++) {
         cartItems[c].product = await productModel.getById(
@@ -78,11 +80,15 @@ exports.get = async (req, res) => {
           cart.subtotal +=
           cartItems[c].product.last_price * cartItems[c].quantity;
         }
+        if (cartItems[c].type === "deliver") {
+          let deliveryFee = await appDataModel.getByMetaKey("delivery-fee");
+          cart.delivery_fee = parseInt(deliveryFee?.meta_values);
+        }
       }
     }
     cart.items = cartItems;
     cart.subtotal = Number(cart.subtotal).toFixed(2);
-    cart.total = Number(cart.subtotal - cart.discount_price).toFixed(2);
+    cart.total = (Number(cart.subtotal - cart.discount_price).toFixed(2)) + Number(cart.delivery_fee);
   }
   if (cart) {
     return res.status(201).json({ data: cart });
