@@ -1,7 +1,6 @@
 require("dotenv").config();
 const productModel = require("../product/productModel");
 const orderModel = require("../order/orderModel");
-const profileModel = require("../profile/profileModel");
 const {
   getSymbolPrice,
   buyPosition,
@@ -20,7 +19,6 @@ const {
   getDateTime,
   getNumberOfDays,
 } = require("../../helpers/time");
-const { updateWalletAmount } = require("../../helpers/updateWallet");
 
 exports.priceUpdate = async (req, res) => {
   const products = await productModel.getAll();
@@ -53,7 +51,7 @@ exports.stakeUpdate = async (req, res) => {
         if (stakes[i].mt5_position_id) {
           let todayDate = getDateTime();
           let expiryDate = await getExpiryDate(
-            stakes[i].created_at,
+            stakes[i].updated_at,
             parseInt(stakes[i].duration),
             stakes[i].duration_type
           );

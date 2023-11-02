@@ -3,6 +3,7 @@ const productTable = "tbl_products";
 const orderTable = "tbl_product_orders";
 const orderDetailsTable = "tbl_product_order_details";
 const orderActivityTable = "tbl_product_order_activity";
+const { getDateTime } = require("../../helpers/time");
 
 const create = async ({
   user_id,
@@ -165,6 +166,7 @@ const deleteOrder = (id) => {
 const updateOrderProductQuantity = async (id, quantity) => {
   return db(orderDetailsTable).where("id", id).update({
     quantity: quantity,
+    updated_at: getDateTime(),
   });
 };
 
@@ -233,6 +235,7 @@ const updateOrderProduct = async (
       delivery_id: delivery_id ? delivery_id : "",
       mt5_position_id: position_id ? position_id : 0,
       status: status,
+      updated_at: getDateTime(),
     })
     .then(() => getOrderDetailsById(id));
 };

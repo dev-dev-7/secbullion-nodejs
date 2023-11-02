@@ -123,6 +123,7 @@ const getDateTime = () => {
     seconds
   );
 };
+
 const getNumberOfDays = (date1, date2) => {
   let date_1 = new Date(date1);
   let date_2 = new Date(date2);
