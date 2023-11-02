@@ -200,6 +200,7 @@ const updateStakeSwapValue = async (id, swap = "0", commission = "0") => {
 const updateOrderProductStatus = async (id, status) => {
   return db(orderDetailsTable).where("id", id).update({
     status: status,
+    updated_at: getDateTime(),
   });
 };
 const updateOrderProductTicketId = async (id, position_id, order_price) => {
