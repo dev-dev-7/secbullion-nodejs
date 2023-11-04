@@ -12,4 +12,8 @@ router
   .route("/bank-transaction/:transaction_id")
   .put([verifyToken], transactionController.update);
 
+  router
+  .route("/withdraw-requests")
+  .get([verifyToken], transactionController.getWithdrawRequests);
+
 module.exports = router;

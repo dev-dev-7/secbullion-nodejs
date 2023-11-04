@@ -14,8 +14,8 @@ const updateTransaction = async (id, data) => {
     .then((updated) => getTransactionById(id));
 };
 
-const getAllTransactions = () => {
-  return db(bankTable).orderBy("id", "desc");
+const getAllTransactionsByType = (type) => {
+  return db(bankTable).where("type", type).limit(100).orderBy("id", "desc");
 };
 
 const getTransactionById = (id) => {
@@ -24,7 +24,7 @@ const getTransactionById = (id) => {
     .first();
 };
 
-const getTransactionByRefrence = (user_id, reference_number) => {
+const getTransactionByReference = (user_id, reference_number) => {
   return db(bankTable)
     .where("user_id", user_id)
     .andWhere("reference_number", reference_number)
@@ -38,8 +38,8 @@ const getTransactionByUserId = (user_id) => {
 module.exports = {
   create,
   updateTransaction,
-  getAllTransactions,
+  getAllTransactionsByType,
   getTransactionById,
-  getTransactionByRefrence,
+  getTransactionByReference,
   getTransactionByUserId,
 };
