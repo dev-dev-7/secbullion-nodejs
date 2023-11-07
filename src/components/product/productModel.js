@@ -12,6 +12,7 @@ const create = async ({
   quantity,
   unit,
   price,
+  currency,
   commission,
 }) => {
   return db(table)
@@ -25,6 +26,7 @@ const create = async ({
       quantity: quantity,
       unit: unit,
       price: price,
+      currency: currency,
       commission: commission,
     })
     .then((id) => getById(id));
@@ -42,6 +44,7 @@ const update = async (
     quantity,
     unit,
     price,
+    currency,
     commission,
   }
 ) => {
@@ -57,6 +60,7 @@ const update = async (
       quantity: quantity,
       unit: unit,
       price: price,
+      currency: currency,
       commission: commission,
     })
     .then((updated) => deleteByFilesByProduct(id));
@@ -134,7 +138,10 @@ const deleteByFilesByProduct = (product_id) => {
 };
 
 const isExistProduct = (symbol, currency) => {
-  return db(table).where("symbol", symbol).andWhere("currency", currency).first();
+  return db(table)
+    .where("symbol", symbol)
+    .andWhere("currency", currency)
+    .first();
 };
 
 const updateProductPrice = async (id, symbol, ask_price, bid_price) => {
