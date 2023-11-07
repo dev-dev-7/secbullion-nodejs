@@ -6,7 +6,7 @@ exports.add = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   let product;
-  product = await model.isExistProduct(req.body.symbol);
+  product = await model.isExistProduct(req.body.symbol, req.body.currency);
   if (!product) {
     product = await model.create(req.body);
     if (product) {

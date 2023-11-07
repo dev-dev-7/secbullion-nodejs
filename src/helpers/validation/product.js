@@ -11,6 +11,7 @@ exports.add = [
   check("unit").notEmpty(),
   check("symbol").notEmpty(),
   check("files").notEmpty(),
+  check("currency").notEmpty(),
 ];
 exports.get = [check("category_id").notEmpty()];
 exports.details = [check("product_id").notEmpty()];
@@ -24,4 +25,5 @@ exports.update = [
   check("unit").notEmpty(),
   check("status").notEmpty(),
   check("files").notEmpty(),
+  check("currency").notEmpty(),
 ];

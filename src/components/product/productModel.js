@@ -133,8 +133,8 @@ const deleteByFilesByProduct = (product_id) => {
     .then(() => getById(product_id));
 };
 
-const isExistProduct = (symbol) => {
-  return db(table).where("symbol", symbol).first();
+const isExistProduct = (symbol, currency) => {
+  return db(table).where("symbol", symbol).andWhere("currency", currency).first();
 };
 
 const updateProductPrice = async (id, symbol, ask_price, bid_price) => {
