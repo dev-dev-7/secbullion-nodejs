@@ -1,6 +1,7 @@
 const db = require("../../config/connection");
 const table = "tbl_app_metadata";
 const tableUserMetadataTable = "tbl_user_metadata";
+const tableCurrenciesTable = "tbl_currencies";
 
 const create = async ({ meta_key, meta_values }) => {
   return db(table)
@@ -42,6 +43,10 @@ const getActive = () => {
   return db(table).where("status", 1);
 };
 
+const getAllCurrencies = () => {
+  return db(tableCurrenciesTable);
+};
+
 module.exports = {
   create,
   update,
@@ -51,4 +56,5 @@ module.exports = {
   getByUserMetaKey,
   getAll,
   getActive,
+  getAllCurrencies
 };
