@@ -2,9 +2,12 @@ const db = require("../../config/connection");
 const Hash = require("../../helpers/hash");
 const userTable = "tbl_users";
 
-const createUser = async ({ password }) => {
+const createUser = async ({ password, currency }) => {
   return db(userTable)
-    .insert({ password: Hash.make(password) })
+    .insert({
+      password: Hash.make(password),
+      currency: currency ? currency : "USD",
+    })
     .then((user_id) => getUserById(user_id));
 };
 
