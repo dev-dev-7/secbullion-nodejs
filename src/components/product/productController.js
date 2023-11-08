@@ -8,12 +8,13 @@ exports.getAll = async (req, res) => {
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
   let user = await authorization(req, res);
+  let currency = user?.currency ? user.currency : process.env.DEFAULT_CURRENCY;
   // All Products
-  const products = await productModel.getActiveProductsWithFiles();
+  const products = await productModel.getActiveProductsWithFiles(currency);
   if (products.length) {
     for (var p = 0; p < products.length; p++) {
       products[p].value = {
-        currency: user?.currency ? user.currency : process.env.DEFAULT_CURRENCY,
+        currency: currency,
         symbol: products[p].symbol,
         unit: products[p].unit,
         price: products[p].last_price,

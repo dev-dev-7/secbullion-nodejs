@@ -93,12 +93,13 @@ const getActiveByCategory = (category_id) => {
   return db(table).where("category_id", category_id).andWhere("status", 1);
 };
 
-const getActiveProductsWithFiles = () => {
+const getActiveProductsWithFiles = (currency) => {
   return db
     .select(table + ".*", tableFiles + ".file")
     .from(table)
     .leftJoin(tableFiles, table + ".id", tableFiles + ".product_id")
     .where(table + ".status", "!=", 4)
+    .andWhere(table + ".currency", currency)
     .groupBy("id");
 };
 
