@@ -9,6 +9,5 @@ exports.appData = async (req, res) => {
     secret_key: process.env.CHECKOUT_SECRETE_KEY,
     public_key: process.env.CHECKOUT_PUBLIC_KEY,
   };
-  data.currencies = await model.getAllCurrencies()
   return res.status(201).json({ data: data });
 };

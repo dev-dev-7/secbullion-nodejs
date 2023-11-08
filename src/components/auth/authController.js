@@ -98,7 +98,6 @@ exports.register = async (req, res) => {
         );
         // create MT5 Accounts:
         req.body.user_id = user.user_id;
-
         await profileModel.insertUserMetaData(
           user.user_id,
           "mt5_account_no",
@@ -109,7 +108,7 @@ exports.register = async (req, res) => {
           0,
           0,
           0,
-          process.env.DEFAULT_CURRENCY
+          req.body.currency ? req.body.currency : process.env.DEFAULT_CURRENCY
         );
         smsglobal.sendMessage(req.body.mobile, otp_code);
       }

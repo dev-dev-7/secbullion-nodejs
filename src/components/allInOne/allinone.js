@@ -2,11 +2,13 @@ require("dotenv").config();
 const { validationResult } = require("express-validator");
 const orderModel = require("../order/orderModel");
 const productModel = require("../product/productModel");
+const { authorization } = require("../../helpers/authorization");
 
 exports.getAll = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
+    let user = await authorization(req, res);
   // My Stake
   const stakes = await orderModel.getByStatus(req.params.user_id, ["stake"]);
   if (stakes) {
@@ -14,9 +16,9 @@ exports.getAll = async (req, res) => {
       stakes[t].product = await productModel.getProductWithFile(
         stakes[t].product_id
       );
-      if (stakes[t].product) {
+      if (stakes[t].product) { 
         stakes[t].product.value = {
-          currency: process.env.DEFAULT_CURRENCY,
+          currency: user?.currency ? user.currency : process.env.DEFAULT_CURRENCY,
           symbol: stakes[t].product.symbol,
           unit: stakes[t].product.unit,
           quantity: stakes[t].quantity,

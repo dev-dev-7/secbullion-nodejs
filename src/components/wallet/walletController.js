@@ -1,91 +1,95 @@
-require('dotenv').config()
-const walletModel = require('./walletModel')
-const orderModel = require('../order/orderModel')
-const cardModel = require('../card/cardModel')
-const transactionModel = require('../transaction/transactionModel')
-const bankDetailsModel = require('../bankDetails/bankDetailsModel')
-const { validationResult } = require('express-validator')
-const { authorization } = require('../../helpers/authorization')
-const { updateWalletAmount } = require('../../helpers/updateWallet')
-const { Checkout } = require('checkout-sdk-node')
+require("dotenv").config();
+const walletModel = require("./walletModel");
+const orderModel = require("../order/orderModel");
+const cardModel = require("../card/cardModel");
+const transactionModel = require("../transaction/transactionModel");
+const bankDetailsModel = require("../bankDetails/bankDetailsModel");
+const { validationResult } = require("express-validator");
+const { authorization } = require("../../helpers/authorization");
+const { updateWalletAmount } = require("../../helpers/updateWallet");
+const { Checkout } = require("checkout-sdk-node");
 
 const cko = new Checkout(process.env.CHECKOUT_SECRETE_KEY, {
   pk: process.env.CHECKOUT_PUBLIC_KEY,
-  scope: ['gateway'],
-  environment: 'production', // or 'production'
-})
+  scope: ["gateway"],
+  environment: "production", // or 'production'
+});
 
 exports.get = async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
-  let wallet = await walletModel.getWalletByUserId(req.params.user_id)
-  let store = await orderModel.getSumOfUserStack(req.params.user_id, 'store')
-  let stake = await orderModel.getSumOfUserStack(req.params.user_id, 'stake')
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
+  let wallet = await walletModel.getWalletByUserId(req.params.user_id);
+  let store = await orderModel.getSumOfUserStack(req.params.user_id, "store");
+  let stake = await orderModel.getSumOfUserStack(req.params.user_id, "stake");
   let result = {
-    currency: process.env.DEFAULT_CURRENCY,
+    currency: user?.currency ? user.currency : process.env.DEFAULT_CURRENCY,
     cash_balance: wallet.cash_balance.toFixed(2),
-    commodities: store?.price ? store.price.toFixed(2) : '0.00',
-    staking: stake?.price ? stake.price.toFixed(2) : '0.00',
-  }
+    commodities: store?.price ? store.price.toFixed(2) : "0.00",
+    staking: stake?.price ? stake.price.toFixed(2) : "0.00",
+  };
   if (result) {
-    return res.status(200).json({ data: result })
+    return res.status(200).json({ data: result });
   } else {
-    return res.status(400).json({ errors: [{ msg: 'Bad Request' }] })
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
-}
+};
 
 exports.getTransaction = async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
   const transactions = await transactionModel.getTransactionByUserId(
-    req.params.user_id,
-  )
+    req.params.user_id
+  );
   if (transactions) {
     for (var i = 0; i < transactions.length; i++) {
       transactions[i].bankDetails = await bankDetailsModel.getBankById(
-        transactions[i].bank_detail_id,
-      )
+        transactions[i].bank_detail_id
+      );
     }
   }
   if (transactions) {
-    return res.status(200).json({ data: transactions })
+    return res.status(200).json({ data: transactions });
   } else {
-    return res.status(400).json({ errors: [{ msg: 'Bad Request' }] })
+    return res.status(400).json({ errors: [{ msg: "Bad Request" }] });
   }
-}
+};
 
 exports.checkouCallback = async (req, res) => {
-  await walletModel.insertCallback('checkout', req.body)
-  if (req.body.type === 'payment_captured') {
-    let amount = req.body.data.amount / 100
+  await walletModel.insertCallback("checkout", req.body);
+  if (req.body.type === "payment_captured") {
+    let amount = req.body.data.amount / 100;
     await updateWalletAmount(
       req.body.data.metadata.user_id,
       amount,
-      '+',
-      'card_payment',
-    )
+      "+",
+      "card_payment"
+    );
   }
-  return res.status(200).json({ msg: 'callback inserted.' })
-}
+  return res.status(200).json({ msg: "callback inserted." });
+};
 
 exports.payment = async (req, res) => {
-  const errors = validationResult(req)
-  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() })
-  let user = await authorization(req, res)
-  let card = await cardModel.getById(req.body.card_id)
+  const errors = validationResult(req);
+  if (!errors.isEmpty())
+    return res.status(400).json({ errors: errors.array() });
+  let user = await authorization(req, res);
+  let card = await cardModel.getById(req.body.card_id);
   if (user.user_id == card?.user_id) {
     try {
       // some async request made with the SDK
       const action = await cko.payments.request({
         source: {
-          type: 'id',
+          type: "id",
           id: card.token, // Generated by Checkout.Frames
         },
-        currency: 'USD',
+        currency: user?.currency ? user.currency : "USD",
         amount: req.body.amount * 100,
-        payment_type: 'Regular',
-        reference: 'ORDER-' + user?.user_id + '-' + card?.id,
-        description: 'SEC WALLET',
+        payment_type: "Regular",
+        reference: "ORDER-" + user?.user_id + "-" + card?.id,
+        description: "SEC WALLET",
         // customer: {
         //   email: 'new_user@email.com',
         //   name: 'John Smith',
@@ -93,14 +97,14 @@ exports.payment = async (req, res) => {
         metadata: {
           user_id: user.user_id,
         },
-      })
+      });
       return res
         .status(200)
-        .json({ data: action, msg: 'payment has been done' })
+        .json({ data: action, msg: "payment has been done" });
     } catch (error) {
-      return res.status(200).json({ msg: error.name })
+      return res.status(200).json({ msg: error.name });
     }
   } else {
-    return res.status(404).json({ errors: [{ msg: 'Invalid Request' }] })
+    return res.status(404).json({ errors: [{ msg: "Invalid Request" }] });
   }
-}
+};

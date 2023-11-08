@@ -53,7 +53,9 @@ exports.orderSummary = async (req, res) => {
       }
     }
     let sum = await getGrandTotal(cartItems, req.body.coupon_code);
-    order.currency = process.env.DEFAULT_CURRENCY;
+    order.currency = user?.currency
+      ? user.currency
+      : process.env.DEFAULT_CURRENCY;
     order.subtotal = sum.subTotal;
     order.coupon_used = sum.coupon_used;
     order.total = sum.grandTotal;
@@ -100,7 +102,9 @@ exports.submit = async (req, res) => {
   req.body.user_id = user.user_id;
   req.body.subtotal = sum.subTotal;
   req.body.total = sum.grandTotal;
-  req.body.currency = process.env.DEFAULT_CURRENCY;
+  req.body.currency = user?.currency
+    ? user.currency
+    : process.env.DEFAULT_CURRENCY;
   req.body.txn_token = "wallet";
   req.body.discount_price = sum.coupon_used;
   req.body.delivery_fee = sum.delivery_fee;
@@ -112,7 +116,9 @@ exports.submit = async (req, res) => {
     );
     if (cartItems.length) {
       for (var i = 0; i < cartItems.length; i++) {
-        cartItems[i].currency = process.env.DEFAULT_CURRENCY;
+        cartItems[i].currency = user?.currency
+          ? user.currency
+          : process.env.DEFAULT_CURRENCY;
         if (cartItems[i].type === "store" || cartItems[i].type === "stake") {
           if (mt5AccountNumber?.meta_values) {
             let mt5Order = await buyPosition(
