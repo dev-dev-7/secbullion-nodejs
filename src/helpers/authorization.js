@@ -15,8 +15,8 @@ exports.authorization = async (req, res) => {
     if (decoded?.user) {
       return decoded?.user;
     } else {
-      return null;
+      return res.send(null);
+      ;
     }
   }
-  return res.send(500);
 };
