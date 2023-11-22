@@ -6,7 +6,7 @@ const { Checkout } = require("checkout-sdk-node");
 
 const cko = new Checkout(process.env.CHECKOUT_SECRETE_KEY, {
   pk: process.env.CHECKOUT_PUBLIC_KEY,
-  scope: ['gateway'],
+  scope: ["gateway"],
   environment: "production",
 });
 
@@ -50,4 +50,10 @@ exports.create = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ msg: err.name });
   }
+};
+
+exports.delete = async (req, res) => {
+  let user = await authorization(req, res);
+  const card = await model.remove(user.user_id, req.params.id);
+  return res.status(201).json({ data: card });
 };

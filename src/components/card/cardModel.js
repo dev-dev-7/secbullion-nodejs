@@ -38,10 +38,11 @@ const update = async (id, { method, type, token, last_digit }) => {
     .then((updated) => getById(id));
 };
 
-const remove = async (id) => {
+const remove = async (user_id, id) => {
   return db(table)
     .del()
-    .where("id", id)
+    .where("user_id", user_id)
+    .andWhere("id", id)
     .then(() => getById(id));
 };
 

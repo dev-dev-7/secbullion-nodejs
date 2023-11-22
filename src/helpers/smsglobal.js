@@ -5,7 +5,7 @@ var smsglobal = require("smsglobal")(apiKey, apiSecret);
 
 const sendMessage = (phone, otp_code) => {
   var payload = {
-    origin: "ISHRO",
+    origin: config.smsglobal.SMSGLOBAL_ORIGIN,
     destination: phone,
     message: "Your one time otp for secbullion is " + otp_code,
   };

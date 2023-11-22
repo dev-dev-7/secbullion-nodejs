@@ -19,6 +19,7 @@ module.exports = {
     GOOGLE_CLOUD_KEY_FILE: process.env.GOOGLE_CLOUD_KEY_FILE,
   },
   smsglobal: {
+    API_ORIGIN: process.env.SMSGLOBAL_ORIGIN,
     API_KEY: process.env.SMSGLOBAL_API_KEY,
     SECRETE_KEY: process.env.SMSGLOBAL_SECRETE_KEY,
   },
