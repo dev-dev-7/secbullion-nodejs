@@ -25,7 +25,7 @@ const create = async ({
       symbol: symbol,
       quantity: quantity,
       unit: unit,
-      price: price,
+      price: price?price:null,
       currency: currency,
       commission: commission ? commission : 0,
     })
