@@ -69,8 +69,8 @@ const update = async (
 const remove = async (id) => {
   return db(table)
     .where("id", id)
-    .update({ status: 4 })
-    .then((updated) => getById(id));
+    .del()
+    .then(() => getById(id));
 };
 
 const getById = (id) => {

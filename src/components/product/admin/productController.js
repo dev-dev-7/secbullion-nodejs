@@ -5,10 +5,11 @@ exports.add = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty())
     return res.status(400).json({ errors: errors.array() });
-  let product;
-  product = await model.isExistProduct(req.body.symbol, req.body.currency);
-  if (!product) {
-    product = await model.create(req.body);
+  let exist = await model.isExistProduct(req.body.symbol, req.body.currency);
+  if (exist) {
+    return res.status(400).json({ errors: [{ msg: "Product already exist" }] });
+  } else {
+    let product = await model.create(req.body);
     if (product) {
       if (req.body.files) {
         for (var i = 0; i < req.body.files.length; i++) {
@@ -16,8 +17,8 @@ exports.add = async (req, res) => {
         }
       }
     }
+    return res.status(201).json({ data: product });
   }
-  return res.status(201).json({ data: product });
 };
 
 exports.getAll = async (req, res) => {
