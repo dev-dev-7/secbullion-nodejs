@@ -7,8 +7,8 @@ exports.add = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   let exist = await model.isExistProduct(req.body.symbol, req.body.currency);
   if (exist) {
-    return res.status(400).json({ errors: [{ msg: "Product already exist" }] });
-  } else {
+    return res.status(400).json({ msg: "Product already exist" });
+  }else{
     let product = await model.create(req.body);
     if (product) {
       if (req.body.files) {
